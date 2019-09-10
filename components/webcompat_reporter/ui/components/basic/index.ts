@@ -11,6 +11,7 @@ export {
 } from './structure'
 
 export {
+  RectangularCard,
   ModalTitle,
   InfoText,
   DisclaimerText,

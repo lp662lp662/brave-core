@@ -173,6 +173,15 @@
       <message name="IDS_ADBLOCK_CUSTOM_FILTERS_TITLE" desc="Title for custom filters section">Custom Filters</message>
       <message name="IDS_ADBLOCK_CUSTOM_FILTERS_INSTRUCTIONS" desc="Instructions for custom filters section">One per line, a filter is described in Adblock Plus filter syntax</message>
 
+      <!-- WebUI webcompat reporter resources -->
+      <message name="IDS_BRAVE_WEBCOMPATREPORTER_REPORT_MODAL_TITLE" desc="Title for initial report modal view">Report a broken site</message>
+      <message name="IDS_BRAVE_WEBCOMPATREPORTER_REPORT_EXPLANATION" desc="Appears above the site URL to explain why the modal was opened">Let Brave's developers know that this site doesn't work properly with Shields:</message>
+      <message name="IDS_BRAVE_WEBCOMPATREPORTER_REPORT_DISCLAIMER" desc="Describes what is sent to Brave's servers in the report">Note: This site address will be submitted with your Brave version number and your IP address (which will not be stored).</message>
+      <message name="IDS_BRAVE_WEBCOMPATREPORTER_CANCEL" desc="Text for cancel button">Cancel</message>
+      <message name="IDS_BRAVE_WEBCOMPATREPORTER_SUBMIT" desc="Text for submit report button">Submit</message>
+      <message name="IDS_BRAVE_WEBCOMPATREPORTER_THANK_YOU" desc="Title for post-submit confirmation modal view">Thank you!</message>
+      <message name="IDS_BRAVE_WEBCOMPATREPORTER_CONFIRMATION_NOTICE" desc="Assures the user that the problem will be fixed soon">Thanks for letting Brave's developers know that there's something wrong with this site. We'll do our best to fix it!</message>
+
       <!-- WebUI welcome page resources -->
       <message name="IDS_BRAVE_WELCOME_PAGE_MAIN_TITLE" desc="Welcome message title">Brave the new Internet</message>
       <message name="IDS_BRAVE_WELCOME_PAGE_MAIN_DESC" desc="Welcome message description">Get ready to enjoy a faster and more secure browsing experience with a browser built to protect your privacy.</message>

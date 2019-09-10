@@ -113,6 +113,7 @@ source_set("browser_process") {
     "renderer_context_menu",
     "renderer_host",
     "ui",
+    "webcompat_reporter",
     "//base",
     "//brave/browser/tor",
     "//brave/browser/translate/buildflags",

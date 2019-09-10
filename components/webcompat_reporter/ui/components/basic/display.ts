@@ -5,6 +5,7 @@
 import styled from 'brave-ui/theme'
 import { TextSection } from './structure'
 import { CheckCircleIcon } from 'brave-ui/components/icons'
+import { Card } from 'brave-ui/components'
 
 export const ModalTitle = styled(TextSection)`
   box-sizing: border-box;
@@ -52,4 +53,14 @@ export const SuccessIcon = styled(CheckCircleIcon)`
   color: ${p => p.theme.color.subtle};
   width: 30px;
   margin-right: 10px;
+`
+
+interface CardProps {
+  children?: React.ReactNode
+  useDefaultContentPadding?: boolean
+  emphasis?: string
+}
+
+export const RectangularCard = styled<CardProps>(Card)`
+  border-radius: 0;
 `
