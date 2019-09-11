@@ -157,7 +157,7 @@ source_set("ui") {
     "//brave/browser/gcm_driver",
     "//brave/browser/resources/settings:resources",
     "//brave/browser/tor",
-    "//brave/browser/webcompat_reporter",
+    "//brave/components/webcompat_reporter/browser",
     "//brave/common",
     "//brave/components/brave_adblock_ui:generated_resources",
     "//brave/components/webcompat_reporter/ui:generated_resources",
