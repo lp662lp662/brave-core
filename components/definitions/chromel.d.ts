@@ -201,6 +201,7 @@ declare namespace chrome.braveShields {
   const setNoScriptControlTypeAsync: any
   const getNoScriptControlTypeAsync: any
   const onShieldsPanelShown: any
+  const reportBrokenSite: any
 
   type BraveShieldsViewPreferences = {
     showAdvancedView: boolean
