@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/cocoa/main_menu_builder.mm b/chrome/browser/ui/cocoa/main_menu_builder.mm
-index b0f66cc832e85b3d9da0b64ed1c3536563b16656..00414aa8a7edc794ba901d0ea92f44db7f8700a6 100644
+index b0f66cc832e85b3d9da0b64ed1c3536563b16656..70e98fdc608b443022af1222e5fc8d8f7b21785e 100644
 --- a/chrome/browser/ui/cocoa/main_menu_builder.mm
 +++ b/chrome/browser/ui/cocoa/main_menu_builder.mm
 @@ -98,6 +98,8 @@ base::scoped_nsobject<NSMenuItem> BuildFileMenu(
@@ -11,3 +11,11 @@ index b0f66cc832e85b3d9da0b64ed1c3536563b16656..00414aa8a7edc794ba901d0ea92f44db
                  Item(IDS_REOPEN_CLOSED_TABS_MAC)
                      .command_id(IDC_RESTORE_TAB)
                      .remove_if(is_pwa),
+@@ -427,6 +429,7 @@ base::scoped_nsobject<NSMenuItem> BuildHelpMenu(
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+             Item(IDS_FEEDBACK_MAC).command_id(IDC_FEEDBACK),
+ #endif
++                Item(IDS_REPORT_BROKEN_SITE_MAC).command_id(IDC_SHOW_BRAVE_WEBCOMPAT_REPORTER),
+                 Item(IDS_HELP_MAC)
+                     .string_format_1(product_name)
+                     .command_id(IDC_HELP_PAGE_VIA_MENU),
