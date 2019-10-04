@@ -33,7 +33,7 @@
 <translation id="9133213713928851646">Brave speichert nicht, was Sie in einem Privaten Fenster tun. Von Ihnen besuchte Seiten tauchen nicht in Ihrem Verlauf auf und Cookies verschwinden, wenn Sie Ihre Sitzung beenden. Mit Privaten Fenstern surfen Sie allerdings nicht komplett anonym im Netz.</translation>
 <translation id="8760415064721320867">Privates Fenster mit Tor</translation>
 <translation id="4844209912525464363">Brave speichert nie, was Sie in einem Privaten Fenster tun. Mit Tor bleibt Ihr Surfverhalten auch vor Ihrem Internetanbieter oder Arbeitgeber verborgen, und die von Ihnen besuchten Seiten können Ihre IP-Adresse nicht sehen.</translation>
-<translation id="778096729652828897">Mehr erfahren über Privates Fenster mit Tor</translation>
+<translation id="778096729652828897">Mehr über Private Fenster mit Tor erfahren</translation>
 <translation id="7919374705736538787">Privat suchen mit</translation>
 <translation id="3135655280958284640">DuckDuckGo</translation>
 <translation id="218839872518145456">Mit aktivierter privater Suche setzt Brave DuckDuckGo als Suchmaschine in Privaten Fenstern ein. DuckDuckGo zeichnet Ihren Suchverlauf nicht auf, so dass Sie privat suchen können.</translation>
@@ -44,7 +44,7 @@
 <translation id="805807983419360524">mit Tor</translation>
 <translation id="8958799246752641148">Tor versteckt Ihre IP-Adresse vor den Seiten, die Sie besuchen, indem es Ihre Aufrufe und die angeforderten Daten über mehrere Tor-Server umleitet. Diese Verbindungen sind verschlüsselt, so dass Ihr Internetanbieter oder Arbeitgeber ebenfalls nicht sehen können, welche Seiten Sie besuchen. Tor kann das Surfen ausbremsen und manche Seiten funktionieren möglicherweise gar nicht.</translation>
 <translation id="520608572871993342">Das Surfen mit Privaten Fenstern ändert nur, was Brave auf Ihrem Gerät tut – es ändert nicht das Verhalten von allen anderen. Tor versteckt Ihre IP-Adresse vor den Seiten, die Sie besuchen, und die von Ihnen besuchten Seiten vor Ihrem Internetanbieter und Arbeitgeber. Ein Privates Tor-Fenster können Sie aus dem Menü oder mit {{ key }} öffnen.</translation>
-<translation id="6975708438781948564">Mehr erfahren über Tor in Brave</translation>
+<translation id="6975708438781948564">Mehr über Tor in Brave erfahren</translation>
 <translation id="4272382368346338917">Zusätzliche Filter</translation>
 <translation id="8949292968394988358">Achtung: Wenn Sie zu viele Filter anschalten, wird die Leistung vermindert</translation>
 <translation id="8686201964111147748">Gesamtanzahl an blockierten Werbeanzeigen und Trackern:</translation>
@@ -60,9 +60,9 @@
 <translation id="2609701960545338618">Richten Sie Ihre übliche Browserumgebung ein, indem Sie Lesezeichen und Einstellungen aus Ihrem alten Browser importieren. In den Einstellungen stehen erweiterte Import-Optionen zur Verfügung.</translation>
 <translation id="8275038454117074363">Importieren</translation>
 <translation id="2088479175984386785">Import aus ...</translation>
-<translation id="5540323067375019678">Verwalten Sie Ihre Shields</translation>
-<translation id="3278033011827237847">Brave Shields schützt Sie beim Browsen vor unerwünschter Werbung und störenden Trackern. Wenn Sie beim Browsen auf einer bestimmten Seite auf ein Problem stoßen, passen Sie einfach Ihr Schutzniveau im Shields-Panel in der Toolbar an.</translation>
-<translation id="3366308997091824722">Brave Shields anpassen</translation>
+<translation id="5540323067375019678">Brave Schutz anpassen</translation>
+<translation id="3278033011827237847">Brave schützt Sie beim Browsen vor unerwünschter Werbung und diebischen Trackern. Wird eine Seite fehlerhaft dargestellt, passen Sie einfach die Schutz-Einstellungen an.</translation>
+<translation id="3366308997091824722">Brave Schutz anpassen</translation>
 <translation id="4764692524839457597">Standard</translation>
 <translation id="3108122610701115301">Standard festlegen</translation>
 <translation id="2469440407442116729">Suchmaschine auswählen</translation>
@@ -84,7 +84,7 @@
 <translation id="1527222983464337010">Eine automatische Möglichkeit, um Herausgeber und Content Creators zu unterstützen. Legen Sie eine monatliche Zahlung fest und surfen Sie wie gewohnt. Die von Ihnen besuchten Seiten erhalten Ihre Beiträge automatisch, basierend darauf, wie viel Aufmerksamkeit Sie ihnen Brave zufolge geschenkt haben.</translation>
 <translation id="20281847067919078">Geschätzte ausstehende Vergütungen</translation>
 <translation id="8593551638387217772">Nächstes Auszahlungsdatum</translation>
-<translation id="319209088187794725">Diesen Monat erhaltene Werbungsmeldungen</translation>
+<translation id="319209088187794725">Erhaltene Anzeigen via Benachrichtigung in diesem Monat</translation>
 <translation id="4229016885653790965">Sorry! Werbung ist in Ihrer Region noch nicht verfügbar.</translation>
 <translation id="654711254769318398">Angezeigte Werbeseiten</translation>
 <translation id="2532127066761785857">Maximalanzahl der angezeigten Werbeanzeigen</translation>
@@ -126,7 +126,7 @@
 <translation id="3905400818082450708">Reddit</translation>
 <translation id="6032511312767282174">GitHub</translation>
 <translation id="2635094637295383009">Twitter</translation>
-<translation id="3920963435109110161">Tippen Sie auf die entsprechende Stelle, wenn Sie Edelsteine finden.</translation>
+<translation id="3920963435109110161">Spenden Sie gleich drauf los, wenn Sie etwas entdecken, dass es wert ist.</translation>
 <translation id="6135431587052937035">Unterstützen Sie Ihre Lieblings-Websites mit wiederkehrenden monatlichen Spenden.</translation>
 <translation id="2788596505277705686">{{balance}} BAT wurde wiederhergestellt. Ihr Wallet-Schlüssel wurde verifiziert und erfolgreich geladen.</translation>
 <translation id="1083279119532577005">Wallet wiederhergestellt!</translation>
@@ -255,7 +255,7 @@
 <translation id="1389143276807887637">importieren</translation>
 <translation id="7335371657242627509">In Auto-Beitrag aufnehmen</translation>
 <translation id="8446884382197647889">Mehr erfahren</translation>
-<translation id="3250511771491660127">Machen Sie das monatlich</translation>
+<translation id="3250511771491660127">Monatlich wiederholen</translation>
 <translation id="6028954173739504682">Ihre Geldbörse verwalten</translation>
 <translation id="7886389832052393750">Apr</translation>
 <translation id="4736221692378411923">August</translation>
@@ -278,7 +278,7 @@
 <translation id="8051372105644249165">Nicht genug Token. Bitte</translation>
 <translation id="3630697955794050612">aus</translation>
 <translation id="4921250468871504777">ok</translation>
-<translation id="7866482334467279021">ein</translation>
+<translation id="7866482334467279021">an</translation>
 <translation id="1166682575529520472">Monatlich</translation>
 <translation id="8370173854533168890">Einmal</translation>
 <translation id="9182287025588539628">Einmalige Trinkgelder</translation>
@@ -306,7 +306,7 @@
 <translation id="7577100371127227294">Monatliche Trinkgelder</translation>
 <translation id="2391095793008133394">Geben Sie {{ user }} ein Trinkgeld für den Beitrag:</translation>
 <translation id="7557413530932469222">Geben Sie {{ user }} ein Trinkgeld für den Beitrag!</translation>
-<translation id="717513177896084801">Tipp {{ user }}</translation>
+<translation id="717513177896084801">An {{ user }} spenden</translation>
 <translation id="1110535155349301542">entfernen</translation>
 <translation id="8204292894173669182">Aus 'Gespeichert' entfernen</translation>
 <translation id="8942997470474842562">Sie haben {{reservedAmount}} BAT für Ersteller bestimmt, die sich noch nicht für den Empfang von Beiträgen angemeldet haben. Ihr Browser wird weiterhin versuchen, ihnen Beiträge zukommen zu lassen, bis sie sich verifiziert haben oder bis 90 Tage verstrichen sind.</translation>
@@ -338,12 +338,12 @@
 <translation id="459721429458957031">Nutzen Sie Ihren Wiederherstellungsschlüssel, um Ihre Geldbörse wiederherzustellen.</translation>
 <translation id="4600052736217630789">Das Wiederherstellen mithilfe eines solchen Schlüssels ersetzt Ihre derzeitige Geldbörse. Stellen Sie also sicher, dass Sie vor der Wiederherstellung Ihre aktuelle Geldbörse leeren oder sie sichern.</translation>
 <translation id="3267911153934785912">Geben Sie Ihren Wiederherstellungsschlüssel an oder</translation>
-<translation id="3494964159182650590">Rewards-Übersicht</translation>
+<translation id="3494964159182650590">Übersicht der Spenden</translation>
 <translation id="63956545637156715">Warum Brave Rewards?</translation>
 <translation id="1738658589626889850">Als Datei speichern</translation>
 <translation id="259138486959961679">Alle {{numItems}} Artikel ansehen</translation>
 <translation id="7857284676033058221">Alle  {{numSites}} Seiten anschauen</translation>
-<translation id="3536298624341433814">Mein Trinkgeld überweisen</translation>
+<translation id="3536298624341433814">Jetzt senden</translation>
 <translation id="8428213095426709021">Einstellungen</translation>
 <translation id="1792148354504719133">Seite</translation>
 <translation id="5944430251223015324">Seiten</translation>
@@ -369,7 +369,7 @@
 <translation id="5050370287908180130">Monatlichen Kontoauszug für Details Anschauen</translation>
 <translation id="8615803647903750175">Aktivität der Digitalen Geldbörse</translation>
 <translation id="2620624773940447728">Geldbörse-Adresse</translation>
-<translation id="4989277977420164514">Kontostand Wallet</translation>
+<translation id="4989277977420164514">Kontostand</translation>
 <translation id="1083771727630442739">Walleterstellung fehlgeschlagen</translation>
 <translation id="9146039192200831719">Bitte überprüfen Sie Ihre Internetverbindung.</translation>
 <translation id="1910721550319506122">Willkommen!</translation>
@@ -385,7 +385,7 @@
 <translation id="6727483290601442544">Detaillierte Informationen anzeigen</translation>
 <translation id="1988679729106502285">HINWEIS:</translation>
 <translation id="5815103311506128988">Dieser Ersteller hat sich noch nicht angemeldet, um Beiträge von Brave-Nutzern zu erhalten. Ihr Browser wird weiterhin versuchen, ihm Beiträge zukommen zu lassen, bis er sich verifiziert hat oder bis 90 Tage verstrichen sind.</translation>
-<translation id="603411408512957306">Dieser verifizierte Creator muss sein Konto noch über das KYC-Verfahren verifizieren lassen, um ein Trinkgeld aus Ihrer verifizierten Wallet zu erhalten. Trinkgelder werden in Ihrer Wallet verbleiben, bis die Verifizierung abgeschlossen wurde.</translation>
+<translation id="7461596279975181413">Dieser verifizierte Creator muss sein Konto noch über das KYC-Verfahren verifizieren lassen, um ein Trinkgeld aus Ihrer verifizierten Wallet zu erhalten. Trinkgelder werden in Ihrer Wallet verbleiben, bis die Verifizierung abgeschlossen wurde.</translation>
 <translation id="4292832015778676417">verdient aus Werbeanzeigen</translation>
 <translation id="3197752845651180812">Ausstehende Beiträge</translation>
 <translation id="3164105678355419142">Wiederkehrendes Trinkgeld</translation>
