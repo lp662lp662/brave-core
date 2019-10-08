@@ -137,7 +137,7 @@ class PublisherInfoDatabaseTest : public ::testing::Test {
   std::unique_ptr<PublisherInfoDatabase> publisher_info_database_;
 };
 
-TEST_F(PublisherInfoDatabaseTest, InsertContributionInfo) {
+TEST_F(PublisherInfoDatabaseTest, InsertOrUpdateContributionInfo) {
   /**
    * Good path
    */
@@ -149,11 +149,11 @@ TEST_F(PublisherInfoDatabaseTest, InsertContributionInfo) {
   info.probi = "12345678901234567890123456789012345678901234";
   info.month = ledger::ACTIVITY_MONTH::JANUARY;
   info.year = 1970;
-  info.category = static_cast<int>(ledger::RewardsCategory::AUTO_CONTRIBUTE);
+  info.type = static_cast<int>(ledger::RewardsType::AUTO_CONTRIBUTE);
   info.date = base::Time::Now().ToJsTime();
   info.publisher_key = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  bool success = publisher_info_database_->InsertContributionInfo(info);
+  bool success = publisher_info_database_->InsertOrUpdateContributionInfo(info);
   EXPECT_TRUE(success);
 
   std::string query = "SELECT * FROM contribution_info WHERE publisher_id=?";
@@ -166,7 +166,7 @@ TEST_F(PublisherInfoDatabaseTest, InsertContributionInfo) {
   EXPECT_EQ(info_sql.ColumnString(0), info.publisher_key);
   EXPECT_EQ(info_sql.ColumnString(1), info.probi);
   EXPECT_EQ(info_sql.ColumnInt64(2), info.date);
-  EXPECT_EQ(info_sql.ColumnInt(3), info.category);
+  EXPECT_EQ(info_sql.ColumnInt(3), info.type);
   EXPECT_EQ(info_sql.ColumnInt(4), info.month);
   EXPECT_EQ(info_sql.ColumnInt(5), info.year);
 }
@@ -731,14 +731,13 @@ TEST_F(PublisherInfoDatabaseTest, InsertPendingContribution) {
   contribution1->amount = 10;
   contribution1->added_date = 10;
   contribution1->viewing_id = "fsodfsdnf23r23rn";
-  contribution1->category = ledger::RewardsCategory::AUTO_CONTRIBUTE;
+  contribution1->type = ledger::RewardsType::AUTO_CONTRIBUTE;
 
   auto contribution2 = ledger::PendingContribution::New();
   contribution2->publisher_key = "key2";
   contribution2->amount = 20;
   contribution2->viewing_id = "aafsofdfsdnf23r23rn";
-  contribution2->category = ledger::RewardsCategory::ONE_TIME_TIP;
-
+  contribution2->type = ledger::RewardsType::ONE_TIME_TIP;
 
   ledger::PendingContributionList list;
   list.push_back(contribution1->Clone());
@@ -759,8 +758,8 @@ TEST_F(PublisherInfoDatabaseTest, InsertPendingContribution) {
   EXPECT_EQ(info_sql.ColumnDouble(1), contribution1->amount);
   EXPECT_GE(info_sql.ColumnInt64(2), 20);
   EXPECT_EQ(info_sql.ColumnString(3), contribution1->viewing_id);
-  EXPECT_EQ(static_cast<ledger::RewardsCategory>(info_sql.ColumnInt(4)),
-      contribution1->category);
+  EXPECT_EQ(static_cast<ledger::RewardsType>(info_sql.ColumnInt(4)),
+      contribution1->type);
 
   // Second contribution
   EXPECT_TRUE(info_sql.Step());
@@ -768,8 +767,8 @@ TEST_F(PublisherInfoDatabaseTest, InsertPendingContribution) {
   EXPECT_EQ(info_sql.ColumnDouble(1), contribution2->amount);
   EXPECT_GE(info_sql.ColumnInt64(2), 0);
   EXPECT_EQ(info_sql.ColumnString(3), contribution2->viewing_id);
-  EXPECT_EQ(static_cast<ledger::RewardsCategory>(info_sql.ColumnInt(4)),
-      contribution2->category);
+  EXPECT_EQ(static_cast<ledger::RewardsType>(info_sql.ColumnInt(4)),
+      contribution2->type);
 }
 
 TEST_F(PublisherInfoDatabaseTest, GetActivityList) {
@@ -1179,25 +1178,25 @@ void PublisherInfoDatabaseTest::PreparePendingContributions() {
   contribution1->publisher_key = "key1";
   contribution1->amount = 10;
   contribution1->viewing_id = "fsodfsdnf23r23rn";
-  contribution1->category = ledger::RewardsCategory::AUTO_CONTRIBUTE;
+  contribution1->type = ledger::RewardsType::AUTO_CONTRIBUTE;
 
   auto contribution2 = ledger::PendingContribution::New();
   contribution2->publisher_key = "key2";
   contribution2->amount = 20;
   contribution2->viewing_id = "aafsoffdffdfsdnf23r23rn";
-  contribution2->category = ledger::RewardsCategory::ONE_TIME_TIP;
+  contribution2->type = ledger::RewardsType::ONE_TIME_TIP;
 
   auto contribution3 = ledger::PendingContribution::New();
   contribution3->publisher_key = "key3";
   contribution3->amount = 30;
   contribution3->viewing_id = "aafszxfzcofdfsdnf23r23rn";
-  contribution3->category = ledger::RewardsCategory::ONE_TIME_TIP;
+  contribution3->type = ledger::RewardsType::ONE_TIME_TIP;
 
   auto contribution4 = ledger::PendingContribution::New();
   contribution4->publisher_key = "key4";
   contribution4->amount = 40;
   contribution4->viewing_id = "aafsofdfs12333dnf23r23rn";
-  contribution4->category = ledger::RewardsCategory::ONE_TIME_TIP;
+  contribution4->type = ledger::RewardsType::ONE_TIME_TIP;
 
   ledger::PendingContributionList list;
   list.push_back(std::move(contribution1));

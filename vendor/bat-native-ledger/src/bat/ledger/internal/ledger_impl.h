@@ -20,6 +20,7 @@
 #include "bat/ledger/internal/bat_helper.h"
 #include "bat/ledger/internal/logging.h"
 #include "bat/ledger/internal/wallet/wallet.h"
+#include "bat/ledger/exclude_filter.h"
 #include "bat/ledger/ledger.h"
 #include "bat/ledger/ledger_callback_handler.h"
 #include "bat/ledger/ledger_client.h"
@@ -221,7 +222,7 @@ class LedgerImpl : public ledger::Ledger,
   void OnReconcileComplete(ledger::Result result,
                            const std::string& viewing_id,
                            const std::string& probi,
-                           const ledger::RewardsCategory category);
+                           const ledger::RewardsType type);
 
   std::string URIEncode(const std::string& value) override;
 
@@ -277,7 +278,7 @@ class LedgerImpl : public ledger::Ledger,
                           ledger::PublisherBannerCallback callback) override;
 
   void OnReconcileCompleteSuccess(const std::string& viewing_id,
-                                  const ledger::RewardsCategory category,
+                                  const ledger::RewardsType type,
                                   const std::string& probi,
                                   const ledger::ACTIVITY_MONTH month,
                                   const int year,
@@ -392,7 +393,7 @@ class LedgerImpl : public ledger::Ledger,
                             const int year,
                             const uint32_t date,
                             const std::string& publisher_key,
-                            const ledger::RewardsCategory category);
+                            const ledger::RewardsType type);
 
   void NormalizeContributeWinners(
       ledger::PublisherInfoList* newList,

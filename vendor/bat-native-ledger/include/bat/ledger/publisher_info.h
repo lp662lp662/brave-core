@@ -6,10 +6,7 @@
 #ifndef BAT_LEDGER_PUBLISHER_INFO_HANDLER_
 #define BAT_LEDGER_PUBLISHER_INFO_HANDLER_
 
-#include <string>
 #include <vector>
-#include <map>
-#include <utility>
 
 #include "bat/ledger/export.h"
 #include "bat/ledger/public/interfaces/ledger.mojom.h"
@@ -25,7 +22,7 @@ using ServerPublisherInfo = mojom::ServerPublisherInfo;
 using ServerPublisherInfoPtr = mojom::ServerPublisherInfoPtr;
 using ServerPublisherInfoList = std::vector<ServerPublisherInfoPtr>;
 using PublisherStatus = mojom::PublisherStatus;
-using RewardsCategory = mojom::RewardsCategory;
+using RewardsType = mojom::RewardsType;
 
 const char kClearFavicon[] = "clear";
 const char kIgnorePublisherBlob[] = "ignore";
@@ -52,15 +49,6 @@ LEDGER_EXPORT enum PUBLISHER_EXCLUDE {
   EXCLUDED = 1,  // user manually changed it to exclude
   INCLUDED = 2  // user manually changed it to include and is overriding server
 };
-
-using ExcludeFilter = mojom::ExcludeFilter;
-using ActivityInfoFilter = mojom::ActivityInfoFilter;
-using ActivityInfoFilterPtr = mojom::ActivityInfoFilterPtr;
-using ActivityInfoFilterOrderPair = mojom::ActivityInfoFilterOrderPair;
-using ActivityInfoFilterOrderPairPtr = mojom::ActivityInfoFilterOrderPairPtr;
-
-using ContributionInfo = mojom::ContributionInfo;
-using ContributionInfoPtr = mojom::ContributionInfoPtr;
 
 }  // namespace ledger
 

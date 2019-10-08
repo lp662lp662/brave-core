@@ -1026,18 +1026,18 @@ void RewardsServiceImpl::OnReconcileComplete(
     ledger::Result result,
     const std::string& viewing_id,
     const std::string& probi,
-    const ledger::RewardsCategory category) {
+    const ledger::RewardsType type) {
   if (result == ledger::Result::LEDGER_OK) {
     auto now = base::Time::Now();
     if (!Connected())
       return;
 
-    if (category == ledger::RewardsCategory::RECURRING_TIP) {
+    if (type == ledger::RewardsType::RECURRING_TIP) {
       MaybeShowNotificationTipsPaid();
     }
 
     bat_ledger_->OnReconcileCompleteSuccess(viewing_id,
-        category,
+        type,
         probi,
         GetPublisherMonth(now),
         GetPublisherYear(now),
@@ -1050,7 +1050,7 @@ void RewardsServiceImpl::OnReconcileComplete(
                                  static_cast<int>(result),
                                  viewing_id,
                                  probi,
-                                 static_cast<int>(category));
+                                 static_cast<int>(type));
 }
 
 void RewardsServiceImpl::LoadLedgerState(
@@ -2206,19 +2206,20 @@ void RewardsServiceImpl::OnTip(const std::string& publisher_key,
 }
 
 bool SaveContributionInfoOnFileTaskRunner(
-    const brave_rewards::ContributionInfo info,
+    ledger::ContributionInfoPtr info,
   PublisherInfoDatabase* backend) {
-  if (backend && backend->InsertContributionInfo(info))
+  if (backend && backend->InsertOrUpdateContributionInfo(*info)) {
     return true;
+  }
 
   return false;
 }
 
 void RewardsServiceImpl::OnContributionInfoSaved(
-    const ledger::RewardsCategory category,
+    const ledger::RewardsType type,
     bool success) {
   for (auto& observer : observers_) {
-    observer.OnContributionSaved(this, success, static_cast<int>(category));
+    observer.OnContributionSaved(this, success, static_cast<int>(type));
   }
 }
 
@@ -2226,23 +2227,21 @@ void RewardsServiceImpl::SaveContributionInfo(const std::string& probi,
   const int month,
   const int year,
   const uint32_t date,
-  const std::string& publisher_key,
-  const ledger::RewardsCategory category) {
-  brave_rewards::ContributionInfo info;
-  info.probi = probi;
-  info.month = month;
-  info.year = year;
-  info.date = date;
-  info.publisher_key = publisher_key;
-  info.category = static_cast<int>(category);
+  const std::string& id,
+  const ledger::RewardsType type) {
+  ledger::ContributionInfoPtr info = ledger::ContributionInfo::New();
+  info->probi = probi;
+  info->created_date = date;
+  info->id = id;
+  info->type = static_cast<int>(type);
 
   base::PostTaskAndReplyWithResult(file_task_runner_.get(), FROM_HERE,
       base::Bind(&SaveContributionInfoOnFileTaskRunner,
-                    info,
+                    base::Passed(std::move(info)),
                     publisher_info_backend_.get()),
       base::Bind(&RewardsServiceImpl::OnContributionInfoSaved,
                      AsWeakPtr(),
-                     category));
+                     type));
 }
 
 bool SaveRecurringTipOnFileTaskRunner(
@@ -2271,9 +2270,9 @@ void RewardsServiceImpl::SaveRecurringTipUI(
     const int amount,
     SaveRecurringTipCallback callback) {
   ledger::ContributionInfoPtr info = ledger::ContributionInfo::New();
-  info->publisher = publisher_key;
-  info->value = amount;
-  info->date = GetCurrentTimestamp();
+  info->id = publisher_key;
+  info->amount = amount;
+  info->created_date = GetCurrentTimestamp();
 
   bat_ledger_->SaveRecurringTip(
       std::move(info),
@@ -2302,9 +2301,9 @@ void RewardsServiceImpl::SaveRecurringTip(
   }
 
   brave_rewards::RecurringDonation new_info;
-  new_info.publisher_key = info->publisher;
-  new_info.amount = info->value;
-  new_info.added_date = info->date;
+  new_info.publisher_key = info->id;
+  new_info.amount = info->amount;
+  new_info.added_date = info->created_date;
 
   base::PostTaskAndReplyWithResult(file_task_runner_.get(), FROM_HERE,
       base::Bind(&SaveRecurringTipOnFileTaskRunner,
@@ -3148,7 +3147,7 @@ PendingContributionInfo PendingContributionLedgerToRewards(
     const ledger::PendingContributionInfoPtr contribution) {
   PendingContributionInfo info;
   info.publisher_key = contribution->publisher_key;
-  info.category = static_cast<int>(contribution->category);
+  info.type = static_cast<int>(contribution->type);
   info.status = static_cast<uint32_t>(contribution->status);
   info.name = contribution->name;
   info.url = contribution->url;

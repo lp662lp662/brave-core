@@ -8,7 +8,6 @@
 
 #include <vector>
 
-#include "bat/ledger/export.h"
 #include "bat/ledger/public/interfaces/ledger.mojom.h"
 
 namespace ledger {

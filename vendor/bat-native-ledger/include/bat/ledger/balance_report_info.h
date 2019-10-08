@@ -6,8 +6,6 @@
 #ifndef BAT_LEDGER_BALANCE_REPORT_INFO_HANDLER_
 #define BAT_LEDGER_BALANCE_REPORT_INFO_HANDLER_
 
-#include <string>
-
 #include "bat/ledger/export.h"
 #include "bat/ledger/public/interfaces/ledger.mojom.h"
 

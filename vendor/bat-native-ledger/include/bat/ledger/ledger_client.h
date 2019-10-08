@@ -21,6 +21,8 @@
 #include "bat/ledger/media_event_info.h"
 #include "bat/ledger/pending_contribution.h"
 #include "bat/ledger/publisher_info.h"
+#include "bat/ledger/contribution_info.h"
+#include "bat/ledger/activity_info_filter.h"
 #include "bat/ledger/reconcile_info.h"
 #include "bat/ledger/wallet_properties.h"
 #include "bat/ledger/public/interfaces/ledger.mojom.h"
@@ -98,7 +100,7 @@ class LEDGER_EXPORT LedgerClient {
   virtual void OnReconcileComplete(Result result,
                                    const std::string& viewing_id,
                                    const std::string& probi,
-                                   const ledger::RewardsCategory category) = 0;
+                                   const ledger::RewardsType type) = 0;
 
   virtual void LoadLedgerState(OnLoadCallback callback) = 0;
 
@@ -154,7 +156,7 @@ class LEDGER_EXPORT LedgerClient {
       const int year,
       const uint32_t date,
       const std::string& publisher_key,
-      const ledger::RewardsCategory category) = 0;
+      const ledger::RewardsType type) = 0;
 
   virtual void SaveRecurringTip(
       ledger::ContributionInfoPtr info,

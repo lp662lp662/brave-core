@@ -29,7 +29,6 @@
 #include "mojo/public/cpp/bindings/associated_binding.h"
 #include "brave/components/brave_rewards/browser/balance_report.h"
 #include "brave/components/brave_rewards/browser/content_site.h"
-#include "brave/components/brave_rewards/browser/contribution_info.h"
 #include "ui/gfx/image/image.h"
 #include "brave/components/brave_rewards/browser/publisher_banner.h"
 #include "brave/components/brave_rewards/browser/rewards_service_private_observer.h"
@@ -343,7 +342,7 @@ class RewardsServiceImpl : public RewardsService,
              int amount,
              bool recurring,
              ledger::PublisherInfoPtr publisher_info);
-  void OnContributionInfoSaved(const ledger::RewardsCategory category,
+  void OnContributionInfoSaved(const ledger::RewardsType type,
                                bool success);
   void OnRecurringTipSaved(
       ledger::SaveRecurringTipCallback callback,
@@ -477,7 +476,7 @@ class RewardsServiceImpl : public RewardsService,
   void OnReconcileComplete(ledger::Result result,
                            const std::string& viewing_id,
                            const std::string& probi,
-                           const ledger::RewardsCategory category) override;
+                           const ledger::RewardsType type) override;
   void OnGrantFinish(ledger::Result result,
                      ledger::GrantPtr grant) override;
   void LoadLedgerState(ledger::OnLoadCallback callback) override;
@@ -541,8 +540,8 @@ class RewardsServiceImpl : public RewardsService,
                             const int month,
                             const int year,
                             const uint32_t date,
-                            const std::string& publisher_key,
-                            const ledger::RewardsCategory category) override;
+                            const std::string& id,
+                            const ledger::RewardsType type) override;
   void SaveRecurringTip(
       ledger::ContributionInfoPtr info,
       ledger::SaveRecurringTipCallback callback) override;

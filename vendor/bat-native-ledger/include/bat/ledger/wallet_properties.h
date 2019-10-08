@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 
+#include "bat/ledger/export.h"
 #include "bat/ledger/public/interfaces/ledger.mojom.h"
 
 namespace ledger {

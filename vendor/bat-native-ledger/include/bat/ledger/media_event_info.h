@@ -6,10 +6,6 @@
 #ifndef BAT_LEDGER_MEDIA_EVENT_INFO_H_
 #define BAT_LEDGER_MEDIA_EVENT_INFO_H_
 
-#include <string>
-
-#include "bat/ledger/export.h"
-#include "bat/ledger/publisher_info.h"
 #include "bat/ledger/public/interfaces/ledger.mojom.h"
 
 namespace ledger {

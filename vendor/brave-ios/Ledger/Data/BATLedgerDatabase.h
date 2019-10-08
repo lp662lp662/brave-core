@@ -39,14 +39,14 @@ typedef void (^BATLedgerDatabaseWriteCompletion)(BOOL success);
 
 #pragma mark - Contribution Info
 
-/// Insert contribution info into the database given all the information for a contribution
-+ (void)insertContributionInfo:(NSString *)probi
-                         month:(const int)month
-                          year:(const int)year
-                          date:(const uint32_t)date
-                  publisherKey:(NSString *)publisherKey
-                      category:(BATRewardsCategory)category
-                    completion:(nullable BATLedgerDatabaseWriteCompletion)completion;
+/// Insert or update contribution info into the database given all the information for a contribution
++ (void)insertOrUpdateContributionInfo:(NSString *)probi
+                                 month:(const int)month
+                                  year:(const int)year
+                                  date:(const uint32_t)date
+                          publisherKey:(NSString *)publisherKey
+                              category:(BATRewardsType)type
+                            completion:(nullable BATLedgerDatabaseWriteCompletion)completion;
 
 /// Get a list of publishers you have supported with one time tips given some month and year
 + (NSArray<BATPublisherInfo *> *)oneTimeTipsPublishersForMonth:(BATActivityMonth)month

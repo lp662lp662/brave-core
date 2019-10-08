@@ -4,9 +4,68 @@
 module ledger.mojom;
 
 struct ContributionInfo {
-  string publisher;  // Filled only for recurrent tips
-  double value;
-  uint64 date;
+  string id;
+  int32 type;
+  double amount;
+  string probi;
+  uint32 created_date;
+  uint32 reconciled_date;
+  map<string, double> exchange_rates;
+  array<Ballot> ballots;
+  ContributionStateInfo state;
+};
+
+struct ContributionStateInfo {
+  string anonize_viewing_id;
+  string surveyor_id;
+  string registrar_vk;
+  string master_user_token;
+};
+
+struct Ballot {
+  string publisher_key;
+  int32 count;
+};
+
+struct BatchVote {
+  string surveyor_id;
+  string proof;
+};
+
+struct BatchVotes {
+  string publisher_key;
+  array<BatchVote> batch_votes;
+};
+
+struct CurrentReconcile {
+  string viewing_id;
+  string ananize_viewing_id;
+  string registrar_vk;
+  string pre_flight;
+  string master_user_token;
+  Surveyor surveyor;
+  uint64 timestamp;
+  map<string, double> rates;
+  string amount;
+  string currency;
+  double fee;
+  array<ReconcileDirection> directions;
+  uint32 type;
+  array<PublisherInfo> list;
+  ContributionRetry retry_step;
+  uint32 retry_level;
+  string destination;
+  string proof;
+};
+
+struct ReconcileDirection {
+  string publisher_key;
+  uint32 amount;
+  string currency_code;
+};
+
+struct Surveyor {
+  string id;
 };
 
 struct PublisherInfo {
@@ -46,12 +105,12 @@ struct PendingContribution {
   double amount;
   uint64 added_date;
   string viewing_id;
-  RewardsCategory category;
+  RewardsType type;
 };
 
 struct PendingContributionInfo {
   string publisher_key;
-  RewardsCategory category;
+  RewardsType type;
   PublisherStatus status = PublisherStatus.NOT_VERIFIED;
   string name;
   string url;
@@ -86,6 +145,12 @@ struct WalletProperties {
   double fee_amount;
   array<double> parameters_choices;
   array<Grant> grants;
+};
+
+struct Wallet {
+  string id;
+  string private_key;
+  map<string, string> cards;
 };
 
 struct Balance {
@@ -245,7 +310,7 @@ struct TransferFee {
   uint32 execution_id;
 };
 
-enum RewardsCategory {
+enum RewardsType {
   AUTO_CONTRIBUTE = 2,
   ONE_TIME_TIP = 8,
   RECURRING_TIP = 16,
