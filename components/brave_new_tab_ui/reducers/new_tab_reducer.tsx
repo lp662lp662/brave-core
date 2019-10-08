@@ -246,6 +246,126 @@ export const newTabReducer: Reducer<NewTab.State | undefined> = (state: NewTab.S
       }
       break
 
+    case types.CREATE_WALLET:
+      chrome.braveRewards.createWallet()
+      state = { ...state }
+      state.rewardsState.walletCreating = true
+      break
+
+    case types.ON_ENABLED_MAIN:
+      state = { ...state }
+      state.rewardsState.enabledMain = payload.enabledMain
+      break
+
+    case types.ON_WALLET_INITIALIZED: {
+      const result: NewTab.RewardsResult = payload.result
+      state = { ...state }
+
+      switch (result) {
+        case NewTab.RewardsResult.WALLET_CORRUPT:
+          state.rewardsState.walletCorrupted = true
+          break
+        case NewTab.RewardsResult.WALLET_CREATED:
+          state.rewardsState.walletCreated = true
+          state.rewardsState.walletCreateFailed = false
+          state.rewardsState.walletCreating = false
+          state.rewardsState.walletCorrupted = false
+          chrome.braveRewards.saveAdsSetting('adsEnabled', 'true')
+          break
+        case NewTab.RewardsResult.LEDGER_OK:
+          state.rewardsState.walletCreateFailed = true
+          state.rewardsState.walletCreating = false
+          state.rewardsState.walletCreated = false
+          state.rewardsState.walletCorrupted = false
+          break
+      }
+      break
+    }
+
+    case types.ON_REWARDS_SETTING_SAVE:
+      state = { ...state }
+
+      const key = action.payload.key
+      const value = action.payload.value
+
+      if (key) {
+        state.rewardsState[key] = !!value
+        chrome.braveRewards.saveSetting(key, value)
+      }
+      break
+
+    case types.ON_ADS_ENABLED:
+      state = { ...state }
+      state.rewardsState.enabledAds = payload.enabled
+      break
+
+    case types.ON_ADS_ESTIMATED_EARNINGS:
+      state = { ...state }
+      state.rewardsState.adsEstimatedEarnings = payload.amount
+      break
+
+    case types.ON_BALANCE_REPORTS:
+      state = { ...state }
+      state.rewardsState.reports = payload.reports
+      break
+
+    case types.DISMISS_NOTIFICATION:
+      state = { ...state }
+
+      const dismissedNotifications = state.rewardsState.dismissedNotifications
+      dismissedNotifications.push(payload.id)
+      state.rewardsState.dismissedNotifications = dismissedNotifications
+
+      state.rewardsState.grants = state.rewardsState.grants.filter((grant) => {
+        return grant.promotionId !== payload.id
+      })
+      break
+
+    case types.GET_GRANTS:
+      chrome.braveRewards.getGrants()
+      break
+
+    case types.ON_GRANT:
+      state = { ...state }
+
+      if (action.payload.properties.status === 1) {
+        break
+      }
+
+      const promotionId = payload.properties.promotionId
+      if (!promotionId) {
+        break
+      }
+
+      if (!state.rewardsState.dismissedNotifications) {
+        state.rewardsState.dismissedNotifications = []
+      }
+
+      if (state.rewardsState.dismissedNotifications.indexOf(promotionId) > -1) {
+        break
+      }
+
+      const hasGrant = state.rewardsState.grants.find((grant: NewTab.GrantRecord) => {
+        return grant.promotionId === promotionId
+      })
+      if (hasGrant) {
+        break
+      }
+
+      const updatedGrants = state.rewardsState.grants
+      updatedGrants.push({
+        promotionId: promotionId,
+        type: payload.properties.type
+      })
+
+      state.rewardsState.grants = updatedGrants
+      break
+
+    case types.ON_BALANCE:
+      state = { ...state }
+      state.rewardsState.balance = payload.balance
+      break
+
     default:
       break
   }

@@ -74,3 +74,44 @@ export const preferencesUpdated = (preferences: Preferences) =>
 
 export const setInitialData = (initialData: InitialData) =>
   action(types.NEW_TAB_SET_INITIAL_DATA, initialData)
+
+export const createWallet = () => action(types.CREATE_WALLET, {})
+
+export const onEnabledMain = (enabledMain: boolean) => action(types.ON_ENABLED_MAIN, {
+  enabledMain
+})
+
+export const onAdsEnabled = (enabled: boolean) => action(types.ON_ADS_ENABLED, {
+  enabled
+})
+
+export const onRewardsSettingSave = (key: string, value: any) => action(types.ON_REWARDS_SETTING_SAVE, {
+  key,
+  value
+})
+
+export const onWalletInitialized = (result: NewTab.RewardsResult) => action(types.ON_WALLET_INITIALIZED, {
+  result
+})
+
+export const onAdsEstimatedEarnings = (amount: number) => action(types.ON_ADS_ESTIMATED_EARNINGS, {
+  amount
+})
+
+export const onBalanceReports = (reports: Record<string, NewTab.RewardsReport>) => action(types.ON_BALANCE_REPORTS, {
+  reports
+})
+
+export const getGrants = () => action(types.GET_GRANTS)
+
+export const onGrant = (properties: NewTab.GrantResponse) => action(types.ON_GRANT, {
+  properties
+})
+
+export const dismissNotification = (id: string) => action(types.DISMISS_NOTIFICATION, {
+  id
+})
+
+export const onBalance = (balance: NewTab.RewardsBalance) => action(types.ON_BALANCE, {
+  balance
+})

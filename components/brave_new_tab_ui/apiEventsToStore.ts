@@ -37,3 +37,19 @@ export default function wireApiEventsToStore () {
     console.error('New Tab Page fatal error:', e)
   })
 }
+
+chrome.braveRewards.onWalletInitialized.addListener((result: any) => {
+  getActions().onWalletInitialized(result)
+})
+
+chrome.braveRewards.onEnabledMain.addListener((enabledMain: boolean) => {
+  getActions().onEnabledMain(enabledMain)
+})
+
+chrome.braveRewards.onAdsEnabled.addListener((enabled: boolean) => {
+  getActions().onAdsEnabled(enabled)
+})
+
+chrome.braveRewards.onGrant.addListener((properties: NewTab.GrantResponse) => {
+  getActions().onGrant(properties)
+})

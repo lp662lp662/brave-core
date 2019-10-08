@@ -41,6 +41,8 @@ export class App extends React.Component<Props, State> {
         this.props.actions.onAdsSettingSave('adsEnabledMigrated', adsEnabled)
       }
     }
+
+    this.handleGrantNotification()
   }
 
   componentDidUpdate (prevProps: Props, prevState: State) {
@@ -53,6 +55,20 @@ export class App extends React.Component<Props, State> {
         creating: false
       })
     }
+  }
+
+  handleGrantNotification = () => {
+    const hash = window && window.location && window.location.hash
+
+    if (!hash) {
+      return
+    }
+
+    if (!hash.startsWith('#g_')) {
+      return
+    }
+
+    this.actions.getGrantCaptcha(hash.split('#g_')[1])
   }
 
   onCreateWalletClicked = () => {

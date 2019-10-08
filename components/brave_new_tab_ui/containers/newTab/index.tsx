@@ -13,7 +13,8 @@ import {
   Footer,
   App,
   PosterBackground,
-  Gradient
+  Gradient,
+  RewardsWidget as Rewards
 } from '../../components/default'
 
 // Components
@@ -29,6 +30,7 @@ interface Props {
   saveShowClock: (value: boolean) => void
   saveShowTopSites: (value: boolean) => void
   saveShowStats: (value: boolean) => void
+  saveShowRewards: (value: boolean) => void
 }
 
 interface State {
@@ -43,9 +45,27 @@ class NewTabPage extends React.Component<Props, State> {
   }
 
   componentDidMount () {
+    const { walletCreated } = this.props.newTabData.rewardsState
+
     // if a notification is open at component mounting time, close it
     this.props.actions.onHideSiteRemovalNotification()
     this.trackCachedImage()
+
+    chrome.braveRewards.getAdsEnabled((enabled: boolean) => {
+      this.props.actions.onAdsEnabled(enabled)
+    })
+    chrome.braveRewards.getRewardsMainEnabled((enabled: boolean) => {
+      this.props.actions.onEnabledMain(enabled)
+    })
+
+    if (!walletCreated) {
+      return
+    }
+
+    this.refreshActions()
+    window.setInterval(() => {
+      this.refreshActions()
+    }, 30000)
   }
 
   componentDidUpdate (prevProps: Props) {
@@ -58,6 +78,20 @@ class NewTabPage extends React.Component<Props, State> {
       // reset loaded state
       this.setState({ backgroundHasLoaded: false })
     }
+  }
+
+  refreshActions = () => {
+    this.props.actions.getGrants()
+
+    chrome.braveRewards.getAdsEstimatedEarnings((amount: number) => {
+      this.props.actions.onAdsEstimatedEarnings(amount)
+    })
+    chrome.braveRewards.getBalanceReports((data: Record<string, NewTab.RewardsReport>) => {
+      this.props.actions.onBalanceReports(data)
+    })
+    chrome.braveRewards.fetchBalance((balance: NewTab.RewardsBalance) => {
+      this.props.actions.onBalance(balance)
+    })
   }
 
   trackCachedImage () {
@@ -128,6 +162,28 @@ class NewTabPage extends React.Component<Props, State> {
     )
   }
 
+  toggleShowRewards = () => {
+    this.props.saveShowRewards(
+      !this.props.newTabData.showRewards
+    )
+  }
+
+  enableAds = () => {
+    chrome.braveRewards.saveAdsSetting('adsEnabled', 'true')
+  }
+
+  enableRewards = () => {
+    this.props.actions.onRewardsSettingSave('enabledMain', '1')
+  }
+
+  createWallet = () => {
+    this.props.actions.createWallet()
+  }
+
+  dismissNotification = (id: string) => {
+    this.props.actions.dismissNotification(id)
+  }
+
   closeSettings = () => {
     this.setState({ showSettingsMenu: false })
   }
@@ -139,6 +195,7 @@ class NewTabPage extends React.Component<Props, State> {
   render () {
     const { newTabData, actions } = this.props
     const { showSettingsMenu } = this.state
+    const { rewardsState } = newTabData
 
     if (!newTabData) {
       return null
@@ -173,6 +230,17 @@ class NewTabPage extends React.Component<Props, State> {
               showWidget={newTabData.showClock}
               hideWidget={this.toggleShowClock}
               menuPosition={'left'}
+            />
+            <Rewards
+              {...rewardsState}
+              onCreateWallet={this.createWallet}
+              onEnableAds={this.enableAds}
+              onEnableRewards={this.enableRewards}
+              textDirection={newTabData.textDirection}
+              showWidget={newTabData.showRewards}
+              hideWidget={this.toggleShowRewards}
+              onDismissNotification={this.dismissNotification}
+              menuPosition={'right'}
             />
             {this.props.newTabData.gridSites.length ? <List
               blockNumber={this.props.newTabData.gridSites.length}
@@ -223,6 +291,8 @@ class NewTabPage extends React.Component<Props, State> {
               showClock={newTabData.showClock}
               showStats={newTabData.showStats}
               showTopSites={newTabData.showTopSites}
+              showRewards={newTabData.showRewards}
+              toggleShowRewards={this.toggleShowRewards}
             />
           </Footer>
         </Page>
