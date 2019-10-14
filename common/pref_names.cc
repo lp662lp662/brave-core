@@ -70,6 +70,7 @@ const char kBraveWalletEncryptedSeed[] = "brave.wallet.encrypted_seed";
 const char kBraveWalletEnabled[] = "brave.wallet.enabled";
 const char kAlwaysShowBookmarkBarOnNTP[] =
     "brave.always_show_bookmark_bar_on_ntp";
+const char kTorDisabled[] = "brave.tor_disabled";
 
 #if defined(OS_ANDROID)
 const char kDesktopModeEnabled[] = "brave.desktop_mode_enabled";
