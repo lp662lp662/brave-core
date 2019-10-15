@@ -48,22 +48,30 @@ void TorWindowSearchEngineProviderService::OnTemplateURLServiceChanged() {
          data().prepopulate_id);
 }
 
-int TorWindowSearchEngineProviderService::
-GetInitialSearchEngineProvider() const {
+int TorWindowSearchEngineProviderService::GetInitialSearchEngineProvider()
+    const {
   int initial_id = alternative_search_engine_provider_in_tor_.GetValue();
-
-  bool region_for_qwant =
-      TemplateURLPrepopulateData::GetPrepopulatedDefaultSearch(
-          otr_profile_->GetPrefs())->prepopulate_id ==
-          TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_QWANT;
 
   // If this is first run, |initial_id| is invalid. Then, use qwant or ddg
   // depends on default prepopulate data.
-  if (initial_id ==
+  if (initial_id !=
       TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_INVALID) {
-    initial_id = region_for_qwant ?
-        TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_QWANT :
-        TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_DUCKDUCKGO;
+    initial_id = TemplateURLPrepopulateData::GetPrepopulatedDefaultSearch(
+                     otr_profile_->GetPrefs())
+                     ->prepopulate_id;
+    switch (initial_id) {
+      case TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_QWANT:
+      case TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_DUCKDUCKGO:
+      case TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_DUCKDUCKGO_DE:
+      case TemplateURLPrepopulateData::
+          PREPOPULATED_ENGINE_ID_DUCKDUCKGO_AU_NZ_IE:
+        break;
+
+      default:
+        initial_id =
+            TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_DUCKDUCKGO;
+        break;
+    }
   }
 
   return initial_id;
