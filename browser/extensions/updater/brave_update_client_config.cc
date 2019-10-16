@@ -8,6 +8,7 @@
 #include "base/containers/flat_map.h"
 #include "base/no_destructor.h"
 #include "base/version.h"
+#include "build/branding_buildflags.h"
 #include "chrome/browser/component_updater/component_updater_utils.h"
 #include "chrome/browser/extensions/updater/extension_update_client_command_line_config_policy.h"
 #include "chrome/browser/google/google_brand.h"
@@ -243,7 +244,7 @@ BraveUpdateClientConfig::GetProtocolHandlerFactory() const {
 
 update_client::RecoveryCRXElevator
 BraveUpdateClientConfig::GetRecoveryCRXElevator() const {
-#if defined(GOOGLE_CHROME_BUILD) && defined(OS_WIN)
+#if BUILDFLAG(GOOGLE_CHROME_BRANDING) && defined(OS_WIN)
   return base::BindOnce(&RunRecoveryCRXElevated);
 #else
   return {};

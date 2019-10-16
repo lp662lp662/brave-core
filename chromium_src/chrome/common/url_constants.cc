@@ -45,22 +45,22 @@ const char kChromeReleaseNotesURL[] =
 
 const char kChromeHelpViaKeyboardURL[] =
 #if defined(OS_CHROMEOS)
-#if defined(GOOGLE_CHROME_BUILD)
+#if BUILDFLAG(GOOGLE_CHROME_BRANDING)
     "https://support.brave.com/";
 #else
     "https://support.brave.com/";
-#endif  // defined(GOOGLE_CHROME_BUILD)
+#endif  // BUILDFLAG(GOOGLE_CHROME_BRANDING)
 #else
     "https://support.brave.com/";
 #endif  // defined(OS_CHROMEOS)
 
 const char kChromeHelpViaMenuURL[] =
 #if defined(OS_CHROMEOS)
-#if defined(GOOGLE_CHROME_BUILD)
+#if BUILDFLAG(GOOGLE_CHROME_BRANDING)
     "https://support.brave.com/";
 #else
     "https://support.brave.com/";
-#endif  // defined(GOOGLE_CHROME_BUILD)
+#endif  // BUILDFLAG(GOOGLE_CHROME_BRANDING)
 #else
     "https://support.brave.com/";
 #endif  // defined(OS_CHROMEOS)

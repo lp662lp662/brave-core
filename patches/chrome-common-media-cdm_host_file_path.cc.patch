@@ -1,7 +1,16 @@
 diff --git a/chrome/common/media/cdm_host_file_path.cc b/chrome/common/media/cdm_host_file_path.cc
-index a454dd3450ae06949ab38f2d854b7a9f811604ff..193d1a682aa2e07ac479ed819033ceba9610a0ff 100644
+index a454dd3450ae06949ab38f2d854b7a9f811604ff..1bb000892c5ce19238c72d53f46b5c3fb4faeaf8 100644
 --- a/chrome/common/media/cdm_host_file_path.cc
 +++ b/chrome/common/media/cdm_host_file_path.cc
+@@ -18,7 +18,7 @@
+ #include "chrome/common/chrome_constants.h"
+ #endif
+ 
+-#if BUILDFLAG(GOOGLE_CHROME_BRANDING)
++#if BUILDFLAG(GOOGLE_CHROME_BRANDING) || defined(BRAVE_CHROMIUM_BUILD)
+ 
+ namespace {
+ 
 @@ -44,7 +44,11 @@ void AddCdmHostFilePaths(
  #if defined(OS_WIN)
  

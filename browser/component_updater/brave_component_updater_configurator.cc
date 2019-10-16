@@ -13,6 +13,7 @@
 
 #include "base/strings/sys_string_conversions.h"
 #include "base/version.h"
+#include "build/branding_buildflags.h"
 #include "build/build_config.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/net/system_network_context_manager.h"
@@ -185,7 +186,7 @@ BraveConfigurator::GetProtocolHandlerFactory() const {
 
 update_client::RecoveryCRXElevator BraveConfigurator::GetRecoveryCRXElevator()
     const {
-#if defined(GOOGLE_CHROME_BUILD) && defined(OS_WIN)
+#if BUILDFLAG(GOOGLE_CHROME_BRANDING) && defined(OS_WIN)
   return base::BindOnce(&RunRecoveryCRXElevated);
 #else
   return {};
