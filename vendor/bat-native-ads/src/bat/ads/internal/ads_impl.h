@@ -212,32 +212,12 @@ class AdsImpl : public Ads {
   std::vector<AdInfo> GetUnseenAds(
       const std::vector<AdInfo>& ads) const;
 
-  bool AdRespectsTotalMaxFrequencyCapping(
-      const AdInfo& ad);
-  bool AdRespectsPerHourFrequencyCapping(
-      const AdInfo& ad);
-  bool AdRespectsPerDayFrequencyCapping(
-      const AdInfo& ad);
-  bool AdRespectsDailyCapFrequencyCapping(
-      const AdInfo& ad);
-
-  std::deque<uint64_t> GetAdsShownForId(
-      const std::string& id);
-  std::deque<uint64_t> GetCreativeSetForId(
-      const std::string& id);
-  std::deque<uint64_t> GetCampaignForId(
-      const std::string& id);
-
   bool IsAdValid(
       const AdInfo& ad_info);
   NotificationInfo last_shown_notification_info_;
   bool ShowAd(
       const AdInfo& ad_info,
       const std::string& category);
-  bool HistoryRespectsRollingTimeConstraint(
-      const std::deque<uint64_t> history,
-      const uint64_t seconds_window,
-      const uint64_t allowable_ad_count) const;
   bool HistoryRespectsRollingTimeConstraint(
       const std::deque<AdHistoryDetail> history,
       const uint64_t seconds_window,

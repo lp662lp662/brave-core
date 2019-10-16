@@ -142,6 +142,8 @@ source_set("ads") {
     "src/bat/ads/internal/filtered_category.h",
     "src/bat/ads/internal/flagged_ad.cc",
     "src/bat/ads/internal/flagged_ad.h",
+    "src/bat/ads/internal/frequency_capping.cc",
+    "src/bat/ads/internal/frequency_capping.h",
     "src/bat/ads/internal/json_helper.cc",
     "src/bat/ads/internal/json_helper.h",
     "src/bat/ads/internal/locale_helper.cc",
