@@ -25,9 +25,7 @@ TorWindowSearchEngineProviderService(Profile* otr_profile)
 
   // Configure previously used provider because effective tor profile is
   // off the recored profile.
-  auto provider_data =
-      TemplateURLPrepopulateData::GetPrepopulatedEngine(
-          otr_profile->GetPrefs(), GetInitialSearchEngineProvider());
+  auto provider_data = GetInitialSearchEngineProvider(otr_profile->GetPrefs());
   TemplateURL provider_url(*provider_data);
   otr_template_url_service_->SetUserSelectedDefaultSearchProvider(
       &provider_url);
@@ -48,14 +46,21 @@ void TorWindowSearchEngineProviderService::OnTemplateURLServiceChanged() {
          data().prepopulate_id);
 }
 
-int TorWindowSearchEngineProviderService::GetInitialSearchEngineProvider()
-    const {
+std::unique_ptr<TemplateURLData>
+TorWindowSearchEngineProviderService::GetInitialSearchEngineProvider(
+    PrefService* prefs) const {
+  std::unique_ptr<TemplateURLData> provider_data = nullptr;
   int initial_id = alternative_search_engine_provider_in_tor_.GetValue();
-
-  // If this is first run, |initial_id| is invalid. Then, use qwant or ddg
-  // depends on default prepopulate data.
   if (initial_id !=
       TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_INVALID) {
+    provider_data = std::move(
+        TemplateURLPrepopulateData::GetPrepopulatedEngine(prefs, initial_id));
+  }
+
+  // If this is first run, |initial_id| is invalid. Then, use qwant or ddg
+  // depends on default prepopulate data. If not, check that the initial_id
+  // returned data.
+  if (!provider_data) {
     initial_id = TemplateURLPrepopulateData::GetPrepopulatedDefaultSearch(
                      otr_profile_->GetPrefs())
                      ->prepopulate_id;
@@ -72,7 +77,10 @@ int TorWindowSearchEngineProviderService::GetInitialSearchEngineProvider()
             TemplateURLPrepopulateData::PREPOPULATED_ENGINE_ID_DUCKDUCKGO;
         break;
     }
+    provider_data = std::move(
+        TemplateURLPrepopulateData::GetPrepopulatedEngine(prefs, initial_id));
   }
 
-  return initial_id;
+  DCHECK(provider_data);
+  return provider_data;
 }
