@@ -22,6 +22,10 @@
 #include "brave/components/brave_sync/switches.h"
 #endif
 
+#if BUILDFLAG(ENABLE_TOR)
+#include "brave/browser/tor/tor_profile_service.h"
+#endif
+
 namespace {
 bool IsBraveCommands(int id) {
   return id >= IDC_BRAVE_COMMANDS_START && id <= IDC_BRAVE_COMMANDS_LAST;
@@ -119,8 +123,7 @@ void BraveBrowserCommandController::UpdateCommandForBraveAdblock() {
 }
 
 void BraveBrowserCommandController::UpdateCommandForTor() {
-  const bool isTorEnabled =
-      !browser_->profile()->GetPrefs()->GetBoolean(kTorDisabled);
+  const bool isTorEnabled = !tor::TorProfileService::IsTorDisabled();
   UpdateCommandEnabled(IDC_NEW_TOR_CONNECTION_FOR_SITE, isTorEnabled);
   UpdateCommandEnabled(IDC_NEW_OFFTHERECORD_WINDOW_TOR, isTorEnabled);
 }
