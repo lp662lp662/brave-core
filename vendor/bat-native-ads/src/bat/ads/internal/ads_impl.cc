@@ -22,7 +22,12 @@
 #include "bat/ads/internal/static_values.h"
 #include "bat/ads/internal/time.h"
 #include "bat/ads/internal/uri_helper.h"
-#include "bat/ads/internal/frequency_capping.h"
+#include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
+#include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
+#include "bat/ads/internal/exclusion_rules/frequency/hourly_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/daily_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/daily_campaign_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/maximum_frequency_cap.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/error/en.h"
@@ -1043,18 +1048,41 @@ void AdsImpl::ServeAd(
   ShowAd(ad, category);
 }
 
+void AdsImpl::BuildFrequencyExclusionRules(std::vector<ExclusionRule*> exclusion_rules) {
+
+  FrequencyCapping frequency_capping(client_.get(), ads_client_);
+
+  ExclusionRule* exclusionRule = 0x0;
+
+  exclusionRule = new DailyCampaignFrequencyCap(frequency_capping);
+  exclusion_rules.push_back(exclusionRule);
+
+  exclusionRule = new DailyFrequencyCap(frequency_capping);
+  exclusion_rules.push_back(exclusionRule);
+
+  exclusionRule = new HourlyFrequencyCap(frequency_capping);
+  exclusion_rules.push_back(exclusionRule);
+
+  exclusionRule = new MaximumFrequencyCap(frequency_capping);
+  exclusion_rules.push_back(exclusionRule);
+}
+
 std::vector<AdInfo> AdsImpl::GetEligibleAds(
     const std::vector<AdInfo>& ads) {
   std::vector<AdInfo> eligible_ads = {};
 
   auto unseen_ads = GetUnseenAdsAndRoundRobinIfNeeded(ads);
 
-  FrequencyCapping frequency_capping(client_.get());
+  std::vector<ExclusionRule*> exclusion_rules;
+
+  BuildFrequencyExclusionRules(exclusion_rules);
 
   for (const auto& ad : unseen_ads) {
 
-    if(frequency_capping.IsCapped(ad)) {
-      continue;
+    for(const ExclusionRule* exclusion_rule : exclusion_rules) {
+      if(exclusion_rule->IsExcluded(ad)) {
+        continue;
+      }
     }
 
     if (client_->IsFilteredAd(ad.creative_set_id)) {

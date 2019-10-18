@@ -37,6 +37,7 @@ class Client;
 class Bundle;
 class AdsServe;
 class Notifications;
+class ExclusionRule;
 
 class AdsImpl : public Ads {
  public:
@@ -323,6 +324,8 @@ class AdsImpl : public Ads {
   bool is_confirmations_ready_;
 
   AdsClient* ads_client_;  // NOT OWNED
+
+    void BuildFrequencyExclusionRules(std::vector<ExclusionRule*> exclusion_rules);
 
   // Not copyable, not assignable
   AdsImpl(const AdsImpl&) = delete;

@@ -6,24 +6,21 @@
 #ifndef BAT_ADS_INTERNAL_FREQUENCY_CAPPING_H_
 #define BAT_ADS_INTERNAL_FREQUENCY_CAPPING_H_
 
+#include <cstdint>
+#include <deque>
+#include <string>
+
 namespace ads {
-  struct AdInfo;
   class Client;
+  class AdsClient;
 
   class FrequencyCapping {
     public:
-      FrequencyCapping(Client* client_state)
-          : client_state_(client_state) {
+      FrequencyCapping(Client* client_state, AdsClient* ads_client)
+          : client_state_(client_state) 
+          , ads_client_(ads_client) {
       }
       ~FrequencyCapping() { }
-
-      void IsBob() const;
-
-      bool IsCapped(
-          const AdInfo& ad) const;
-
-  private:
-      Client* client_state_;
 
       bool HistoryRespectsRollingTimeConstraint(
           const std::deque<uint64_t> history,
@@ -39,17 +36,13 @@ namespace ads {
       std::deque<uint64_t> GetCampaignForId(
           const std::string& id) const;
 
-      bool DoesAdRespectMaximumCap(
-          const AdInfo& ad) const;
-      bool DoesAdRespectPerHourCap(
-          const AdInfo& ad) const;
-      bool DoesAdRespectPerDayCapping(
-          const AdInfo& ad) const;
-      bool DoesAdRespectDailyCapping(
-          const AdInfo& ad) const;
+    AdsClient* GetAdsClient() const { return(ads_client_); }
+
+  private:
+      Client* client_state_;
+      AdsClient* ads_client_;
 
   };
-
 }  // namespace ads
 
 #endif // BAT_ADS_INTERNAL_FREQUENCY_CAPPING_H_
