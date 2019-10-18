@@ -424,7 +424,7 @@ void BraveProfileSyncServiceImpl::OnGetInitData(
 
   client_data::Config config;
   config.api_version = brave_sync_prefs_->GetApiVersion();
-  config.server_url = "https://sync.brave.com";
+  config.server_url = "https://sync-staging.brave.com";
   config.debug = true;
   brave_sync_client_->SendGotInitData(seed, device_id, config);
 }
@@ -825,6 +825,13 @@ void BraveProfileSyncServiceImpl::FetchSyncRecords(const bool bookmarks,
   }
   if (preferences) {
     category_names.push_back(kPreferences);  // "PREFERENCES";
+  }
+
+  base::Time last_compact_time = brave_sync_prefs_->GetLastCompactTime();
+  if (tools::IsTimeEmpty(last_compact_time) ||
+      base::Time::Now() - last_compact_time > base::TimeDelta::FromDays(7)) {
+    brave_sync_client_->SendCompactSyncCategory(kBookmarks);
+    brave_sync_prefs_->SetLastCompactTime(base::Time::Now());
   }
 
   base::Time start_at_time = brave_sync_prefs_->GetLatestRecordTime();
