@@ -28,6 +28,8 @@ const char kStateServerPublisherListStamp[] =
     "brave.rewards.server_publisher_list_stamp";
 const char kStateUpholdAnonAddress[] =
     "brave.rewards.uphold_anon_address";
+const char kStatePromotionLastFetchStamp[] =
+    "brave.rewards.promotion_last_fetch_stamp";
 
 const char kUseRewardsStagingServer[] = "brave.rewards.use_staging_server";
 }  // namespace prefs

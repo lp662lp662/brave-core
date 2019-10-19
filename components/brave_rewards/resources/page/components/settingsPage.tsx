@@ -80,7 +80,7 @@ class SettingsPage extends React.Component<Props, State> {
     }
 
     this.actions.checkImported()
-    this.actions.getGrants()
+    this.actions.fetchPromotions()
     this.actions.getRewardsMainEnabled()
     this.actions.updateAdsRewards()
     this.actions.getExternalWallet('uphold')

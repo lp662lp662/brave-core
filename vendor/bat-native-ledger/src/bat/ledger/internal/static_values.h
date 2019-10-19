@@ -38,6 +38,16 @@
 #define PUBLISHER_DISTRO_DEVELOPMENT_SERVER  \
 "https://creators-distro.brave.software"
 
+#define PROMOTION_STAGING_SERVER              \
+""
+#define PROMOTION_PRODUCTION_SERVER           \
+""
+#define PROMOTION_DEVELOPMENT_SERVER            \
+"http://grant-alb-1930101620.us-west-2.elb.amazonaws.com"
+
+#define CAPTCHA_TEMP_SERVER            \
+"http://reputation-alb-1044480833.us-west-2.elb.amazonaws.com"
+
 #define PREFIX_V1                       "/v1"
 #define PREFIX_V2                       "/v2"
 #define PREFIX_V3                       "/v3"
@@ -55,7 +65,6 @@
 #define UPDATE_RULES_V2                 \
 "/v2/publisher/ruleset?limit=512&excludedOnly=false"
 #define RECOVER_WALLET_PUBLIC_KEY       "/wallet?publicKey="
-#define GET_SET_PROMOTION               "/grants"
 #define GET_PROMOTION_CAPTCHA           "/captchas/"
 #define GET_PUBLISHERS_LIST             "/api/v3/public/channels"
 #define GET_PROMOTION_ATTESTATION       "/attestations/"

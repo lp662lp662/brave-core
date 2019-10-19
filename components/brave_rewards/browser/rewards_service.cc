@@ -60,6 +60,7 @@ void RewardsService::RegisterProfilePrefs(PrefRegistrySimple* registry) {
   registry->RegisterDictionaryPref(prefs::kRewardsExternalWallets);
   registry->RegisterUint64Pref(prefs::kStateServerPublisherListStamp, 0ull);
   registry->RegisterStringPref(prefs::kStateUpholdAnonAddress, "");
+  registry->RegisterUint64Pref(prefs::kStatePromotionLastFetchStamp, 0ull);
 }
 
 }  // namespace brave_rewards
