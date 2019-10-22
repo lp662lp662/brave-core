@@ -12,7 +12,7 @@ namespace ads {
     struct AdInfo;
     class FrequencyCapping;
 
-    class DailyFrequencyCap : public ExclusionRule {
+    class DailyFrequencyCap final : public ExclusionRule {
     public:
         DailyFrequencyCap(const FrequencyCapping& frequency_capping) 
         : frequency_capping_(frequency_capping) { 

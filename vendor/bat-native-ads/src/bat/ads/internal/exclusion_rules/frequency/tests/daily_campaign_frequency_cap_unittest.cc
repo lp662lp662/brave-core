@@ -26,13 +26,19 @@ using ::testing::Invoke;
 namespace ads {
 
 static const char* test_campaign_id = "60267cee-d5bb-4a0d-baaf-91cd7f18e07e";
+static const char* test_campaign_id_2 = "90762cee-d5bb-4a0d-baaf-61cd7f18e07e";
 
 //static auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
 
 class AdsDailyCampaignFrequencyCapTest : public ::testing::Test {
- protected:
+protected:
   std::unique_ptr<MockAdsClient> mock_ads_client_;
   std::unique_ptr<AdsImpl> ads_;
+
+  std::unique_ptr<ClientMock> client_mock_;
+  std::unique_ptr<FrequencyCapping> frequency_capping_;
+  std::unique_ptr<DailyCampaignFrequencyCap> exclusion_rule_;
+  std::unique_ptr<AdInfo> ad_info_;
 
   AdsDailyCampaignFrequencyCapTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
@@ -54,6 +60,11 @@ class AdsDailyCampaignFrequencyCapTest : public ::testing::Test {
     auto callback = std::bind(&AdsDailyCampaignFrequencyCapTest::OnAdsImpleInitialize,
         this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
+
+    client_mock_ = std::make_unique<ClientMock>(ads_.get(), mock_ads_client_.get());
+    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(), mock_ads_client_.get());
+    exclusion_rule_ = std::make_unique<DailyCampaignFrequencyCap>(*frequency_capping_);
+    ad_info_ = std::make_unique<AdInfo>();
   }
 
   void OnAdsImpleInitialize(const Result result) {
@@ -66,52 +77,56 @@ class AdsDailyCampaignFrequencyCapTest : public ::testing::Test {
   }
 };
 
-TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdAllowed) {
+TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdAllowedWhenNoAds) {
   // Arrange
-  ClientMock* client_mock = new ClientMock(ads_.get(),
-      mock_ads_client_.get());
-
-  FrequencyCapping frequency_capping(client_mock, mock_ads_client_.get());
-
-  ExclusionRule* exclusionRule = new
-      DailyCampaignFrequencyCap(frequency_capping);
-
-  AdInfo ad;
-  ad.campaign_id = test_campaign_id;
-  ad.daily_cap = 2;
+  ad_info_->campaign_id = test_campaign_id;
+  ad_info_->daily_cap = 2;
 
   // Act
-  bool isAdExcluded = exclusionRule->IsExcluded(ad);
-  // Assert
-  EXPECT_FALSE(isAdExcluded);
+  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
 
-  // Arrange
-  client_mock->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 1);
-  // Act
-  isAdExcluded = exclusionRule->IsExcluded(ad);
   // Assert
-  EXPECT_FALSE(isAdExcluded);
+  EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdExcluded) {
+TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdAllowedWithAds) {
   // Arrange
-  ClientMock* client_mock = new ClientMock(ads_.get(),
-      mock_ads_client_.get());
-  client_mock->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 2);
+  ad_info_->campaign_id = test_campaign_id;
+  ad_info_->daily_cap = 2;
 
-  FrequencyCapping frequency_capping(client_mock, mock_ads_client_.get());
-
-  ExclusionRule* exclusionRule = new
-      DailyCampaignFrequencyCap(frequency_capping);
-
-  AdInfo ad;
-  ad.campaign_id = test_campaign_id;
-  ad.daily_cap = 1;
+  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 1);
 
   // Act
-  bool isAdExcluded = exclusionRule->IsExcluded(ad);
+  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+
   // Assert
-  EXPECT_TRUE(isAdExcluded);
+  EXPECT_FALSE(is_ad_excluded);
+}
+
+TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdExcludedWithMatchingCampaignAds) {
+  // Arrange
+  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 2);
+
+  ad_info_->campaign_id = test_campaign_id;
+  ad_info_->daily_cap = 1;
+
+  // Act
+  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  // Assert
+  EXPECT_TRUE(is_ad_excluded);
+}
+
+TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdNotExcludedWhenNoMatchingCampaignAds) {
+  // Arrange
+  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id_2, 2);
+
+  ad_info_->campaign_id = test_campaign_id;
+  ad_info_->daily_cap = 1;
+
+  // Act
+  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  // Assert
+  EXPECT_FALSE(is_ad_excluded);
 }
 
   // Tests
