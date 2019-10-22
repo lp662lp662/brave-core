@@ -204,7 +204,7 @@ test("brave_unit_tests") {
       "//brave/vendor/bat-native-ads/src/bat/ads/internal/ads_tabs_unittest.cc",
       "//brave/vendor/bat-native-ads/src/bat/ads/internal/ads_client_mock.cc",
       "//brave/vendor/bat-native-ads/src/bat/ads/internal/ads_client_mock.h",
-      "//brave/vendor/bat-native-ads/src/bat/ads/internal/frequency_capping.cc",
+      "//brave/vendor/bat-native-ads/src/bat/ads/internal/exclusion_rules/frequency/frequency_capping_unittest.cc",
       "//brave/vendor/bat-native-confirmations/src/bat/confirmations/internal/ad_grants_unittest.cc",
       "//brave/vendor/bat-native-confirmations/src/bat/confirmations/internal/payments_unittest.cc",
       "//brave/vendor/bat-native-confirmations/src/bat/confirmations/internal/confirmations_create_confirmation_request_unittest.cc",
@@ -218,6 +218,8 @@ test("brave_unit_tests") {
       "//brave/vendor/bat-native-confirmations/src/bat/confirmations/internal/confirmations_client_mock.cc",
       "//brave/vendor/bat-native-confirmations/src/bat/confirmations/internal/confirmations_client_mock.h",
       "//brave/vendor/bat-native-usermodel/test/usermodel_unittest.cc",
+      "//brave/vendor/bat-native-ads/src/bat/ads/internal/client_mock.h",
+      "//brave/vendor/bat-native-ads/src/bat/ads/internal/client_mock.cc",
     ]
   }
 
