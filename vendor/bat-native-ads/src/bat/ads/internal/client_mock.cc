@@ -7,8 +7,11 @@
 
 namespace ads {
 
-  void ClientMock::ConfigureWithDataForMaximumFrequencyCappingTest() {
+  void ClientMock::ConfigureWithDataForMaximumFrequencyCappingTest(const std::string& creative_set_id, uint8_t ad_instances) {
 
+    for(uint8_t i = 0; i < ad_instances; i++) {
+      AppendCurrentTimeToCreativeSetHistory(creative_set_id);
+    }
   }
 
 }  // namespace ads

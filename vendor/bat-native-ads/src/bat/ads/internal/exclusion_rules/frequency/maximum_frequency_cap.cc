@@ -26,6 +26,7 @@ namespace ads {
     bool MaximumFrequencyCap::DoesAdRespectMaximumCap(
         const AdInfo& ad) const {
       auto creative_set = frequency_capping_.GetCreativeSetForId(ad.creative_set_id);
+
       if (creative_set.size() >= ad.total_max) {
         return false;
       }

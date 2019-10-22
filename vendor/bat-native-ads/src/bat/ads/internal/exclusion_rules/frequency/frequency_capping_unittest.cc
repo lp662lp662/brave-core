@@ -3,6 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <memory>
+
 #include "testing/gtest/include/gtest/gtest.h"
 
 #include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
@@ -17,7 +19,7 @@
 #include "bat/ads/internal/ads_impl.h"
 #include "bat/ads/ad_info.h"
 
-// npm run test -- brave_unit_tests --filter=ads*
+// npm run test -- brave_unit_tests --filter=Ads*
 
 using std::placeholders::_1;
 using ::testing::_;
@@ -25,18 +27,20 @@ using ::testing::Invoke;
 
 namespace ads {
 
-class FrequencyCappingTest : public ::testing::Test {
+static const char* test_creative_set_id = "654f10df-fbc4-4a92-8d43-2edf73734a60";
+
+class AdsFrequencyCappingTest : public ::testing::Test {
  protected:
   std::unique_ptr<MockAdsClient> mock_ads_client_;
   std::unique_ptr<AdsImpl> ads_;
 
-  FrequencyCappingTest() :
+  AdsFrequencyCappingTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
       ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
-  ~FrequencyCappingTest() override {
+  ~AdsFrequencyCappingTest() override {
     // You can do clean-up work that doesn't throw exceptions here
   }
 
@@ -47,8 +51,9 @@ class FrequencyCappingTest : public ::testing::Test {
     // Code here will be called immediately after the constructor (right before
     // each test)
 
-    auto callback = std::bind(&FrequencyCappingTest::OnAdsImpleInitialize, this, _1);
-    ads_->Initialize(callback);
+    auto callback = std::bind(&AdsFrequencyCappingTest::OnAdsImpleInitialize,
+        this, _1);
+    ads_->Initialize(callback);  // TODO(masparrow): Null callback?
   }
 
   void OnAdsImpleInitialize(const Result result) {
@@ -61,22 +66,59 @@ class FrequencyCappingTest : public ::testing::Test {
   }
 };
 
-TEST_F(FrequencyCappingTest, TestMaximumFrequencyCapping) {
-  // Arrange 
-  ClientMock* client_mock = new ClientMock(ads_.get(), mock_ads_client_.get());
-  client_mock->ConfigureWithDataForMaximumFrequencyCappingTest();
+TEST_F(AdsFrequencyCappingTest, TestMaximumFrequencyCappingAdAllowed) {
+  // Arrange
+  ClientMock* client_mock = new ClientMock(ads_.get(),
+      mock_ads_client_.get());
 
   FrequencyCapping frequency_capping(client_mock, mock_ads_client_.get());
 
-  ExclusionRule* exclusionRule = new MaximumFrequencyCap(frequency_capping);
+  ExclusionRule* exclusionRule = new
+      MaximumFrequencyCap(frequency_capping);
 
   AdInfo ad;
+  ad.creative_set_id = test_creative_set_id;
+  ad.total_max = 2;
 
   // Act
   bool isAdExcluded = exclusionRule->IsExcluded(ad);
+  // Assert
+  EXPECT_FALSE(isAdExcluded);
 
+  // Arrange
+  client_mock->ConfigureWithDataForMaximumFrequencyCappingTest(test_creative_set_id, 1);
+  // Act
+  isAdExcluded = exclusionRule->IsExcluded(ad);
+  // Assert
+  EXPECT_FALSE(isAdExcluded);
+}
+
+TEST_F(AdsFrequencyCappingTest, TestMaximumFrequencyCappingAdExcluded) {
+  // Arrange
+  ClientMock* client_mock = new ClientMock(ads_.get(),
+      mock_ads_client_.get());
+  client_mock->ConfigureWithDataForMaximumFrequencyCappingTest(test_creative_set_id, 5);
+
+  FrequencyCapping frequency_capping(client_mock, mock_ads_client_.get());
+
+  ExclusionRule* exclusionRule = new
+      MaximumFrequencyCap(frequency_capping);
+
+  AdInfo ad;
+  ad.creative_set_id = test_creative_set_id;
+  ad.total_max = 0;
+
+  // Act
+  bool isAdExcluded = exclusionRule->IsExcluded(ad);
+  // Assert
+  EXPECT_TRUE(isAdExcluded);
+
+  // Arrange
+  ad.total_max = 5;
+  // Act
+  isAdExcluded = exclusionRule->IsExcluded(ad);
   // Assert
   EXPECT_TRUE(isAdExcluded);
 }
 
-}  // namespace ads
+} // namespace ads

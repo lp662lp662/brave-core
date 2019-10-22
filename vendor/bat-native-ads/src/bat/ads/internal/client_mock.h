@@ -14,7 +14,7 @@ class ClientMock : public Client {
  public:
   ClientMock(AdsImpl* ads, AdsClient* ads_client): Client(ads, ads_client) { }
 
-  void ConfigureWithDataForMaximumFrequencyCappingTest();
+  void ConfigureWithDataForMaximumFrequencyCappingTest(const std::string& creative_set_id, uint8_t ad_instances);
 
 };
 
