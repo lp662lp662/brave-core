@@ -9,15 +9,13 @@
 
 #include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
-#include "bat/ads/internal/exclusion_rules/frequency/hourly_frequency_cap.h"
-#include "bat/ads/internal/exclusion_rules/frequency/daily_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/daily_campaign_frequency_cap.h"
-#include "bat/ads/internal/exclusion_rules/frequency/maximum_frequency_cap.h"
 
 #include "bat/ads/internal/client_mock.h"
 #include "bat/ads/internal/ads_client_mock.h"
 #include "bat/ads/internal/ads_impl.h"
 #include "bat/ads/ad_info.h"
+#include "bat/ads/internal/time.h"
 
 // npm run test -- brave_unit_tests --filter=Ads*
 
@@ -27,20 +25,22 @@ using ::testing::Invoke;
 
 namespace ads {
 
-static const char* test_creative_set_id = "654f10df-fbc4-4a92-8d43-2edf73734a60";
+static const char* test_campaign_id = "60267cee-d5bb-4a0d-baaf-91cd7f18e07e";
 
-class AdsFrequencyCappingTest : public ::testing::Test {
+//static auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
+
+class AdsDailyCampaignFrequencyCapTest : public ::testing::Test {
  protected:
   std::unique_ptr<MockAdsClient> mock_ads_client_;
   std::unique_ptr<AdsImpl> ads_;
 
-  AdsFrequencyCappingTest() :
+  AdsDailyCampaignFrequencyCapTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
       ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
-  ~AdsFrequencyCappingTest() override {
+  ~AdsDailyCampaignFrequencyCapTest() override {
     // You can do clean-up work that doesn't throw exceptions here
   }
 
@@ -51,7 +51,7 @@ class AdsFrequencyCappingTest : public ::testing::Test {
     // Code here will be called immediately after the constructor (right before
     // each test)
 
-    auto callback = std::bind(&AdsFrequencyCappingTest::OnAdsImpleInitialize,
+    auto callback = std::bind(&AdsDailyCampaignFrequencyCapTest::OnAdsImpleInitialize,
         this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
   }
@@ -66,7 +66,7 @@ class AdsFrequencyCappingTest : public ::testing::Test {
   }
 };
 
-TEST_F(AdsFrequencyCappingTest, TestMaximumFrequencyCappingAdAllowed) {
+TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdAllowed) {
   // Arrange
   ClientMock* client_mock = new ClientMock(ads_.get(),
       mock_ads_client_.get());
@@ -74,11 +74,11 @@ TEST_F(AdsFrequencyCappingTest, TestMaximumFrequencyCappingAdAllowed) {
   FrequencyCapping frequency_capping(client_mock, mock_ads_client_.get());
 
   ExclusionRule* exclusionRule = new
-      MaximumFrequencyCap(frequency_capping);
+      DailyCampaignFrequencyCap(frequency_capping);
 
   AdInfo ad;
-  ad.creative_set_id = test_creative_set_id;
-  ad.total_max = 2;
+  ad.campaign_id = test_campaign_id;
+  ad.daily_cap = 2;
 
   // Act
   bool isAdExcluded = exclusionRule->IsExcluded(ad);
@@ -86,39 +86,39 @@ TEST_F(AdsFrequencyCappingTest, TestMaximumFrequencyCappingAdAllowed) {
   EXPECT_FALSE(isAdExcluded);
 
   // Arrange
-  client_mock->ConfigureWithDataForMaximumFrequencyCappingTest(test_creative_set_id, 1);
+  client_mock->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 1);
   // Act
   isAdExcluded = exclusionRule->IsExcluded(ad);
   // Assert
   EXPECT_FALSE(isAdExcluded);
 }
 
-TEST_F(AdsFrequencyCappingTest, TestMaximumFrequencyCappingAdExcluded) {
+TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdExcluded) {
   // Arrange
   ClientMock* client_mock = new ClientMock(ads_.get(),
       mock_ads_client_.get());
-  client_mock->ConfigureWithDataForMaximumFrequencyCappingTest(test_creative_set_id, 5);
+  client_mock->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 2);
 
   FrequencyCapping frequency_capping(client_mock, mock_ads_client_.get());
 
   ExclusionRule* exclusionRule = new
-      MaximumFrequencyCap(frequency_capping);
+      DailyCampaignFrequencyCap(frequency_capping);
 
   AdInfo ad;
-  ad.creative_set_id = test_creative_set_id;
-  ad.total_max = 0;
+  ad.campaign_id = test_campaign_id;
+  ad.daily_cap = 1;
 
   // Act
   bool isAdExcluded = exclusionRule->IsExcluded(ad);
   // Assert
   EXPECT_TRUE(isAdExcluded);
-
-  // Arrange
-  ad.total_max = 5;
-  // Act
-  isAdExcluded = exclusionRule->IsExcluded(ad);
-  // Assert
-  EXPECT_TRUE(isAdExcluded);
 }
+
+  // Tests
+  // None = allowed
+  // 1 in last day (0+s ago) with cap of 2 = allowed
+  // 1 in last day (day-1s ago) with cap of 2 = allowed
+  // 2 in last day (0+s ago) with cap of 2 = excluded
+  // 1 over a day (day+1s ago) with cap of 2 = allowed
 
 } // namespace ads

@@ -28,6 +28,8 @@ namespace ads {
       auto ads_shown = frequency_capping_.GetAdsShownForId(ad.uuid);
       auto hour_window = base::Time::kSecondsPerHour;
 
+    	LOG(INFO) << "\033[1;32m[MAS] ads_shown.size = " << ads_shown.size() << " hour_window = " << hour_window << "\033[0m";
+
       return frequency_capping_.HistoryRespectsRollingTimeConstraint(
           ads_shown, hour_window, 1);
     }
