@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "anon/anon.h"
+#include "bat/ledger/internal/request/request_util.h"
 #include "bat/ledger/internal/contribution/phase_one.h"
 #include "bat/ledger/internal/contribution/phase_two.h"
 #include "bat/ledger/internal/ledger_impl.h"
@@ -30,7 +31,7 @@ PhaseOne::~PhaseOne() {
 void PhaseOne::Start(const std::string& viewing_id) {
   ledger_->AddReconcileStep(viewing_id,
                             ledger::ContributionRetry::STEP_RECONCILE);
-  std::string url = braveledger_bat_helper::buildURL(
+  std::string url = braveledger_request_util::BuildUrl(
       (std::string)RECONCILE_CONTRIBUTION + ledger_->GetUserId(), PREFIX_V2);
 
   auto callback = std::bind(&PhaseOne::ReconcileCallback,
@@ -107,7 +108,7 @@ void PhaseOne::CurrentReconcile(const std::string& viewing_id) {
                             _2,
                             _3);
   ledger_->LoadURL(
-      braveledger_bat_helper::buildURL(path, PREFIX_V2),
+      braveledger_request_util::BuildUrl(path, PREFIX_V2),
       std::vector<std::string>(),
       "",
       "",
@@ -237,7 +238,7 @@ void PhaseOne::ReconcilePayload(const std::string& viewing_id) {
                             _2,
                             _3);
   ledger_->LoadURL(
-      braveledger_bat_helper::buildURL(path, PREFIX_V2),
+      braveledger_request_util::BuildUrl(path, PREFIX_V2),
       wallet_header,
       payload_stringify,
       "application/json; charset=utf-8",
@@ -300,7 +301,7 @@ void PhaseOne::RegisterViewing(const std::string& viewing_id) {
                             _2,
                             _3);
   ledger_->LoadURL(
-      braveledger_bat_helper::buildURL(
+      braveledger_request_util::BuildUrl(
         (std::string)REGISTER_VIEWING, PREFIX_V2),
       std::vector<std::string>(),
       "",
@@ -395,7 +396,7 @@ void PhaseOne::ViewingCredentials(const std::string& viewing_id) {
                                                                     values,
                                                                     1);
 
-  std::string url = braveledger_bat_helper::buildURL(
+  std::string url = braveledger_request_util::BuildUrl(
       (std::string)REGISTER_VIEWING +
       "/" +
       reconcile.anonizeViewingId_,
