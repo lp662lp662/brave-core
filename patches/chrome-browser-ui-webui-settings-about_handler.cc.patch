@@ -1,0 +1,14 @@
+diff --git a/chrome/browser/ui/webui/settings/about_handler.cc b/chrome/browser/ui/webui/settings/about_handler.cc
+index 7245f9a91e3376d3032930529b84cb2f5f4b03f8..097e58c0a3c672a34f5fd42fcb49f01abc5fe97f 100644
+--- a/chrome/browser/ui/webui/settings/about_handler.cc
++++ b/chrome/browser/ui/webui/settings/about_handler.cc
+@@ -311,8 +311,11 @@ AboutHandler* AboutHandler::Create(content::WebUIDataSource* html_source,
+           l10n_util::GetStringUTF16(IDS_ABOUT_VERSION_COPYRIGHT),
+           base::Time::Now()));
+ 
+   base::string16 license = l10n_util::GetStringFUTF16(
+-      IDS_VERSION_UI_LICENSE, base::ASCIIToUTF16(chrome::kChromiumProjectURL),
++      IDS_VERSION_UI_LICENSE, BRAVE_LICENSING_INFO
+       base::ASCIIToUTF16(chrome::kChromeUICreditsURL));
+   html_source->AddString("aboutProductLicense", license);
+ 
