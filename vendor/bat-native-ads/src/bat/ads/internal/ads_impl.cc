@@ -1051,6 +1051,7 @@ void AdsImpl::ServeAd(
 void AdsImpl::BuildFrequencyExclusionRules(std::vector<ExclusionRule*>
 exclusion_rules) {
 
+
 // TODO: some form of factory? or at least use C++11
   FrequencyCapping frequency_capping(client_.get(), ads_client_);
 
@@ -1068,7 +1069,6 @@ exclusion_rules) {
   exclusionRule = new MaximumFrequencyCap(frequency_capping);
   exclusion_rules.push_back(exclusionRule);
 }
-
 std::vector<AdInfo> AdsImpl::GetEligibleAds(
     const std::vector<AdInfo>& ads) {
   std::vector<AdInfo> eligible_ads = {};
@@ -1081,7 +1081,7 @@ std::vector<AdInfo> AdsImpl::GetEligibleAds(
 
   for (const auto& ad : unseen_ads) {
     for (const ExclusionRule* exclusion_rule : exclusion_rules) {
-      if (exclusion_rule->IsExcluded(ad)) {
+      if (exclusion_rule->ShouldExclude(ad)) {
         continue;
       }
     }

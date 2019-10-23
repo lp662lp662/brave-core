@@ -62,9 +62,7 @@ class AdsDailyFrequencyCapTest : public ::testing::Test {
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(), mock_ads_client_.get());
     frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(), mock_ads_client_.get());
-
     exclusion_rule_ = std::make_unique<DailyFrequencyCap>(*frequency_capping_);
-
     ad_info_ = std::make_unique<AdInfo>();
   }
 
@@ -84,7 +82,7 @@ TEST_F(AdsDailyFrequencyCapTest, TestAdAllowedWhenNoAds) {
   ad_info_->per_day= 2;
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -97,7 +95,7 @@ TEST_F(AdsDailyFrequencyCapTest, TestAdAllowedWithAds) {
   client_mock_->ConfigureWithDataForHourlyFrequencyCappingTest(test_creative_set_id, 0, 1);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -111,7 +109,7 @@ TEST_F(AdsDailyFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
   client_mock_->ConfigureWithDataForHourlyFrequencyCappingTest(test_creative_set_id, -(day_window + 1), 1);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -125,7 +123,7 @@ TEST_F(AdsDailyFrequencyCapTest, TestAdExcluded) {
   client_mock_->ConfigureWithDataForHourlyFrequencyCappingTest(test_creative_set_id, 0, 3);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_TRUE(is_ad_excluded);

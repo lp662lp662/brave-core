@@ -14,17 +14,19 @@ class FrequencyCapping;
 
 class HourlyFrequencyCap final : public ExclusionRule {
  public:
-    explicit HourlyFrequencyCap(const FrequencyCapping& frequency_capping)
-    : frequency_capping_(frequency_capping) {
+  explicit HourlyFrequencyCap(
+      const FrequencyCapping& frequency_capping) :
+      frequency_capping_(frequency_capping) {
     }
-    bool IsExcluded(
-        const AdInfo& ad) const override;
+
+  bool ShouldExclude(
+    const AdInfo& ad) const override;
 
  private:
-    const FrequencyCapping& frequency_capping_;
+    const FrequencyCapping& frequency_capping_;  // NOT OWNED
 
-    bool DoesAdRespectPerHourCap(
-        const AdInfo& ad) const;
+  bool DoesAdRespectPerHourCap(
+      const AdInfo& ad) const;
 };
 }  // namespace ads
 

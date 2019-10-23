@@ -10,62 +10,65 @@
 
 namespace ads {
 
-    bool FrequencyCapping::HistoryRespectsRollingTimeConstraint(
-        const std::deque<uint64_t> history,
-        const uint64_t seconds_window,
-        const uint64_t allowable_ad_count) const {
-      uint64_t recent_count = 0;
+bool FrequencyCapping::DoesHistoryRespectCapForRollingTimeConstraint(
+    const std::deque<uint64_t> history,
+    const uint64_t time_constraint_in_seconds,
+    const uint64_t cap) const {
+  uint64_t count = 0;
 
-      auto now_in_seconds = Time::NowInSeconds();
+  auto now_in_seconds = Time::NowInSeconds();
 
-      for (const auto& timestamp_in_seconds : history) {
-        if (now_in_seconds - timestamp_in_seconds < seconds_window) {
-          recent_count++;
-        }
-      }
+  for (const auto& timestamp_in_seconds : history) {
+    if (now_in_seconds - timestamp_in_seconds < time_constraint_in_seconds) {
+      count++;
+    }
+  }
 
-      if (recent_count <= allowable_ad_count) {
-        return true;
-      }
+  if (count <= cap) {
+    return true;
+  }
 
-      return false;
+  return false;
+}
+
+std::deque<uint64_t> FrequencyCapping::GetCreativeSetHistoryForUuid(
+    const std::string& uuid) const {
+  std::deque<uint64_t> history;
+
+  auto creative_set_history = client_state_->GetCreativeSetHistory();
+  if (creative_set_history.find(uuid) != creative_set_history.end()) {
+     history = creative_set_history.at(uuid);
+  }
+
+  return history;
+}
+
+std::deque<uint64_t> FrequencyCapping::GetAdsHistoryForUuid(
+    const std::string& uuid) const {
+  std::deque<uint64_t> history;
+
+  auto ads_history = client_state_->GetAdsShownHistory();
+  for (const auto& ad : ads_history) {
+    if (ad.ad_content.uuid != uuid) {
+      continue;
     }
 
-    std::deque<uint64_t> FrequencyCapping::GetCreativeSetForId(
-        const std::string& id) const {
-      std::deque<uint64_t> creative_set = {};
+    history.push_back(ad.timestamp_in_seconds);
+  }
 
-      auto creative_set_history = client_state_->GetCreativeSetHistory();
-      if (creative_set_history.find(id) != creative_set_history.end()) {
-        creative_set = creative_set_history.at(id);
-      }
+  return history;
+}
 
-      return creative_set;
-    }
+std::deque<uint64_t> FrequencyCapping::GetCampaignForUuid(
+    const std::string& uuid) const {
+  std::deque<uint64_t> history;
 
-    std::deque<uint64_t> FrequencyCapping::GetAdsShownForId(
-        const std::string& id) const {
-      std::deque<uint64_t> ads_shown = {};
+  auto campaign_history = client_state_->GetCampaignHistory();
+  if (campaign_history.find(uuid) != campaign_history.end()) {
+    history = campaign_history.at(uuid);
+  }
 
-      auto ads_shown_history = client_state_->GetAdsShownHistory();
-      for (const auto& ad_shown : ads_shown_history) {
-        if (ad_shown.ad_content.uuid == id) {
-          ads_shown.push_back(ad_shown.timestamp_in_seconds);
-        }
-      }
+  return history;
+}
 
-      return ads_shown;
-    }
-
-    std::deque<uint64_t> FrequencyCapping::GetCampaignForId(
-        const std::string& id) const {
-      std::deque<uint64_t> campaign = {};
-
-      auto campaign_history = client_state_->GetCampaignHistory();
-      if (campaign_history.find(id) != campaign_history.end()) {
-        campaign = campaign_history.at(id);
-      }
-
-      return campaign;
-    }
 }  // namespace ads

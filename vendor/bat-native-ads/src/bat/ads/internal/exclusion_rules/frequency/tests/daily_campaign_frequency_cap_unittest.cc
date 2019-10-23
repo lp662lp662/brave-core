@@ -86,7 +86,7 @@ TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdAllowedWhenNoAds) {
   ad_info_->daily_cap = 2;
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -100,7 +100,7 @@ TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdAllowedWithAds) {
   client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 1);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -115,7 +115,7 @@ TEST_F(AdsDailyCampaignFrequencyCapTest,
   ad_info_->daily_cap = 1;
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
   // Assert
   EXPECT_TRUE(is_ad_excluded);
 }
@@ -129,7 +129,7 @@ TEST_F(AdsDailyCampaignFrequencyCapTest,
   ad_info_->daily_cap = 1;
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
   // Assert
   EXPECT_FALSE(is_ad_excluded);
 }

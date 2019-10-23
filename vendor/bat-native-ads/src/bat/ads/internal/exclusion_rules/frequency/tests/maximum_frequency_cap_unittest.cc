@@ -85,7 +85,7 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdAllowedWhenNoAds) {
   ad_info_->total_max = 2;
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -100,7 +100,7 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdAllowedWithMatchingAds) {
     test_creative_set_id, 1);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -115,7 +115,7 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdAllowedWithNonMatchingAds) {
     test_creative_set_id_2, 5);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -130,7 +130,7 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
     test_creative_set_id, 5);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_TRUE(is_ad_excluded);
@@ -144,7 +144,7 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdExcludedWhenMaximumReached) {
     test_creative_set_id, 5);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_TRUE(is_ad_excluded);

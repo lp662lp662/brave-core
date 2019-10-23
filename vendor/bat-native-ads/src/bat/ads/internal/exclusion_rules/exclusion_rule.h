@@ -7,14 +7,15 @@
 #define BAT_ADS_INTERNAL_EXCLUSION_RULE_H_
 
 namespace ads {
-    struct AdInfo;
 
-    class ExclusionRule {
-      public:
-        virtual bool IsExcluded(
-            const AdInfo& ad) const = 0;
+struct AdInfo;
 
-    };
+class ExclusionRule {
+ public:
+  virtual bool ShouldExclude(
+      const AdInfo& ad) const = 0;
+};
+
 }  // namespace ads
 
-#endif // BAT_ADS_INTERNAL_EXCLUSION_RULE_H_
+#endif  // BAT_ADS_INTERNAL_EXCLUSION_RULE_H_

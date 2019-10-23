@@ -80,7 +80,7 @@ TEST_F(AdsHourlyFrequencyCapTest, TestAdAllowed) {
   ad_info_->uuid = test_ad_uuid;
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -93,7 +93,7 @@ TEST_F(AdsHourlyFrequencyCapTest, TestAdAllowedOverTheHour) {
   client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, -((60*60) + 1), 1);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_FALSE(is_ad_excluded);
@@ -107,7 +107,7 @@ TEST_F(AdsHourlyFrequencyCapTest, TestAdExcludedWithinTheHour1) {
     1);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_TRUE(is_ad_excluded);
@@ -120,7 +120,7 @@ TEST_F(AdsHourlyFrequencyCapTest, TestAdExcludedWithinTheHour2) {
     1);
 
   // Act
-  bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
   EXPECT_TRUE(is_ad_excluded);

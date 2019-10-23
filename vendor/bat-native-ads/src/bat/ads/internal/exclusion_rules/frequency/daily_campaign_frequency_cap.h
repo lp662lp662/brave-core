@@ -14,19 +14,21 @@ class FrequencyCapping;
 
 class DailyCampaignFrequencyCap final : public ExclusionRule {
  public:
-    explicit DailyCampaignFrequencyCap(const FrequencyCapping&
-        frequency_capping)
-    : frequency_capping_(frequency_capping) {
+  explicit DailyCampaignFrequencyCap(
+      const FrequencyCapping& frequency_capping):
+      frequency_capping_(frequency_capping) {
     }
-    bool IsExcluded(
-        const AdInfo& ad) const override;
+
+  bool ShouldExclude(
+      const AdInfo& ad) const override;
 
  private:
-    const FrequencyCapping& frequency_capping_;
+  const FrequencyCapping& frequency_capping_;
 
-    bool DoesAdRespectDailyCampaignCap(
-        const AdInfo& ad) const;
+  bool DoesAdRespectDailyCampaignCap(
+      const AdInfo& ad) const;
 };
+
 }  // namespace ads
 
 #endif  // BAT_ADS_INTERNAL_DAILY_CAMPAIGN_FREQUENCY_CAP_H_

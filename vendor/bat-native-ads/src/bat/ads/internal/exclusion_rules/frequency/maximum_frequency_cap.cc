@@ -12,28 +12,30 @@
 #include "bat/ads/ad_info.h"
 
 namespace ads {
-    bool MaximumFrequencyCap::IsExcluded(
-        const AdInfo& ad) const {
-      if (!DoesAdRespectMaximumCap(ad)) {
-        frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
+
+bool MaximumFrequencyCap::ShouldExclude(
+    const AdInfo& ad) const {
+  if (!DoesAdRespectMaximumCap(ad)) {
+    frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
         ::ads::LogLevel::LOG_WARNING)->stream() << "creativeSetId " <<
         ad.creative_set_id
-                      << " has exceeded the frequency capping for totalMax";
+        << " has exceeded the frequency capping for totalMax";
 
-        return true;
-      }
-      return false;
-    }
+    return true;
+  }
+  return false;
+}
 
-    bool MaximumFrequencyCap::DoesAdRespectMaximumCap(
-        const AdInfo& ad) const {
-      auto creative_set = frequency_capping_.GetCreativeSetForId(
-        ad.creative_set_id);
+bool MaximumFrequencyCap::DoesAdRespectMaximumCap(
+    const AdInfo& ad) const {
+  auto creative_set = frequency_capping_.GetCreativeSetHistoryForUuid(
+    ad.creative_set_id);
 
-      if (creative_set.size() >= ad.total_max) {
-        return false;
-      }
+  if (creative_set.size() >= ad.total_max) {
+    return false;
+  }
 
-      return true;
-    }
+  return true;
+}
+
 }  // namespace ads

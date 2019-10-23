@@ -12,25 +12,26 @@
 #include "bat/ads/ad_info.h"
 
 namespace ads {
-    bool DailyCampaignFrequencyCap::IsExcluded(
-        const AdInfo& ad) const {
-      if (!DoesAdRespectDailyCampaignCap(ad)) {
-        frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
+
+bool DailyCampaignFrequencyCap::ShouldExclude(
+    const AdInfo& ad) const {
+  if (!DoesAdRespectDailyCampaignCap(ad)) {
+    frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
         ::ads::LogLevel::LOG_WARNING)->stream() << "campaignId " <<
-        ad.campaign_id
-                      << " has exceeded the frequency capping for dailyCap";
+        ad.campaign_id << " has exceeded the frequency capping for dailyCap";
 
-        return true;
-      }
-      return false;
-    }
+    return true;
+  }
+  return false;
+}
 
-    bool DailyCampaignFrequencyCap::DoesAdRespectDailyCampaignCap(
-        const AdInfo& ad) const {
-      auto campaign = frequency_capping_.GetCampaignForId(ad.campaign_id);
-      auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
+bool DailyCampaignFrequencyCap::DoesAdRespectDailyCampaignCap(
+    const AdInfo& ad) const {
+  auto campaign = frequency_capping_.GetCampaignForUuid(ad.campaign_id);
+  auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
 
-      return frequency_capping_.HistoryRespectsRollingTimeConstraint(
-          campaign, day_window, ad.daily_cap);
-    }
+  return frequency_capping_.DoesHistoryRespectCapForRollingTimeConstraint(
+      campaign, day_window, ad.daily_cap);
+}
+
 }  // namespace ads
