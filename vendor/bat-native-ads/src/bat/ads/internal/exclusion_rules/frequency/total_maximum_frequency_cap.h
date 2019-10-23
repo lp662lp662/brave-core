@@ -13,9 +13,9 @@ namespace ads {
 struct AdInfo;
 class FrequencyCapping;
 
-class MaximumFrequencyCap final : public ExclusionRule {
+class TotalMaximumFrequencyCap final : public ExclusionRule {
  public:
-  explicit MaximumFrequencyCap(const FrequencyCapping& frequency_capping):
+  explicit TotalMaximumFrequencyCap(const FrequencyCapping& frequency_capping):
       frequency_capping_(frequency_capping) {
   }
   bool ShouldExclude(

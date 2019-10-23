@@ -11,7 +11,7 @@
 
 namespace ads {
 
-  void ClientMock::ConfigureWithDataForMaximumFrequencyCappingTest(const std::string& creative_set_id, const uint8_t ad_instances) {
+  void ClientMock::ConfigureWithDataForTotalMaximumFrequencyCappingTest(const std::string& creative_set_id, const uint8_t ad_instances) {
 
     for(uint8_t i = 0; i < ad_instances; i++) {
       AppendCurrentTimeToCreativeSetHistory(creative_set_id);
@@ -31,7 +31,7 @@ namespace ads {
     }
   }
 
-  void ClientMock::ConfigureWithDataForHourlyFrequencyCappingTest(const std::string& creative_set_id, const int64_t time_offset_per_ad_in_seconds, const uint8_t ad_instances) {
+  void ClientMock::ConfigureWithDataForPerHourFrequencyCappingTest(const std::string& creative_set_id, const int64_t time_offset_per_ad_in_seconds, const uint8_t ad_instances) {
     // TODO:(masparrow) Figure out how to apply time offsets...
     for(uint8_t i = 0; i < ad_instances; i++) {
       AppendCurrentTimeToCreativeSetHistory(creative_set_id);

@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "bat/ads/internal/exclusion_rules/frequency/daily_campaign_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/per_hour_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
 #include "bat/ads/internal/time.h"
 #include "bat/ads/internal/logging.h"
@@ -13,25 +13,28 @@
 
 namespace ads {
 
-bool DailyCampaignFrequencyCap::ShouldExclude(
-    const AdInfo& ad) const {
-  if (!DoesAdRespectDailyCampaignCap(ad)) {
+bool PerHourFrequencyCap::ShouldExclude(
+  const AdInfo& ad) const {
+  if (!DoesAdRespectPerHourCap(ad)) {
     frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
-        ::ads::LogLevel::LOG_WARNING)->stream() << "campaignId " <<
-        ad.campaign_id << " has exceeded the frequency capping for dailyCap";
+    ::ads::LogLevel::LOG_WARNING)->stream() << "adUUID " << ad.uuid
+    << " has exceeded the frequency capping for perHour";
 
     return true;
   }
   return false;
 }
 
-bool DailyCampaignFrequencyCap::DoesAdRespectDailyCampaignCap(
+bool PerHourFrequencyCap::DoesAdRespectPerHourCap(
     const AdInfo& ad) const {
-  auto campaign = frequency_capping_.GetCampaignForUuid(ad.campaign_id);
-  auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
+  auto ads_shown = frequency_capping_.GetAdsHistoryForUuid(ad.uuid);
+  auto hour_window = base::Time::kSecondsPerHour;
+
+  LOG(INFO) << "\033[1;32m[MAS] ads_shown.size = " << ads_shown.size() <<
+  " hour_window = " << hour_window << "\033[0m";
 
   return frequency_capping_.DoesHistoryRespectCapForRollingTimeConstraint(
-      campaign, day_window, ad.daily_cap);
+      ads_shown, hour_window, 1);
 }
 
 }  // namespace ads

@@ -24,10 +24,10 @@
 #include "bat/ads/internal/uri_helper.h"
 #include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
-#include "bat/ads/internal/exclusion_rules/frequency/hourly_frequency_cap.h"
-#include "bat/ads/internal/exclusion_rules/frequency/daily_frequency_cap.h"
-#include "bat/ads/internal/exclusion_rules/frequency/daily_campaign_frequency_cap.h"
-#include "bat/ads/internal/exclusion_rules/frequency/maximum_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/per_hour_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/per_day_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/daily_cap_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/total_maximum_frequency_cap.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/error/en.h"
@@ -1057,16 +1057,16 @@ exclusion_rules) {
 
   ExclusionRule* exclusionRule = 0x0;
 
-  exclusionRule = new DailyCampaignFrequencyCap(frequency_capping);
+  exclusionRule = new DailyCapFrequencyCap(frequency_capping);
   exclusion_rules.push_back(exclusionRule);
 
-  exclusionRule = new DailyFrequencyCap(frequency_capping);
+  exclusionRule = new PerDayFrequencyCap(frequency_capping);
   exclusion_rules.push_back(exclusionRule);
 
-  exclusionRule = new HourlyFrequencyCap(frequency_capping);
+  exclusionRule = new PerHourFrequencyCap(frequency_capping);
   exclusion_rules.push_back(exclusionRule);
 
-  exclusionRule = new MaximumFrequencyCap(frequency_capping);
+  exclusionRule = new TotalMaximumFrequencyCap(frequency_capping);
   exclusion_rules.push_back(exclusionRule);
 }
 std::vector<AdInfo> AdsImpl::GetEligibleAds(

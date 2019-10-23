@@ -3,31 +3,31 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef BAT_ADS_INTERNAL_DAILY_FREQUENCY_CAP_H_
-#define BAT_ADS_INTERNAL_DAILY_FREQUENCY_CAP_H_
+#ifndef BAT_ADS_INTERNAL_HOURLY_FREQUENCY_CAP_H_
+#define BAT_ADS_INTERNAL_HOURLY_FREQUENCY_CAP_H_
 
 #include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
 
 namespace ads {
-
 struct AdInfo;
 class FrequencyCapping;
 
-class DailyFrequencyCap final : public ExclusionRule {
+class PerHourFrequencyCap final : public ExclusionRule {
  public:
-  explicit DailyFrequencyCap(const FrequencyCapping& frequency_capping)
-      : frequency_capping_(frequency_capping) {
+  explicit PerHourFrequencyCap(
+      const FrequencyCapping& frequency_capping) :
+      frequency_capping_(frequency_capping) {
     }
+
   bool ShouldExclude(
-      const AdInfo& ad) const override;
+    const AdInfo& ad) const override;
 
  private:
-  const FrequencyCapping& frequency_capping_;
+    const FrequencyCapping& frequency_capping_;  // NOT OWNED
 
-  bool DoesAdRespectPerDayCap(
+  bool DoesAdRespectPerHourCap(
       const AdInfo& ad) const;
 };
-
 }  // namespace ads
 
-#endif  // BAT_ADS_INTERNAL_DAILY_FREQUENCY_CAP_H_
+#endif  // BAT_ADS_INTERNAL_HOURLY_FREQUENCY_CAP_H_
