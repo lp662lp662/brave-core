@@ -6,6 +6,8 @@
 #ifndef BAT_ADS_INTERNAL_CLIENT_MOCK_H_
 #define BAT_ADS_INTERNAL_CLIENT_MOCK_H_
 
+#include <string>
+
 #include "bat/ads/internal/client.h"
 
 namespace ads {
@@ -14,14 +16,23 @@ class ClientMock : public Client {
  public:
   ClientMock(AdsImpl* ads, AdsClient* ads_client): Client(ads, ads_client) { }
 
-  void ConfigureWithDataForTotalMaximumFrequencyCappingTest(const std::string& creative_set_id, const uint8_t ad_instances);
+  void ConfigureWithDataForTotalMaximumFrequencyCappingTest(
+      const std::string& creative_set_id, const uint8_t ad_instances);
 
-  void ConfigureWithDataForAddHistory(const std::string uuid, const int64_t time_offset_per_ad_in_seconds, const uint8_t ad_instances);
+  void ConfigureWithDataForAddHistory(
+      const std::string uuid,
+      const int64_t time_offset_per_ad_in_seconds,
+      const uint8_t ad_instances);
 
-  void ConfigureWithDataForPerHourFrequencyCappingTest(const std::string& creative_set_id, const int64_t time_offset_per_ad_in_seconds, const uint8_t ad_instances);
+  void ConfigureWithDataForPerHourFrequencyCappingTest(
+      const std::string& creative_set_id,
+      const int64_t time_offset_per_ad_in_seconds,
+      const uint8_t ad_instances);
 
-    void ConfigureWithDataForDailyCampaignHistory(const std::string campaign_id, const uint8_t ad_instances);
-
+    void ConfigureWithDataForDailyCampaignHistory(
+      const std::string campaign_id,
+      const int64_t time_offset_per_ad_in_seconds,
+      const uint8_t ad_instances);
 };
 
 }  // namespace ads

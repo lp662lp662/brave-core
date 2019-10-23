@@ -27,13 +27,16 @@ void ClientMock::ConfigureWithDataForAddHistory(
     const std::string uuid,
     const int64_t time_offset_per_ad_in_seconds,
     const uint8_t ad_instances) {
+  auto now_in_seconds = Time::NowInSeconds();
+
   auto ad_history_detail = std::make_unique<AdHistoryDetail>();
-  ad_history_detail->timestamp_in_seconds = Time::NowInSeconds();
   ad_history_detail->uuid = base::GenerateGUID();
   ad_history_detail->ad_content.uuid = uuid;
 
   for (uint8_t i = 0; i < ad_instances; i++) {
-    ad_history_detail->timestamp_in_seconds += time_offset_per_ad_in_seconds;
+    now_in_seconds += time_offset_per_ad_in_seconds;
+
+    ad_history_detail->timestamp_in_seconds = now_in_seconds;
     AppendAdToAdsShownHistory(*ad_history_detail);
   }
 }
@@ -45,16 +48,19 @@ void ClientMock::ConfigureWithDataForPerHourFrequencyCappingTest(
   auto now_in_seconds = Time::NowInSeconds();
 
   for (uint8_t i = 0; i < ad_instances; i++) {
+    now_in_seconds += time_offset_per_ad_in_seconds;
     AppendTimestampToCreativeSetHistoryForUuid(creative_set_id, now_in_seconds);
   }
 }
 
 void ClientMock::ConfigureWithDataForDailyCampaignHistory(
     const std::string campaign_id,
+    const int64_t time_offset_per_ad_in_seconds,
     const uint8_t ad_instances) {
   auto now_in_seconds = Time::NowInSeconds();
 
   for (uint8_t i = 0; i < ad_instances; i++) {
+    now_in_seconds += time_offset_per_ad_in_seconds;
     AppendTimestampToCampaignHistoryForUuid(campaign_id, now_in_seconds);
   }
 }

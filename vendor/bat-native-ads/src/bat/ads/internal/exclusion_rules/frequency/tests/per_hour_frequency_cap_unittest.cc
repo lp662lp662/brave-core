@@ -61,7 +61,8 @@ class AdsPerHourFrequencyCapTest : public ::testing::Test {
       mock_ads_client_.get());
     frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(),
       mock_ads_client_.get());
-    exclusion_rule_ = std::make_unique<PerHourFrequencyCap>(*frequency_capping_);
+    exclusion_rule_ = std::make_unique<PerHourFrequencyCap>(
+        *frequency_capping_);
     ad_info_ = std::make_unique<AdInfo>();
 }
 
@@ -75,7 +76,7 @@ class AdsPerHourFrequencyCapTest : public ::testing::Test {
   }
 };
 
-TEST_F(AdsPerHourFrequencyCapTest, TestAdAllowed) {
+TEST_F(AdsPerHourFrequencyCapTest, TestAdAllowedWhenNoAds) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
 
@@ -103,7 +104,7 @@ TEST_F(AdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour1) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   // 59m 59s
-  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, (-59*60),
+  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, -(60*60),
     1);
 
   // Act
@@ -125,12 +126,5 @@ TEST_F(AdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour2) {
   // Assert
   EXPECT_TRUE(is_ad_excluded);
 }
-
-  // Tests
-  // None = allowed
-  // 1 in last hour (0s ago) = excluded
-  // 2 in last hour (>= 0s ago) = excluded
-  // 1 in last hour (3599s ago) = excluded
-  // 1 3601s ago = allowed
 
 }  // namespace ads

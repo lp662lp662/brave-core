@@ -25,7 +25,8 @@ using ::testing::Invoke;
 
 namespace ads {
 
-static const char* test_creative_set_id = "654f10df-fbc4-4a92-8d43-2edf73734a60";
+static const char* test_creative_set_id =
+    "654f10df-fbc4-4a92-8d43-2edf73734a60";
 
 static auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
 
@@ -60,8 +61,10 @@ class AdsPerDayFrequencyCapTest : public ::testing::Test {
         this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
-    client_mock_ = std::make_unique<ClientMock>(ads_.get(), mock_ads_client_.get());
-    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(), mock_ads_client_.get());
+    client_mock_ = std::make_unique<ClientMock>(ads_.get(),
+        mock_ads_client_.get());
+    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(),
+        mock_ads_client_.get());
     exclusion_rule_ = std::make_unique<PerDayFrequencyCap>(*frequency_capping_);
     ad_info_ = std::make_unique<AdInfo>();
   }
@@ -79,7 +82,7 @@ class AdsPerDayFrequencyCapTest : public ::testing::Test {
 TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWhenNoAds) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->per_day= 2;
+  ad_info_->per_day = 2;
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -88,11 +91,12 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWhenNoAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWithAds) {
+TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedBelowDailyCap) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->per_day= 2;
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(test_creative_set_id, 0, 1);
+  ad_info_->per_day = 2;
+  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+      test_creative_set_id, 0, 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -104,9 +108,13 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWithAds) {
 TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->per_day= 2;
+  ad_info_->per_day = 2;
+  // Now
+  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+      test_creative_set_id, 0, 1);
   // 24hrs + 1s ago
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(test_creative_set_id, -(day_window + 1), 1);
+  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+      test_creative_set_id, -(day_window + 1), 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -115,12 +123,13 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsPerDayFrequencyCapTest, TestAdExcluded) {
+TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->per_day= 2;
+  ad_info_->per_day = 2;
 
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(test_creative_set_id, 0, 3);
+  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+      test_creative_set_id, 0, 2);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -129,11 +138,4 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdExcluded) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-  // Tests
-  // None = allowed
-  // 1 in last day (0+s ago) with cap of 2 = allowed
-  // 1 in last day (day-1s ago) with cap of 2 = allowed
-  // 2 in last day (0+s ago) with cap of 2 = excluded
-  // 1 over a day (day+1s ago) with cap of 2 = allowed
-
-} // namespace ads
+}  // namespace ads
