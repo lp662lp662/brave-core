@@ -17,6 +17,7 @@ const char kFingerprinting[] = "fingerprinting";
 const char kBraveShields[] = "braveShields";
 const char kReferrers[] = "referrers";
 const char kCookies[] = "cookies";
+const char kGoogleLogin[] = "google-login";
 const char kFacebookEmbeds[] = "fb-embeds";
 const char kTwitterEmbeds[] = "twitter-embeds";
 const char kLinkedInEmbeds[] = "linked-in-embeds";

@@ -8,6 +8,7 @@
 #include <string>
 
 #include "base/bind.h"
+#include "brave/common/pref_names.h"
 #include "brave/components/brave_shields/browser/brave_shields_util.h"
 #include "brave/components/brave_shields/common/brave_shield_constants.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
@@ -20,6 +21,15 @@
 namespace brave_shields {
 
 namespace {
+
+void SetCookieWhitelistForSocialMedia(HostContentSettingsMap* map,
+                                      PrefService* prefs) {
+  if (prefs->GetBoolean(kGoogleLoginControlType)) {
+    SetCookieControlType(map, ControlType::ALLOW, GURL("accounts.google.com"));
+  } else {
+    SetCookieControlType(map, ControlType::BLOCK_THIRD_PARTY, GURL("accounts.google.com"));
+  }
+}
 
 void SetCookieControlTypeFromPrefs(HostContentSettingsMap* map,
                                    PrefService* prefs) {
@@ -35,6 +45,7 @@ void SetCookieControlTypeFromPrefs(HostContentSettingsMap* map,
   }
 
   SetCookieControlType(map, control_type, GURL());
+  SetCookieWhitelistForSocialMedia(map, prefs);
 }
 
 void SetCookiePrefDefaults(HostContentSettingsMap* map, PrefService* prefs) {
@@ -49,6 +60,7 @@ void SetCookiePrefDefaults(HostContentSettingsMap* map, PrefService* prefs) {
     prefs->SetInteger("profile.default_content_setting_values.cookies",
                       CONTENT_SETTING_ALLOW);
   }
+  SetCookieWhitelistForSocialMedia(map, prefs);
 }
 
 }  // namespace
