@@ -1163,6 +1163,15 @@ bool AdsImpl::ShowAd(
     return false;
   }
 
+  auto now_in_seconds = Time::NowInSeconds();
+
+  client_->AppendTimestampToCreativeSetHistoryForUuid(ad.creative_set_id,
+      now_in_seconds);
+  client_->AppendTimestampToCampaignHistoryForUuid(ad.campaign_id,
+      now_in_seconds);
+
+  client_->UpdateAdsUUIDSeen(ad.uuid, 1);
+
   auto notification_info = std::make_unique<NotificationInfo>();
   notification_info->id = base::GenerateGUID();
   notification_info->advertiser = ad.advertiser;
@@ -1193,12 +1202,6 @@ bool AdsImpl::ShowAd(
     notifications_->PopFront(true);
   }
 #endif
-
-
-  client_->AppendCurrentTimeToCreativeSetHistory(ad.creative_set_id);
-  client_->AppendCurrentTimeToCampaignHistory(ad.campaign_id);
-
-  client_->UpdateAdsUUIDSeen(ad.uuid, 1);
 
   return true;
 }

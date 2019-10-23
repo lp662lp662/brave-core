@@ -78,12 +78,14 @@ class Client {
   void AppendPageScoreToPageScoreHistory(
       const std::vector<double>& page_score);
   const std::deque<std::vector<double>> GetPageScoreHistory();
-  void AppendCurrentTimeToCreativeSetHistory(
-      const std::string& creative_set_id);
+  void AppendTimestampToCreativeSetHistoryForUuid(
+      const std::string& uuid,
+      const uint64_t timestamp_in_seconds);
   const std::map<std::string, std::deque<uint64_t>>
       GetCreativeSetHistory() const;
-  void AppendCurrentTimeToCampaignHistory(
-      const std::string& campaign_id);
+  void AppendTimestampToCampaignHistoryForUuid(
+      const std::string& uuid,
+      const uint64_t timestamp_in_seconds);
   const std::map<std::string, std::deque<uint64_t>>
       GetCampaignHistory() const;
   std::string GetVersionCode() const;
