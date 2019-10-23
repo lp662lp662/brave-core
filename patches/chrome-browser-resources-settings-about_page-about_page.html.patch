@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resources/settings/about_page/about_page.html b/chrome/browser/resources/settings/about_page/about_page.html
-index 99c0a1c19a17bcb93b4e180e629f0f786477a4f2..3a043b55610c14cb4eddd6282b3e83085b243814 100644
+index 99c0a1c19a17bcb93b4e180e629f0f786477a4f2..b8363fb58f9df59ea3cce2dff06a368d239cf1cb 100644
 --- a/chrome/browser/resources/settings/about_page/about_page.html
 +++ b/chrome/browser/resources/settings/about_page/about_page.html
 @@ -137,7 +137,7 @@
@@ -11,3 +11,12 @@ index 99c0a1c19a17bcb93b4e180e629f0f786477a4f2..3a043b55610c14cb4eddd6282b3e8308
                    $i18n{learnMore}
                  </a>
                </div>
+@@ -158,7 +158,7 @@
+                 </a>
+               </div>
+ </if>
+-              <div class="secondary">$i18n{aboutBrowserVersion}</div>
++              <div class="secondary">$i18nRaw{aboutBrowserVersion}</div>
+ <if expr="chromeos">
+               <div class="secondary"
+                   inner-h-t-m-l="[[getUpdateOsSettingsLink_()]]">

@@ -1,8 +1,16 @@
 diff --git a/chrome/browser/ui/webui/settings/about_handler.cc b/chrome/browser/ui/webui/settings/about_handler.cc
-index 7245f9a91e3376d3032930529b84cb2f5f4b03f8..097e58c0a3c672a34f5fd42fcb49f01abc5fe97f 100644
+index 7245f9a91e3376d3032930529b84cb2f5f4b03f8..4da9eded591b12f71ed4919d9a75360bde2bef09 100644
 --- a/chrome/browser/ui/webui/settings/about_handler.cc
 +++ b/chrome/browser/ui/webui/settings/about_handler.cc
-@@ -311,8 +311,11 @@ AboutHandler* AboutHandler::Create(content::WebUIDataSource* html_source,
+@@ -296,6 +296,7 @@ AboutHandler* AboutHandler::Create(content::WebUIDataSource* html_source,
+       "aboutBrowserVersion",
+       l10n_util::GetStringFUTF16(
+           IDS_SETTINGS_ABOUT_PAGE_BROWSER_VERSION,
++          BRAVE_RELEASE_NOTES_URL
+           base::UTF8ToUTF16(version_info::GetVersionNumber()),
+           l10n_util::GetStringUTF16(version_info::IsOfficialBuild()
+                                         ? IDS_VERSION_UI_OFFICIAL
+@@ -311,8 +312,11 @@ AboutHandler* AboutHandler::Create(content::WebUIDataSource* html_source,
            l10n_util::GetStringUTF16(IDS_ABOUT_VERSION_COPYRIGHT),
            base::Time::Now()));
  

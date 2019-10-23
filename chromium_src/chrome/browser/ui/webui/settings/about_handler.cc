@@ -8,9 +8,12 @@ namespace {
 
 const char kBraveBuildInstructionsUrl[] = "https://github.com/brave/brave-browser/wiki";
 const char kBraveLicenseUrl[] = "https://mozilla.org/MPL/2.0/";
+const char kBraveReleaseNotesUrl[] = "https://brave.com/latest";
 const char kBraveReleaseTagPrefix[] = "https://github.com/brave/brave-browser/releases/tag/v";
 
 }
+
+#define BRAVE_RELEASE_NOTES_URL base::ASCIIToUTF16(kBraveReleaseNotesUrl),
 
 #define BRAVE_LICENSING_INFO base::ASCIIToUTF16(kBraveLicenseUrl), \
     base::ASCIIToUTF16(kBraveBuildInstructionsUrl), \
