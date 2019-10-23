@@ -9,23 +9,24 @@
 #include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
 
 namespace ads {
-    struct AdInfo;
-    class FrequencyCapping;
+struct AdInfo;
+class FrequencyCapping;
 
-    class MaximumFrequencyCap final : public ExclusionRule {
-    public:
-        MaximumFrequencyCap(const FrequencyCapping& frequency_capping) 
-        : frequency_capping_(frequency_capping) { 
-        }
-        bool IsExcluded(
-            const AdInfo& ad) const override;
+class MaximumFrequencyCap final : public ExclusionRule {
+ public:
+    explicit MaximumFrequencyCap(const FrequencyCapping& frequency_capping)
+    : frequency_capping_(frequency_capping) {
+    }
+    bool IsExcluded(
+        const AdInfo& ad) const override;
 
-    private:
-        const FrequencyCapping& frequency_capping_;
+ private:
+    const FrequencyCapping& frequency_capping_;
 
-        bool DoesAdRespectMaximumCap(
-            const AdInfo& ad) const;
-    };
+    bool DoesAdRespectMaximumCap(
+        const AdInfo& ad) const;
+};
+
 }  // namespace ads
 
-#endif // BAT_ADS_INTERNAL_MAXIMUM_FREQUENCY_CAP_H_
+#endif  // BAT_ADS_INTERNAL_MAXIMUM_FREQUENCY_CAP_H_

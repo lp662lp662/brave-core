@@ -15,8 +15,9 @@ namespace ads {
     bool HourlyFrequencyCap::IsExcluded(
         const AdInfo& ad) const {
       if (!DoesAdRespectPerHourCap(ad)) {
-        frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__, ::ads::LogLevel::LOG_WARNING)->stream() << "adUUID " << ad.uuid
-                      << " has exceeded the frequency capping for perHour";
+        frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
+        ::ads::LogLevel::LOG_WARNING)->stream() << "adUUID " << ad.uuid
+        << " has exceeded the frequency capping for perHour";
 
         return true;
       }
@@ -28,7 +29,8 @@ namespace ads {
       auto ads_shown = frequency_capping_.GetAdsShownForId(ad.uuid);
       auto hour_window = base::Time::kSecondsPerHour;
 
-    	LOG(INFO) << "\033[1;32m[MAS] ads_shown.size = " << ads_shown.size() << " hour_window = " << hour_window << "\033[0m";
+      LOG(INFO) << "\033[1;32m[MAS] ads_shown.size = " << ads_shown.size() <<
+      " hour_window = " << hour_window << "\033[0m";
 
       return frequency_capping_.HistoryRespectsRollingTimeConstraint(
           ads_shown, hour_window, 1);

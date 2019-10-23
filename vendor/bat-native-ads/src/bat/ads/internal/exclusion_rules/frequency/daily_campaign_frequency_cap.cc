@@ -15,7 +15,9 @@ namespace ads {
     bool DailyCampaignFrequencyCap::IsExcluded(
         const AdInfo& ad) const {
       if (!DoesAdRespectDailyCampaignCap(ad)) {
-        frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__, ::ads::LogLevel::LOG_WARNING)->stream() << "campaignId " << ad.campaign_id
+        frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
+        ::ads::LogLevel::LOG_WARNING)->stream() << "campaignId " <<
+        ad.campaign_id
                       << " has exceeded the frequency capping for dailyCap";
 
         return true;

@@ -11,38 +11,37 @@
 #include <string>
 
 namespace ads {
-  class Client;
-  class AdsClient;
+class Client;
+class AdsClient;
 
-  class FrequencyCapping {
-    public:
-      FrequencyCapping(Client* client_state, AdsClient* ads_client)
-          : client_state_(client_state) 
-          , ads_client_(ads_client) {
-      }
-      ~FrequencyCapping() { }
+class FrequencyCapping {
+ public:
+    FrequencyCapping(Client* client_state, AdsClient* ads_client)
+    : client_state_(client_state)
+    , ads_client_(ads_client) {
+    }
+    ~FrequencyCapping() { }
 
-      bool HistoryRespectsRollingTimeConstraint(
-          const std::deque<uint64_t> history,
-          const uint64_t seconds_window,
-          const uint64_t allowable_ad_count) const;
+    bool HistoryRespectsRollingTimeConstraint(
+        const std::deque<uint64_t> history,
+        const uint64_t seconds_window,
+        const uint64_t allowable_ad_count) const;
 
-      std::deque<uint64_t> GetCreativeSetForId(
-          const std::string& id) const;
+    std::deque<uint64_t> GetCreativeSetForId(
+        const std::string& id) const;
 
-      std::deque<uint64_t> GetAdsShownForId(
-          const std::string& id) const;
+    std::deque<uint64_t> GetAdsShownForId(
+        const std::string& id) const;
 
-      std::deque<uint64_t> GetCampaignForId(
-          const std::string& id) const;
+    std::deque<uint64_t> GetCampaignForId(
+        const std::string& id) const;
 
     AdsClient* GetAdsClient() const { return(ads_client_); }
 
-  private:
-      Client* client_state_;
-      AdsClient* ads_client_;
-
-  };
+ private:
+    Client* client_state_;
+    AdsClient* ads_client_;
+};
 }  // namespace ads
 
-#endif // BAT_ADS_INTERNAL_FREQUENCY_CAPPING_H_
+#endif  // BAT_ADS_INTERNAL_FREQUENCY_CAPPING_H_

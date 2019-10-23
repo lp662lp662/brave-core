@@ -15,8 +15,9 @@ namespace ads {
     bool DailyFrequencyCap::IsExcluded(
         const AdInfo& ad) const {
       if (!DoesAdRespectPerDayCap(ad)) {
-        frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__, ::ads::LogLevel::LOG_WARNING)->stream() << "creativeSetId " << ad.creative_set_id
-                      << " has exceeded the frequency capping for perDay";
+        frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
+        ::ads::LogLevel::LOG_WARNING)->stream() << "creativeSetId " <<
+        ad.creative_set_id << " has exceeded the frequency capping for perDay";
 
         return true;
       }
@@ -25,11 +26,11 @@ namespace ads {
 
     bool DailyFrequencyCap::DoesAdRespectPerDayCap(
         const AdInfo& ad) const {
-      auto creative_set = frequency_capping_.GetCreativeSetForId(ad.creative_set_id);
+      auto creative_set = frequency_capping_.GetCreativeSetForId(
+        ad.creative_set_id);
       auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
 
       return frequency_capping_.HistoryRespectsRollingTimeConstraint(
           creative_set, day_window, ad.per_day);
-
     }
 }  // namespace ads

@@ -57,11 +57,13 @@ class AdsHourlyFrequencyCapTest : public ::testing::Test {
         this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
-    client_mock_ = std::make_unique<ClientMock>(ads_.get(), mock_ads_client_.get());
-    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(), mock_ads_client_.get());
+    client_mock_ = std::make_unique<ClientMock>(ads_.get(),
+      mock_ads_client_.get());
+    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(),
+      mock_ads_client_.get());
     exclusion_rule_ = std::make_unique<HourlyFrequencyCap>(*frequency_capping_);
     ad_info_ = std::make_unique<AdInfo>();
- }
+}
 
   void OnAdsImpleInitialize(const Result result) {
     EXPECT_EQ(Result::SUCCESS, result);
@@ -89,7 +91,7 @@ TEST_F(AdsHourlyFrequencyCapTest, TestAdAllowedOverTheHour) {
   ad_info_->uuid = test_ad_uuid;
   // 1hr 1s in the past
   client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, -((60*60) + 1), 1);
-  
+
   // Act
   bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
 
@@ -101,7 +103,8 @@ TEST_F(AdsHourlyFrequencyCapTest, TestAdExcludedWithinTheHour1) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   // 59m 59s
-  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, (-59*60), 1); 
+  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, (-59*60),
+    1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
@@ -113,7 +116,8 @@ TEST_F(AdsHourlyFrequencyCapTest, TestAdExcludedWithinTheHour1) {
 TEST_F(AdsHourlyFrequencyCapTest, TestAdExcludedWithinTheHour2) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
-  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, 0, 1); 
+  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, 0,
+    1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
@@ -129,4 +133,4 @@ TEST_F(AdsHourlyFrequencyCapTest, TestAdExcludedWithinTheHour2) {
   // 1 in last hour (3599s ago) = excluded
   // 1 3601s ago = allowed
 
-} // namespace ads
+}  // namespace ads

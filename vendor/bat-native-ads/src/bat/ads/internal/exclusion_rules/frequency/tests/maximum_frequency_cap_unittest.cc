@@ -24,8 +24,10 @@ using ::testing::Invoke;
 
 namespace ads {
 
-static const char* test_creative_set_id = "654f10df-fbc4-4a92-8d43-2edf73734a60";
-static const char* test_creative_set_id_2 = "465f10df-fbc4-4a92-8d43-4edf73734a60";
+static const char* test_creative_set_id =
+"654f10df-fbc4-4a92-8d43-2edf73734a60";
+static const char* test_creative_set_id_2 =
+"465f10df-fbc4-4a92-8d43-4edf73734a60";
 
 class AdsMaximumFrequencyCapTest : public ::testing::Test {
  protected:
@@ -58,9 +60,12 @@ class AdsMaximumFrequencyCapTest : public ::testing::Test {
         this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
-    client_mock_ = std::make_unique<ClientMock>(ads_.get(), mock_ads_client_.get());
-    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(), mock_ads_client_.get());
-    exclusion_rule_ = std::make_unique<MaximumFrequencyCap>(*frequency_capping_);
+    client_mock_ = std::make_unique<ClientMock>(ads_.get(),
+      mock_ads_client_.get());
+    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(),
+      mock_ads_client_.get());
+    exclusion_rule_ = std::make_unique<MaximumFrequencyCap>(
+      *frequency_capping_);
     ad_info_ = std::make_unique<AdInfo>();
   }
 
@@ -91,7 +96,8 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdAllowedWithMatchingAds) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 2;
 
-  client_mock_->ConfigureWithDataForMaximumFrequencyCappingTest(test_creative_set_id, 1);
+  client_mock_->ConfigureWithDataForMaximumFrequencyCappingTest(
+    test_creative_set_id, 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
@@ -105,7 +111,8 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdAllowedWithNonMatchingAds) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 2;
 
-  client_mock_->ConfigureWithDataForMaximumFrequencyCappingTest(test_creative_set_id_2, 5);
+  client_mock_->ConfigureWithDataForMaximumFrequencyCappingTest(
+    test_creative_set_id_2, 5);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
@@ -119,7 +126,8 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 0;
 
-  client_mock_->ConfigureWithDataForMaximumFrequencyCappingTest(test_creative_set_id, 5);
+  client_mock_->ConfigureWithDataForMaximumFrequencyCappingTest(
+    test_creative_set_id, 5);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
@@ -132,7 +140,8 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdExcludedWhenMaximumReached) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 5;
-  client_mock_->ConfigureWithDataForMaximumFrequencyCappingTest(test_creative_set_id, 5);
+  client_mock_->ConfigureWithDataForMaximumFrequencyCappingTest(
+    test_creative_set_id, 5);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->IsExcluded(*ad_info_);
@@ -141,4 +150,4 @@ TEST_F(AdsMaximumFrequencyCapTest, TestAdExcludedWhenMaximumReached) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-} // namespace ads
+}  // namespace ads

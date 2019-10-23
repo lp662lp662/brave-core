@@ -31,7 +31,7 @@ static const char* test_campaign_id_2 = "90762cee-d5bb-4a0d-baaf-61cd7f18e07e";
 //static auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
 
 class AdsDailyCampaignFrequencyCapTest : public ::testing::Test {
-protected:
+ protected:
   std::unique_ptr<MockAdsClient> mock_ads_client_;
   std::unique_ptr<AdsImpl> ads_;
 
@@ -57,13 +57,16 @@ protected:
     // Code here will be called immediately after the constructor (right before
     // each test)
 
-    auto callback = std::bind(&AdsDailyCampaignFrequencyCapTest::OnAdsImpleInitialize,
-        this, _1);
+    auto callback = std::bind(
+      &AdsDailyCampaignFrequencyCapTest::OnAdsImpleInitialize, this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
-    client_mock_ = std::make_unique<ClientMock>(ads_.get(), mock_ads_client_.get());
-    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(), mock_ads_client_.get());
-    exclusion_rule_ = std::make_unique<DailyCampaignFrequencyCap>(*frequency_capping_);
+    client_mock_ = std::make_unique<ClientMock>(ads_.get(),
+      mock_ads_client_.get());
+    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(),
+      mock_ads_client_.get());
+    exclusion_rule_ = std::make_unique<DailyCampaignFrequencyCap>
+      (*frequency_capping_);
     ad_info_ = std::make_unique<AdInfo>();
   }
 
@@ -103,7 +106,8 @@ TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdAllowedWithAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdExcludedWithMatchingCampaignAds) {
+TEST_F(AdsDailyCampaignFrequencyCapTest,
+  TestAdExcludedWithMatchingCampaignAds) {
   // Arrange
   client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 2);
 
@@ -116,7 +120,8 @@ TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdExcludedWithMatchingCampaignAds) 
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdNotExcludedWhenNoMatchingCampaignAds) {
+TEST_F(AdsDailyCampaignFrequencyCapTest,
+  TestAdNotExcludedWhenNoMatchingCampaignAds) {
   // Arrange
   client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id_2, 2);
 
@@ -136,4 +141,4 @@ TEST_F(AdsDailyCampaignFrequencyCapTest, TestAdNotExcludedWhenNoMatchingCampaign
   // 2 in last day (0+s ago) with cap of 2 = excluded
   // 1 over a day (day+1s ago) with cap of 2 = allowed
 
-} // namespace ads
+}  // namespace ads
