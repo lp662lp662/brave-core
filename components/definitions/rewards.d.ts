@@ -89,7 +89,7 @@ declare namespace Rewards {
     promotionId?: string
     amount: number
     expiresAt: number
-    captcha?: string
+    captchaImage?: string
     hint?: string
     status?: PromotionStatus
     type?: PromotionTypes
@@ -163,7 +163,9 @@ declare namespace Rewards {
   }
 
   export interface Captcha {
-    image: string
+    result: number
+    promotionId: string
+    captchaImage: string
     hint: string
   }
 

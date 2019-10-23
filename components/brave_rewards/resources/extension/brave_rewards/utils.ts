@@ -58,7 +58,7 @@ export const getPromotion = (promotion?: RewardsExtension.Promotion) => {
   promotion.finishText = getMessage('grantFinishTextUGP')
   promotion.finishTokenTitle = getMessage('grantFinishTokenTitleUGP')
 
-  if (promotion.type === Rewards.PromotionTypes.ADS) {
+  if (promotion.type === 1) { // Rewards.PromotionTypes.ADS
     promotion.expiresAt = 0
     promotion.finishTitle = getMessage('grantFinishTitleAds')
     promotion.finishText = getMessage('grantFinishTextAds')
