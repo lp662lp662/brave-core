@@ -26,9 +26,8 @@ namespace ads {
     ad_history_detail->ad_content.uuid = uuid;
 
     for(uint8_t i = 0; i < ad_instances; i++) {
-      AppendAdToAdsShownHistory(*ad_history_detail);
-
       ad_history_detail->timestamp_in_seconds += time_offset_per_ad_in_seconds;
+      AppendAdToAdsShownHistory(*ad_history_detail);
     }
   }
 
