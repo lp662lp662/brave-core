@@ -38,7 +38,7 @@ export default function wireApiEventsToStore () {
   })
 }
 
-chrome.braveRewards.onWalletInitialized.addListener((result: any) => {
+chrome.braveRewards.onWalletInitialized.addListener((result: any | NewTab.RewardsResult) => {
   getActions().onWalletInitialized(result)
 })
 

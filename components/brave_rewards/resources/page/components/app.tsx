@@ -64,11 +64,11 @@ export class App extends React.Component<Props, State> {
       return
     }
 
-    if (!hash.startsWith('#g_')) {
+    if (!hash.startsWith('#grant_')) {
       return
     }
 
-    this.actions.getGrantCaptcha(hash.split('#g_')[1])
+    this.actions.getGrantCaptcha(hash.split('#grant_')[1])
   }
 
   onCreateWalletClicked = () => {

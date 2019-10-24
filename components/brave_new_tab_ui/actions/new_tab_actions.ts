@@ -102,8 +102,6 @@ export const onBalanceReports = (reports: Record<string, NewTab.RewardsReport>) 
   reports
 })
 
-export const getGrants = () => action(types.GET_GRANTS)
-
 export const onGrant = (properties: NewTab.GrantResponse) => action(types.ON_GRANT, {
   properties
 })

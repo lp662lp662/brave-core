@@ -17,6 +17,7 @@ import { InitialData } from '../api/initialData'
 import * as bookmarksAPI from '../api/topSites/bookmarks'
 import * as dndAPI from '../api/topSites/dnd'
 import * as storage from '../storage'
+import { getTotalContributions } from '../rewards-utils'
 
 const initialState = storage.load()
 
@@ -306,7 +307,8 @@ export const newTabReducer: Reducer<NewTab.State | undefined> = (state: NewTab.S
 
     case types.ON_BALANCE_REPORTS:
       state = { ...state }
-      state.rewardsState.reports = payload.reports
+      const reports = payload.reports || {}
+      state.rewardsState.totalContribution = getTotalContributions(reports)
       break
 
     case types.DISMISS_NOTIFICATION:
@@ -319,10 +321,6 @@ export const newTabReducer: Reducer<NewTab.State | undefined> = (state: NewTab.S
       state.rewardsState.grants = state.rewardsState.grants.filter((grant) => {
         return grant.promotionId !== payload.id
       })
-      break
-
-    case types.GET_GRANTS:
-      chrome.braveRewards.getGrants()
       break
 
     case types.ON_GRANT:

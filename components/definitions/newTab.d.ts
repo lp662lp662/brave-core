@@ -74,7 +74,7 @@ declare namespace NewTab {
     enabledAds: boolean
     enabledMain: boolean
     grants: GrantRecord[]
-    reports: Record<string, RewardsReport>
+    totalContribution: string
     walletCreated: boolean
     walletCreating: boolean
     walletCreateFailed: boolean

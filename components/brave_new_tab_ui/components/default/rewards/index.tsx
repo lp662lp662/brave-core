@@ -4,7 +4,7 @@
 
 import * as React from 'react'
 import createWidget from '../widget/index'
-import { convertBalance, tipsTotal } from '../../../../brave_rewards/resources/page/utils'
+import { convertBalance } from '../../../../brave_rewards/resources/page/utils'
 import { getLocale } from '../../../../common/locale'
 
 import {
@@ -36,34 +36,29 @@ export interface RewardsProps {
   enabledMain: boolean
   balance: NewTab.RewardsBalance
   grants: NewTab.GrantRecord[]
-  reports: Record<string, NewTab.RewardsReport>
+  totalContribution: string
   walletCreated: boolean
   walletCreating: boolean
   walletCreateFailed: boolean
   walletCorrupted: boolean
   adsEstimatedEarnings: number
+  onlyAnonWallet?: boolean
   onCreateWallet: () => void
   onEnableAds: () => void
   onEnableRewards: () => void
   onDismissNotification: (id: string) => void
 }
 
+const enum AmountItemType {
+  ADS = 0,
+  TIPS = 1
+}
+
 class Rewards extends React.PureComponent<RewardsProps, {}> {
-  getTotalContributions = () => {
-    const currentTime = new Date()
-    const reportKey = `${currentTime.getFullYear()}_${currentTime.getMonth() + 1}`
-    const report: NewTab.RewardsReport = this.props.reports[reportKey]
-
-    if (report) {
-      return tipsTotal(report)
-    }
-
-    return '0.0'
-  }
 
   getButtonText = (isAds: boolean = false) => {
     if (isAds) {
-      return getLocale('turnOnAds')
+      return getLocale('rewardsWidgetTurnOnAds')
     }
 
     const {
@@ -73,7 +68,7 @@ class Rewards extends React.PureComponent<RewardsProps, {}> {
     } = this.props
 
     if (walletCreateFailed || walletCorrupted) {
-      return getLocale('walletFailedButton')
+      return getLocale('rewardsWidgetWalletFailedButton')
     }
 
     if (walletCreating) {
@@ -133,20 +128,23 @@ class Rewards extends React.PureComponent<RewardsProps, {}> {
     )
   }
 
-  renderAmountItem = (type: string) => {
+  renderAmountItem = (type: AmountItemType) => {
     const {
       balance,
       enabledAds,
       onEnableAds,
-      adsEstimatedEarnings
+      adsEstimatedEarnings,
+      onlyAnonWallet,
+      totalContribution
     } = this.props
 
     const rates = balance.rates || {}
-    const showEnableAds = type === 'ads' && !enabledAds
-    const amount = type === 'ads'
-      ? adsEstimatedEarnings.toFixed(1)
-      : this.getTotalContributions()
+    const showEnableAds = type === AmountItemType.ADS && !enabledAds
+    const amount = type === AmountItemType.TIPS
+      ? totalContribution
+      : adsEstimatedEarnings.toFixed(1)
     const converted = convertBalance(amount, rates)
+    const batFormatString = onlyAnonWallet ? getLocale('rewardsWidgetBatPoints') : getLocale('rewardsWidgetBat')
 
     return (
       <AmountItem>
@@ -162,14 +160,14 @@ class Rewards extends React.PureComponent<RewardsProps, {}> {
           ? <AmountInformation data-test-id={`widget-amount-total-${type}`}>
               <Amount>{amount}</Amount>
               <ConvertedAmount>
-                {`${getLocale('bat')} (${converted} USD)`}
+                {`${batFormatString} ${converted} USD`}
               </ConvertedAmount>
             </AmountInformation>
           : null
         }
         <AmountDescription>
           {
-            type === 'ads'
+            type === AmountItemType.ADS
             ? getLocale('rewardsWidgetEstimatedEarnings')
             : getLocale('rewardsWidgetMonthlyTips')
           }
@@ -190,8 +188,8 @@ class Rewards extends React.PureComponent<RewardsProps, {}> {
 
     return (
       <div data-test-id2={'enableMain'}>
-        {this.renderAmountItem('ads')}
-        {this.renderAmountItem('tips')}
+        {this.renderAmountItem(AmountItemType.ADS)}
+        {this.renderAmountItem(AmountItemType.TIPS)}
       </div>
     )
   }
@@ -211,7 +209,7 @@ class Rewards extends React.PureComponent<RewardsProps, {}> {
     return (
       <>
         <ServiceText>
-          {getLocale('rewardsWidgetServiceText')} <ServiceLink href={'https://brave.com/terms-of-use'}>{getLocale('termsOfService')}</ServiceLink> {getLocale('and')} <ServiceLink href={'https://brave.com/privacy#rewards'}>{getLocale('privacyPolicy')}</ServiceLink>.
+          {getLocale('rewardsWidgetServiceText')} <ServiceLink href={'https://brave.com/terms-of-use'}>{getLocale('rewardsWidgetTermsOfService')}</ServiceLink> {getLocale('and')} <ServiceLink href={'https://brave.com/privacy#rewards'}>{getLocale('rewardsWidgetPrivacyPolicy')}</ServiceLink>.
         </ServiceText>
       </>
     )
@@ -243,14 +241,12 @@ class Rewards extends React.PureComponent<RewardsProps, {}> {
 
     return (
       <WidgetWrapper>
-        <>
-          <BatIcon>
-            <BatColorIcon />
-          </BatIcon>
-          <RewardsTitle>
-            {getLocale('braveRewards')}
-          </RewardsTitle>
-        </>
+        <BatIcon>
+          <BatColorIcon />
+        </BatIcon>
+        <RewardsTitle>
+          {getLocale('rewardsWidgetBraveRewards')}
+        </RewardsTitle>
         {this.renderPreOptIn()}
         {this.renderRewardsInfo()}
         <Footer>

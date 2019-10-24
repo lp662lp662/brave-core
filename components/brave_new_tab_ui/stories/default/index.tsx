@@ -29,7 +29,7 @@ interface State {
   grants: NewTab.GrantRecord[]
   enabledAds: boolean
   enabledMain: boolean
-  reports: Record<string, NewTab.RewardsReport>
+  totalContribution: string
   walletCreated: boolean
   walletCreating: boolean
   walletCreateFailed: boolean
@@ -53,14 +53,13 @@ export default class NewTabPage extends React.PureComponent<Props, State> {
       adsEstimatedEarnings: 5,
       enabledAds: false,
       enabledMain: false,
-      reports: {},
       grants: [],
-      dismissedNotifications: [],
       balance: {
         total: 0,
         rates: {},
         wallets: {}
       },
+      totalContribution: '0.0',
       walletCreated: false,
       walletCreating: false,
       walletCreateFailed: false,
@@ -127,7 +126,6 @@ export default class NewTabPage extends React.PureComponent<Props, State> {
       walletCreateFailed,
       walletCreated,
       walletCreating,
-      reports,
       grants,
       balance
     } = this.state
@@ -168,7 +166,6 @@ export default class NewTabPage extends React.PureComponent<Props, State> {
               walletCorrupted={walletCorrupted}
               walletCreateFailed={walletCreateFailed}
               walletCreating={walletCreating}
-              reports={reports}
               adsEstimatedEarnings={adsEstimatedEarnings}
               onEnableAds={this.enableAds}
               onCreateWallet={this.createWallet}

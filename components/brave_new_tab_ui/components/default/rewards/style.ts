@@ -29,15 +29,15 @@ export const BatIcon = styled<{}, 'div'>('div')`
 export const RewardsTitle = styled<{}, 'span'>('span')`
   top: -9px;
   left: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   position: relative;
+  font-family: Poppins, sans-serif;
 `
 
 export const ServiceText = styled<{}, 'span'>('span')`
   color: #fff;
-  font-size: 14px;
-  font-weight: normal;
+  font-size: 10px;
   letter-spacing: 0;
   line-height: 18px;
 `
@@ -53,6 +53,7 @@ export const LearnMoreLink = styled(ServiceLink)`
 `
 
 export const LearnMoreText = styled<{}, 'div'>('div')`
+  font-size: 14px;
   margin-top: 50px;
 `
 
@@ -61,14 +62,13 @@ export const PreOptInInfo = styled<{}, 'div'>('div')`
 `
 
 export const Title = styled<{}, 'span'>('span')`
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 19px;
   display: block;
+  font-family: Poppins, sans-serif;
 `
 
 export const SubTitle = styled<{}, 'span'>('span')`
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
   display: block;
   margin-top: 10px;
   max-width: 250px;
@@ -84,7 +84,7 @@ export const TurnOnButton = styled<{}, 'button'>('button')`
   background: white;
   color: ${palette.blurple500};
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   padding: 7px 60px;
   margin: 0 auto;
   cursor: pointer;
@@ -105,18 +105,18 @@ export const AmountInformation = styled<{}, 'div'>('div')`
 `
 
 export const Amount = styled<{}, 'span'>('span')`
-  font-size: 22px;
+  font-size: 32px;
   margin-right: 10px;
+  font-family: Poppins, sans-serif;
 `
 
 export const ConvertedAmount = styled<{}, 'span'>('span')`
-  font-size: 16px;
+  font-size: 14px;
 `
 
 export const AmountDescription = styled<{}, 'span'>('span')`
-  font-size: 16px;
-  color: ${palette.blue500};
-  font-weight: 600;
+  font-size: 14px;
+  color: rgb(128, 158, 255);
 `
 
 export const NotificationWrapper = styled(WidgetWrapper)`

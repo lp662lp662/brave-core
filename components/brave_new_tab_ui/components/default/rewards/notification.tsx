@@ -28,7 +28,7 @@ export default class RewardsNotification extends React.PureComponent<Notificatio
 
   onNotificationAction = () => {
     this.dismissNotification()
-    window.open(`chrome://rewards#g_${this.props.grant.promotionId}`, '_blank')
+    window.open(`chrome://rewards#grant_${this.props.grant.promotionId}`, '_blank')
   }
 
   render () {
@@ -49,7 +49,7 @@ export default class RewardsNotification extends React.PureComponent<Notificatio
             }
           </SubTitle>
           <NotificationButton onClick={this.onNotificationAction}>
-            {getLocale('claimMyRewards')}
+            {getLocale('rewardsWidgetClaimMyRewards')}
           </NotificationButton>
         </Content>
       </NotificationWrapper>

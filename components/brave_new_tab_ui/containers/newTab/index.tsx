@@ -34,12 +34,14 @@ interface Props {
 }
 
 interface State {
+  onlyAnonWallet: boolean
   showSettingsMenu: boolean
   backgroundHasLoaded: boolean
 }
 
 class NewTabPage extends React.Component<Props, State> {
   state = {
+    onlyAnonWallet: false,
     showSettingsMenu: false,
     backgroundHasLoaded: false
   }
@@ -62,6 +64,12 @@ class NewTabPage extends React.Component<Props, State> {
       return
     }
 
+    chrome.braveRewards.onlyAnonWallet((only: boolean) => {
+      this.setState({
+        onlyAnonWallet: !!only
+      })
+    })
+
     this.refreshActions()
     window.setInterval(() => {
       this.refreshActions()
@@ -81,7 +89,7 @@ class NewTabPage extends React.Component<Props, State> {
   }
 
   refreshActions = () => {
-    this.props.actions.getGrants()
+    chrome.braveRewards.getGrants()
 
     chrome.braveRewards.getAdsEstimatedEarnings((amount: number) => {
       this.props.actions.onAdsEstimatedEarnings(amount)
@@ -240,6 +248,7 @@ class NewTabPage extends React.Component<Props, State> {
               showWidget={newTabData.showRewards}
               hideWidget={this.toggleShowRewards}
               onDismissNotification={this.dismissNotification}
+              onlyAnonWallet={this.state.onlyAnonWallet}
               menuPosition={'right'}
             />
             {this.props.newTabData.gridSites.length ? <List

@@ -42,7 +42,7 @@ const defaultState: NewTab.State = {
     enabledAds: false,
     enabledMain: false,
     grants: [],
-    reports: {},
+    totalContribution: '0.0',
     walletCreated: false,
     walletCreating: false,
     walletCreateFailed: false,
