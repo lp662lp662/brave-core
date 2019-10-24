@@ -170,4 +170,20 @@ TEST_F(AdsDailyCapFrequencyCapTest,
   EXPECT_FALSE(is_ad_excluded);
 }
 
+TEST_F(AdsDailyCapFrequencyCapTest, TestAdExcludedForIssue4207) {
+  // Arrange
+  // 5 ads per hour, up to a total of 20
+  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id,
+      -(base::Time::kSecondsPerHour / 5), 20);
+
+  ad_info_->campaign_id = test_campaign_id;
+  ad_info_->daily_cap = 20;
+
+  // Act
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
+
+  // Assert
+  EXPECT_TRUE(is_ad_excluded);
+}
+
 }  // namespace ads
