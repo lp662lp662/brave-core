@@ -26,8 +26,11 @@ using ::testing::Invoke;
 
 namespace ads {
 
-const char test_creative_set_id[] = "654f10df-fbc4-4a92-8d43-2edf73734a60";
-const char test_creative_set_id_2[] = "465f10df-fbc4-4a92-8d43-4edf73734a60";
+
+const char test_creative_set_ids[][40] = {
+    "654f10df-fbc4-4a92-8d43-2edf73734a60",
+    "465f10df-fbc4-4a92-8d43-4edf73734a60"
+};
 
 class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
  protected:
@@ -82,7 +85,7 @@ class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
 
 TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithNoAdHistory) {
   // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
+  ad_info_->creative_set_id = test_creative_set_ids[0];
   ad_info_->total_max = 2;
 
   // Act
@@ -94,10 +97,10 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithNoAdHistory) {
 
 TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithMatchingAds) {
   // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
+  ad_info_->creative_set_id = test_creative_set_ids[0];
   ad_info_->total_max = 2;
 
-  client_mock_->GenerateCreativeSetHistory(test_creative_set_id,
+  client_mock_->GenerateCreativeSetHistory(ad_info_->creative_set_id,
       base::Time::kSecondsPerHour, 1);
 
   // Act
@@ -109,11 +112,11 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithMatchingAds) {
 
 TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithNonMatchingAds) {
   // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->total_max = 2;
-
-  client_mock_->GenerateCreativeSetHistory(test_creative_set_id_2,
+  client_mock_->GenerateCreativeSetHistory(test_creative_set_ids[0],
       base::Time::kSecondsPerHour, 5);
+
+  ad_info_->creative_set_id = test_creative_set_ids[1];
+  ad_info_->total_max = 2;
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -124,10 +127,10 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithNonMatchingAds) {
 
 TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdExcludedWhenNoneAllowed) {
   // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
+  ad_info_->creative_set_id = test_creative_set_ids[0];
   ad_info_->total_max = 0;
 
-  client_mock_->GenerateCreativeSetHistory(test_creative_set_id,
+  client_mock_->GenerateCreativeSetHistory(ad_info_->creative_set_id,
       base::Time::kSecondsPerHour, 5);
 
   // Act
@@ -139,9 +142,10 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdExcludedWhenNoneAllowed) {
 
 TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdExcludedWhenMaximumReached) {
   // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
+  ad_info_->creative_set_id = test_creative_set_ids[0];
   ad_info_->total_max = 5;
-  client_mock_->GenerateCreativeSetHistory(test_creative_set_id,
+
+  client_mock_->GenerateCreativeSetHistory(ad_info_->creative_set_id,
       base::Time::kSecondsPerHour, 5);
 
   // Act
