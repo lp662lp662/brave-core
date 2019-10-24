@@ -325,7 +325,8 @@ class AdsImpl : public Ads {
 
   AdsClient* ads_client_;  // NOT OWNED
 
-    void BuildFrequencyExclusionRules(std::vector<ExclusionRule*> exclusion_rules);
+  void BuildFrequencyCaps(
+      std::vector<ExclusionRule*>& frequency_caps) const;
 
   // Not copyable, not assignable
   AdsImpl(const AdsImpl&) = delete;

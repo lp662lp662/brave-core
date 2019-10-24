@@ -23,7 +23,7 @@ bool DailyCapFrequencyCap::ShouldExclude(
   return false;
 }
 
-const std::string& DailyCapFrequencyCap::GetReasonForExclusion() const {
+const std::string& DailyCapFrequencyCap::GetLastReason() const {
     return reason_for_exclusion_;
 }
 

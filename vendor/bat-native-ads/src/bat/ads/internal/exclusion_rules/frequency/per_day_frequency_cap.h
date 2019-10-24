@@ -23,7 +23,7 @@ class PerDayFrequencyCap final : public ExclusionRule {
   bool ShouldExclude(
       const AdInfo& ad) const override;
 
-  const std::string& GetReasonForExclusion() const override;
+  const std::string& GetLastReason() const override;
 
  private:
   const FrequencyCapping& frequency_capping_;

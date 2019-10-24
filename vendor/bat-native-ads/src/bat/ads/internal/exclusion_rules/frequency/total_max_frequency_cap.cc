@@ -23,7 +23,7 @@ bool TotalMaxFrequencyCap::ShouldExclude(
   return false;
 }
 
-const std::string& TotalMaxFrequencyCap::GetReasonForExclusion() const {
+const std::string& TotalMaxFrequencyCap::GetLastReason() const {
     return reason_for_exclusion_;
 }
 

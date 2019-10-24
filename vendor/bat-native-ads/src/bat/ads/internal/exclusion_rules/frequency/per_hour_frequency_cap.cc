@@ -23,7 +23,7 @@ bool PerHourFrequencyCap::ShouldExclude(
   return false;
 }
 
-const std::string& PerHourFrequencyCap::GetReasonForExclusion() const {
+const std::string& PerHourFrequencyCap::GetLastReason() const {
     return reason_for_exclusion_;
 }
 

@@ -12,12 +12,16 @@
 
 namespace ads {
 
+class AdsImpl;
 class Client;
 
 class FrequencyCapping {
  public:
-  explicit FrequencyCapping(Client* client_state) :
-      client_state_(client_state) {
+  explicit FrequencyCapping(
+      const AdsImpl* ads,
+      const Client* client) :
+      ads_(ads),
+      client_(client) {
   }
 
   ~FrequencyCapping() = default;
@@ -37,7 +41,8 @@ class FrequencyCapping {
       const std::string& uuid) const;
 
  private:
-  Client* client_state_;  // NOT OWNED
+  const AdsImpl* ads_;  // NOT OWNED
+  const Client* client_;  // NOT OWNED
 };
 
 }  // namespace ads

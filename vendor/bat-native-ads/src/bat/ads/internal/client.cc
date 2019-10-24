@@ -72,7 +72,7 @@ void Client::AppendAdToAdsShownHistory(
   SaveState();
 }
 
-const std::deque<AdHistoryDetail> Client::GetAdsShownHistory() {
+const std::deque<AdHistoryDetail> Client::GetAdsShownHistory() const {
   return client_state_->ads_shown_history;
 }
 

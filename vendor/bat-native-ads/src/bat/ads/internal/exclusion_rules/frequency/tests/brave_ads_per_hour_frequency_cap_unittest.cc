@@ -50,8 +50,9 @@ class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
-      mock_ads_client_.get());
-    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get());
+        mock_ads_client_.get());
+    frequency_capping_ = std::make_unique<FrequencyCapping>(ads_.get(),
+        client_mock_.get());
     exclusion_rule_ = std::make_unique<PerHourFrequencyCap>(
         *frequency_capping_);
     ad_info_ = std::make_unique<AdInfo>();

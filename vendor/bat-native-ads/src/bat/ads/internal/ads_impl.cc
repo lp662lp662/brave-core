@@ -1048,41 +1048,41 @@ void AdsImpl::ServeAd(
   ShowAd(ad, category);
 }
 
-void AdsImpl::BuildFrequencyExclusionRules(std::vector<ExclusionRule*>
-exclusion_rules) {
+void AdsImpl::BuildFrequencyCaps(
+  std::vector<ExclusionRule*>& frequency_caps) const {
+  FrequencyCapping frequency_capping(this, client_.get());
 
+  auto daily_cap_frequency_cap = std::make_unique<DailyCapFrequencyCap>
+      (frequency_capping);
+  frequency_caps.push_back(daily_cap_frequency_cap.get());
 
-// TODO: some form of factory? or at least use C++11
-  FrequencyCapping frequency_capping(client_.get());
+  auto per_day_frequency_cap = std::make_unique<PerDayFrequencyCap>
+      (frequency_capping);
+  frequency_caps.push_back(per_day_frequency_cap.get());
 
-  ExclusionRule* exclusionRule = 0x0;
+  auto per_hour_frequency_cap = std::make_unique<PerHourFrequencyCap>
+      (frequency_capping);
+  frequency_caps.push_back(per_hour_frequency_cap.get());
 
-  exclusionRule = new DailyCapFrequencyCap(frequency_capping);
-  exclusion_rules.push_back(exclusionRule);
-
-  exclusionRule = new PerDayFrequencyCap(frequency_capping);
-  exclusion_rules.push_back(exclusionRule);
-
-  exclusionRule = new PerHourFrequencyCap(frequency_capping);
-  exclusion_rules.push_back(exclusionRule);
-
-  exclusionRule = new TotalMaxFrequencyCap(frequency_capping);
-  exclusion_rules.push_back(exclusionRule);
+  auto total_max_frequency_cap = std::make_unique<TotalMaxFrequencyCap>
+      (frequency_capping);
+  frequency_caps.push_back(total_max_frequency_cap.get());
 }
+
 std::vector<AdInfo> AdsImpl::GetEligibleAds(
     const std::vector<AdInfo>& ads) {
   std::vector<AdInfo> eligible_ads = {};
 
   auto unseen_ads = GetUnseenAdsAndRoundRobinIfNeeded(ads);
 
-  std::vector<ExclusionRule*> exclusion_rules;
+  std::vector<ExclusionRule*> frequency_caps;
 
-  BuildFrequencyExclusionRules(exclusion_rules);
+  BuildFrequencyCaps(frequency_caps);
 
   for (const auto& ad : unseen_ads) {
-    for (const ExclusionRule* exclusion_rule : exclusion_rules) {
+    for (const ExclusionRule* exclusion_rule : frequency_caps) {
       if (exclusion_rule->ShouldExclude(ad)) {
-        BLOG(WARNING) << exclusion_rule->GetReasonForExclusion();
+        BLOG(WARNING) << exclusion_rule->GetLastReason();
         continue;
       }
     }
@@ -1232,13 +1232,8 @@ bool AdsImpl::IsAllowedToServeAds() {
   auto does_history_respect_ads_per_day_limit =
       DoesHistoryRespectAdsPerDayLimit();
 
-  bool does_history_respect_minimum_wait_time;
-  if (!IsMobile()) {
-    does_history_respect_minimum_wait_time =
-        DoesHistoryRespectMinimumWaitTimeToServeAds();
-  } else {
-    does_history_respect_minimum_wait_time = true;
-  }
+  bool does_history_respect_minimum_wait_time =
+      DoesHistoryRespectMinimumWaitTimeToServeAds();
 
   BLOG(INFO) << "IsAllowedToServeAds:";
   BLOG(INFO) << "    does_history_respect_minimum_wait_time: "
@@ -1251,6 +1246,10 @@ bool AdsImpl::IsAllowedToServeAds() {
 }
 
 bool AdsImpl::DoesHistoryRespectMinimumWaitTimeToServeAds() {
+  if (IsMobile()) {
+    return true;
+  }
+
   auto ads_shown_history = client_->GetAdsShownHistory();
 
   auto hour_window = base::Time::kSecondsPerHour;

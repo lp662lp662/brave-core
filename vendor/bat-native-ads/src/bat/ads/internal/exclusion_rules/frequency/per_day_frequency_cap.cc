@@ -23,7 +23,7 @@ bool PerDayFrequencyCap::ShouldExclude(
   return false;
 }
 
-const std::string& PerDayFrequencyCap::GetReasonForExclusion() const {
+const std::string& PerDayFrequencyCap::GetLastReason() const {
     return reason_for_exclusion_;
 }
 
