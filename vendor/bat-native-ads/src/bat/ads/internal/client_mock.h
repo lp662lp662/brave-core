@@ -16,23 +16,20 @@ class ClientMock : public Client {
  public:
   ClientMock(AdsImpl* ads, AdsClient* ads_client): Client(ads, ads_client) { }
 
-  void GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
-      const std::string& creative_set_id, const uint8_t ad_instances);
-
-  void GenerateAdHistoryForPerHourFrequencyCapTests(
+  void GenerateAdHistory(
       const std::string uuid,
       const int64_t time_offset_per_ad_in_seconds,
-      const uint8_t ad_instances);
+      const uint8_t count);
 
-  void GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
+  void GenerateCreativeSetHistory(
       const std::string& creative_set_id,
       const int64_t time_offset_per_ad_in_seconds,
-      const uint8_t ad_instances);
+      const uint8_t count);
 
-    void GenerateCampaignHistoryForDailyCapFrequencyCapTests(
+    void GenerateCampaignHistory(
       const std::string campaign_id,
       const int64_t time_offset_per_ad_in_seconds,
-      const uint8_t ad_instances);
+      const uint8_t count);
 };
 
 }  // namespace ads

@@ -28,6 +28,9 @@ namespace ads {
 const char test_campaign_id[] = "60267cee-d5bb-4a0d-baaf-91cd7f18e07e";
 const char test_campaign_id_2[] = "90762cee-d5bb-4a0d-baaf-61cd7f18e07e";
 
+const uint64_t kSecondsPerDay = base::Time::kSecondsPerHour *
+    base::Time::kHoursPerDay;
+
 class BraveAdsDailyCapFrequencyCapTest : public ::testing::Test {
  protected:
   std::unique_ptr<MockAdsClient> mock_ads_client_;
@@ -95,8 +98,8 @@ TEST_F(BraveAdsDailyCapFrequencyCapTest, TestAdAllowedWithAds) {
   ad_info_->campaign_id = test_campaign_id;
   ad_info_->daily_cap = 2;
 
-  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id, 0,
-      1);
+  client_mock_->GenerateCampaignHistory(
+      test_campaign_id, 0, 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -111,8 +114,8 @@ TEST_F(BraveAdsDailyCapFrequencyCapTest, TestAdAllowedWithAdsWithinTheDay) {
   ad_info_->daily_cap = 2;
 
   // 23hrs 59m 59s ago
-  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id,
-    -(base::Time::kSecondsPerDay - 1), 1);
+  client_mock_->GenerateCampaignHistory(
+      test_campaign_id, -(kSecondsPerDay - 1), 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -127,8 +130,8 @@ TEST_F(BraveAdsDailyCapFrequencyCapTest, TestAdAllowedWithAdsOverTheDay) {
   ad_info_->daily_cap = 2;
 
   // 24hs ago
-  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id,
-    -base::Time::kSecondsPerDay, 1);
+  client_mock_->GenerateCampaignHistory(
+      test_campaign_id, -kSecondsPerDay, 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -140,8 +143,8 @@ TEST_F(BraveAdsDailyCapFrequencyCapTest, TestAdAllowedWithAdsOverTheDay) {
 TEST_F(BraveAdsDailyCapFrequencyCapTest,
   TestAdExcludedWithMatchingCampaignAds) {
   // Arrange
-  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id, 0,
-      2);
+  client_mock_->GenerateCampaignHistory(
+    test_campaign_id, 0, 2);
 
   ad_info_->campaign_id = test_campaign_id;
   ad_info_->daily_cap = 2;
@@ -155,8 +158,8 @@ TEST_F(BraveAdsDailyCapFrequencyCapTest,
 TEST_F(BraveAdsDailyCapFrequencyCapTest,
   TestAdNotExcludedWithNoMatchingCampaignAds) {
   // Arrange
-  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id_2, 0,
-      2);
+  client_mock_->GenerateCampaignHistory(
+    test_campaign_id_2, 0, 2);
 
   ad_info_->campaign_id = test_campaign_id;
   ad_info_->daily_cap = 1;
@@ -170,7 +173,7 @@ TEST_F(BraveAdsDailyCapFrequencyCapTest,
 TEST_F(BraveAdsDailyCapFrequencyCapTest, TestAdExcludedForIssue4207) {
   // Arrange
   // 5 ads per hour, up to a total of 20
-  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id,
+  client_mock_->GenerateCampaignHistory(test_campaign_id,
       -(base::Time::kSecondsPerHour / 5), 20);
 
   ad_info_->campaign_id = test_campaign_id;

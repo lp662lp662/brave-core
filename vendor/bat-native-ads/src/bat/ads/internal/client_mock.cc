@@ -14,26 +14,17 @@
 
 namespace ads {
 
-void ClientMock::GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
-    const std::string& creative_set_id, const uint8_t ad_instances) {
-  auto now_in_seconds = Time::NowInSeconds();
-
-  for (uint8_t i = 0; i < ad_instances; i++) {
-    AppendTimestampToCreativeSetHistoryForUuid(creative_set_id, now_in_seconds);
-  }
-}
-
-void ClientMock::GenerateAdHistoryForPerHourFrequencyCapTests(
+void ClientMock::GenerateAdHistory(
     const std::string uuid,
     const int64_t time_offset_per_ad_in_seconds,
-    const uint8_t ad_instances) {
+    const uint8_t count) {
   auto now_in_seconds = Time::NowInSeconds();
 
   auto ad_history_detail = std::make_unique<AdHistoryDetail>();
   ad_history_detail->uuid = base::GenerateGUID();
   ad_history_detail->ad_content.uuid = uuid;
 
-  for (uint8_t i = 0; i < ad_instances; i++) {
+  for (uint8_t i = 0; i < count; i++) {
     now_in_seconds += time_offset_per_ad_in_seconds;
 
     ad_history_detail->timestamp_in_seconds = now_in_seconds;
@@ -41,25 +32,25 @@ void ClientMock::GenerateAdHistoryForPerHourFrequencyCapTests(
   }
 }
 
-void ClientMock::GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
+void ClientMock::GenerateCreativeSetHistory(
     const std::string& creative_set_id,
     const int64_t time_offset_per_ad_in_seconds,
-    const uint8_t ad_instances) {
+    const uint8_t count) {
   auto now_in_seconds = Time::NowInSeconds();
 
-  for (uint8_t i = 0; i < ad_instances; i++) {
+  for (uint8_t i = 0; i < count; i++) {
     now_in_seconds += time_offset_per_ad_in_seconds;
     AppendTimestampToCreativeSetHistoryForUuid(creative_set_id, now_in_seconds);
   }
 }
 
-void ClientMock::GenerateCampaignHistoryForDailyCapFrequencyCapTests(
+void ClientMock::GenerateCampaignHistory(
     const std::string campaign_id,
     const int64_t time_offset_per_ad_in_seconds,
-    const uint8_t ad_instances) {
+    const uint8_t count) {
   auto now_in_seconds = Time::NowInSeconds();
 
-  for (uint8_t i = 0; i < ad_instances; i++) {
+  for (uint8_t i = 0; i < count; i++) {
     now_in_seconds += time_offset_per_ad_in_seconds;
     AppendTimestampToCampaignHistoryForUuid(campaign_id, now_in_seconds);
   }

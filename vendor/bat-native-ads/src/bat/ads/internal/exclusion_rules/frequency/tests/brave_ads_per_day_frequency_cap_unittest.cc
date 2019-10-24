@@ -27,6 +27,9 @@ namespace ads {
 
 const char test_creative_set_id[] = "654f10df-fbc4-4a92-8d43-2edf73734a60";
 
+const uint64_t kSecondsPerDay = base::Time::kSecondsPerHour *
+    base::Time::kHoursPerDay;
+
 class BraveAdsPerDayFrequencyCapTest : public ::testing::Test {
  protected:
   std::unique_ptr<MockAdsClient> mock_ads_client_;
@@ -92,7 +95,7 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedBelowDailyCap) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
-  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
+  client_mock_->GenerateCreativeSetHistory(
       test_creative_set_id, 0, 1);
 
   // Act
@@ -107,11 +110,11 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
   // Now
-  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
+  client_mock_->GenerateCreativeSetHistory(
       test_creative_set_id, 0, 1);
   // 24hrs + 1s ago
-  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
-      test_creative_set_id, -base::Time::kSecondsPerDay, 1);
+  client_mock_->GenerateCreativeSetHistory(
+      test_creative_set_id, -kSecondsPerDay, 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -125,7 +128,7 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap1) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
 
-  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
+  client_mock_->GenerateCreativeSetHistory(
       test_creative_set_id, 0, 2);
 
   // Act
@@ -141,11 +144,11 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap2) {
   ad_info_->per_day = 2;
 
   // Now
-  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
+  client_mock_->GenerateCreativeSetHistory(
       test_creative_set_id, 0, 1);
   // 23hrs 59m 59s ago
-  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
-      test_creative_set_id, -(base::Time::kSecondsPerDay - 1), 1);
+  client_mock_->GenerateCreativeSetHistory(
+      test_creative_set_id, -(kSecondsPerDay - 1), 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -160,7 +163,7 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedForIssue4207) {
   ad_info_->per_day = 20;
 
   // 5 ads per hour, up to a total of 20
-  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
+  client_mock_->GenerateCreativeSetHistory(
       test_creative_set_id, -(base::Time::kSecondsPerHour / 5), 20);
 
   // Act

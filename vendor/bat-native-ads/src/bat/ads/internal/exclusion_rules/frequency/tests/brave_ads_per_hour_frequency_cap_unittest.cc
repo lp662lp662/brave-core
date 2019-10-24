@@ -9,7 +9,7 @@
 
 #include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
-#include "bat/ads/internal/exclusion_rules/frequency/total_maximum_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/per_hour_frequency_cap.h"
 
 #include "bat/ads/internal/client_mock.h"
 #include "bat/ads/internal/ads_client_mock.h"
@@ -24,18 +24,25 @@ using ::testing::Invoke;
 
 namespace ads {
 
-const char test_creative_set_id[] = "654f10df-fbc4-4a92-8d43-2edf73734a60";
-const char test_creative_set_id_2[] = "465f10df-fbc4-4a92-8d43-4edf73734a60";
+const char test_ad_uuid[] = "9aea9a47-c6a0-4718-a0fa-706338bb2156";
 
-class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
+class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
  protected:
-  BraveAdsTotalMaxFrequencyCapTest() :
+  std::unique_ptr<MockAdsClient> mock_ads_client_;
+  std::unique_ptr<AdsImpl> ads_;
+
+  std::unique_ptr<ClientMock> client_mock_;
+  std::unique_ptr<FrequencyCapping> frequency_capping_;
+  std::unique_ptr<PerHourFrequencyCap> exclusion_rule_;
+  std::unique_ptr<AdInfo> ad_info_;
+
+  BraveAdsPerHourFrequencyCapTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
       ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
-  ~BraveAdsTotalMaxFrequencyCapTest() override {
+  ~BraveAdsPerHourFrequencyCapTest() override {
     // You can do clean-up work that doesn't throw exceptions here
   }
 
@@ -46,8 +53,7 @@ class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
     // Code here will be called immediately after the constructor (right before
     // each test)
 
-    auto callback = std::bind(
-        &BraveAdsTotalMaxFrequencyCapTest::OnAdsImpleInitialize,
+    auto callback = std::bind(&BraveAdsPerHourFrequencyCapTest::OnAdsImpleInitialize,
         this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
@@ -55,10 +61,10 @@ class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
       mock_ads_client_.get());
     frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(),
       mock_ads_client_.get());
-    exclusion_rule_ = std::make_unique<TotalMaximumFrequencyCap>(
-      *frequency_capping_);
+    exclusion_rule_ = std::make_unique<PerHourFrequencyCap>(
+        *frequency_capping_);
     ad_info_ = std::make_unique<AdInfo>();
-  }
+}
 
   void OnAdsImpleInitialize(const Result result) {
     EXPECT_EQ(Result::SUCCESS, result);
@@ -68,20 +74,11 @@ class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
     // Code here will be called immediately after each test (right before the
     // destructor)
   }
-
-  std::unique_ptr<MockAdsClient> mock_ads_client_;
-  std::unique_ptr<AdsImpl> ads_;
-
-  std::unique_ptr<ClientMock> client_mock_;
-  std::unique_ptr<FrequencyCapping> frequency_capping_;
-  std::unique_ptr<TotalMaximumFrequencyCap> exclusion_rule_;
-  std::unique_ptr<AdInfo> ad_info_;
 };
 
-TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithNoAdHistory) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdAllowedWhenNoAds) {
   // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->total_max = 2;
+  ad_info_->uuid = test_ad_uuid;
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -90,13 +87,11 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithNoAdHistory) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdAllowedWithMatchingAds) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdAllowedOverTheHour) {
   // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->total_max = 2;
-
-  client_mock_->GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
-    test_creative_set_id, 1);
+  ad_info_->uuid = test_ad_uuid;
+  // 1hr 1s in the past
+  client_mock_->GenerateAdHistory(test_ad_uuid, -(60*60), 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -105,28 +100,12 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdAllowedWithMatchingAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdAllowedWithNonMatchingAds) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour1) {
   // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->total_max = 2;
-
-  client_mock_->GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
-    test_creative_set_id_2, 5);
-
-  // Act
-  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
-
-  // Assert
-  EXPECT_FALSE(is_ad_excluded);
-}
-
-TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
-  // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->total_max = 0;
-
-  client_mock_->GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
-    test_creative_set_id, 5);
+  ad_info_->uuid = test_ad_uuid;
+  // 59m 59s
+  client_mock_->GenerateAdHistory(test_ad_uuid, -((60*60) - 1),
+    1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -135,12 +114,11 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdExcludedWhenMaximumReached) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour2) {
   // Arrange
-  ad_info_->creative_set_id = test_creative_set_id;
-  ad_info_->total_max = 5;
-  client_mock_->GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
-    test_creative_set_id, 5);
+  ad_info_->uuid = test_ad_uuid;
+  client_mock_->GenerateAdHistory(test_ad_uuid, 0,
+    1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
