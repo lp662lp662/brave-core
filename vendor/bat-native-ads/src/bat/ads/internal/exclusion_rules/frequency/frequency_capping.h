@@ -13,13 +13,11 @@
 namespace ads {
 
 class Client;
-class AdsClient;
 
 class FrequencyCapping {
  public:
-  FrequencyCapping(Client* client_state, AdsClient* ads_client) :
-      client_state_(client_state),
-      ads_client_(ads_client) {
+  explicit FrequencyCapping(Client* client_state) :
+      client_state_(client_state) {
   }
 
   ~FrequencyCapping() = default;
@@ -38,14 +36,8 @@ class FrequencyCapping {
   std::deque<uint64_t> GetCampaignForUuid(
       const std::string& uuid) const;
 
-  AdsClient* GetAdsClient() const {
-    return ads_client_;
-  }
-
  private:
   Client* client_state_;  // NOT OWNED
-
-  AdsClient* ads_client_;  // NOT OWNED
 };
 
 }  // namespace ads

@@ -55,8 +55,7 @@ class BraveAdsPerDayFrequencyCapTest : public ::testing::Test {
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
         mock_ads_client_.get());
-    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(),
-        mock_ads_client_.get());
+    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get());
     exclusion_rule_ = std::make_unique<PerDayFrequencyCap>(*frequency_capping_);
     ad_info_ = std::make_unique<AdInfo>();
   }

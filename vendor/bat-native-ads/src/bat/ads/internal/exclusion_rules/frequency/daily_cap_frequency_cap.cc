@@ -6,7 +6,6 @@
 #include "bat/ads/internal/exclusion_rules/frequency/daily_cap_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
 #include "bat/ads/internal/time.h"
-#include "bat/ads/internal/logging.h"
 #include "bat/ads/internal/client.h"
 
 #include "bat/ads/ad_info.h"
@@ -16,13 +15,16 @@ namespace ads {
 bool DailyCapFrequencyCap::ShouldExclude(
     const AdInfo& ad) const {
   if (!DoesAdRespectDailyCampaignCap(ad)) {
-    frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
-        ::ads::LogLevel::LOG_WARNING)->stream() << "campaignId " <<
-        ad.campaign_id << " has exceeded the frequency capping for dailyCap";
-
+    std::ostringstream string_stream;
+    string_stream  << "campaignId " << ad.campaign_id <<
+        " has exceeded the frequency capping for dailyCap";
     return true;
   }
   return false;
+}
+
+const std::string& DailyCapFrequencyCap::GetReasonForExclusion() const {
+    return reason_for_exclusion_;
 }
 
 bool DailyCapFrequencyCap::DoesAdRespectDailyCampaignCap(

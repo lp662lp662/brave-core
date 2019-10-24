@@ -6,6 +6,8 @@
 #ifndef BAT_ADS_INTERNAL_HOURLY_FREQUENCY_CAP_H_
 #define BAT_ADS_INTERNAL_HOURLY_FREQUENCY_CAP_H_
 
+#include <string>
+
 #include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
 
 namespace ads {
@@ -22,8 +24,12 @@ class PerHourFrequencyCap final : public ExclusionRule {
   bool ShouldExclude(
     const AdInfo& ad) const override;
 
+  const std::string& GetReasonForExclusion() const override;
+
  private:
-    const FrequencyCapping& frequency_capping_;  // NOT OWNED
+  const FrequencyCapping& frequency_capping_;  // NOT OWNED
+
+  std::string reason_for_exclusion_;
 
   bool DoesAdRespectPerHourCap(
       const AdInfo& ad) const;

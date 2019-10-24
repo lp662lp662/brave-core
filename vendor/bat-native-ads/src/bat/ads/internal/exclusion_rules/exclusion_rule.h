@@ -6,6 +6,8 @@
 #ifndef BAT_ADS_INTERNAL_EXCLUSION_RULE_H_
 #define BAT_ADS_INTERNAL_EXCLUSION_RULE_H_
 
+#include <string>
+
 namespace ads {
 
 struct AdInfo;
@@ -14,6 +16,8 @@ class ExclusionRule {
  public:
   virtual bool ShouldExclude(
       const AdInfo& ad) const = 0;
+
+  virtual const std::string& GetReasonForExclusion() const = 0;
 };
 
 }  // namespace ads

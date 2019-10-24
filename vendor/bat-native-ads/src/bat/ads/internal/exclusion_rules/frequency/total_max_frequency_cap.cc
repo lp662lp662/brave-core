@@ -6,7 +6,6 @@
 #include "bat/ads/internal/exclusion_rules/frequency/total_max_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
 #include "bat/ads/internal/time.h"
-#include "bat/ads/internal/logging.h"
 #include "bat/ads/internal/client.h"
 
 #include "bat/ads/ad_info.h"
@@ -16,14 +15,16 @@ namespace ads {
 bool TotalMaxFrequencyCap::ShouldExclude(
     const AdInfo& ad) const {
   if (!DoesAdRespectMaximumCap(ad)) {
-    frequency_capping_.GetAdsClient()->Log(__FILE__, __LINE__,
-        ::ads::LogLevel::LOG_WARNING)->stream() << "creativeSetId " <<
-        ad.creative_set_id
-        << " has exceeded the frequency capping for totalMax";
-
+    std::ostringstream string_stream;
+    string_stream << "creativeSetId " << ad.creative_set_id <<
+        " has exceeded the frequency capping for totalMax";
     return true;
   }
   return false;
+}
+
+const std::string& TotalMaxFrequencyCap::GetReasonForExclusion() const {
+    return reason_for_exclusion_;
 }
 
 bool TotalMaxFrequencyCap::DoesAdRespectMaximumCap(
