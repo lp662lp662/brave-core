@@ -91,7 +91,7 @@ TEST_F(AdsPerHourFrequencyCapTest, TestAdAllowedOverTheHour) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   // 1hr 1s in the past
-  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, -((60*60) + 1), 1);
+  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, -(60*60), 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -104,7 +104,7 @@ TEST_F(AdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour1) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   // 59m 59s
-  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, -(60*60),
+  client_mock_->ConfigureWithDataForAddHistory(test_ad_uuid, -((60*60) - 1),
     1);
 
   // Act
