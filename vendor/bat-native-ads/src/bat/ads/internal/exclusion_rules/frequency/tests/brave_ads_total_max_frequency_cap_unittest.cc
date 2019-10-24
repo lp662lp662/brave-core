@@ -11,7 +11,7 @@
 
 #include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
-#include "bat/ads/internal/exclusion_rules/frequency/total_maximum_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/total_max_frequency_cap.h"
 
 #include "bat/ads/internal/client_mock.h"
 #include "bat/ads/internal/ads_client_mock.h"
@@ -57,7 +57,7 @@ class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
       mock_ads_client_.get());
     frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get(),
       mock_ads_client_.get());
-    exclusion_rule_ = std::make_unique<TotalMaximumFrequencyCap>(
+    exclusion_rule_ = std::make_unique<TotalMaxFrequencyCap>(
       *frequency_capping_);
     ad_info_ = std::make_unique<AdInfo>();
   }
@@ -76,7 +76,7 @@ class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
 
   std::unique_ptr<ClientMock> client_mock_;
   std::unique_ptr<FrequencyCapping> frequency_capping_;
-  std::unique_ptr<TotalMaximumFrequencyCap> exclusion_rule_;
+  std::unique_ptr<TotalMaxFrequencyCap> exclusion_rule_;
   std::unique_ptr<AdInfo> ad_info_;
 };
 

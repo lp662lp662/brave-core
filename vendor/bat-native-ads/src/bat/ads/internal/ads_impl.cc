@@ -27,7 +27,7 @@
 #include "bat/ads/internal/exclusion_rules/frequency/per_hour_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/per_day_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/daily_cap_frequency_cap.h"
-#include "bat/ads/internal/exclusion_rules/frequency/total_maximum_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/frequency/total_max_frequency_cap.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/error/en.h"
@@ -1066,7 +1066,7 @@ exclusion_rules) {
   exclusionRule = new PerHourFrequencyCap(frequency_capping);
   exclusion_rules.push_back(exclusionRule);
 
-  exclusionRule = new TotalMaximumFrequencyCap(frequency_capping);
+  exclusionRule = new TotalMaxFrequencyCap(frequency_capping);
   exclusion_rules.push_back(exclusionRule);
 }
 std::vector<AdInfo> AdsImpl::GetEligibleAds(
