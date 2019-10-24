@@ -90,6 +90,7 @@ declare namespace Rewards {
     amount: number
     expiresAt: number
     captchaImage?: string
+    captchaId?: string
     hint?: string
     status?: PromotionStatus
     type?: PromotionTypes
@@ -112,8 +113,7 @@ declare namespace Rewards {
 
   export interface PromotionFinish {
     result: Result,
-    statusCode: number,
-    expiryTime: number
+    promotion?: Promotion
   }
 
   export enum ExcludeStatus {

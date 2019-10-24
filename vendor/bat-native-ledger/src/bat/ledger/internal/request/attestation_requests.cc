@@ -27,11 +27,20 @@ std::string GetStartAttestationAndroidUrl() {
 
 std::string GetCaptchaUrl(const std::string captcha_id) {
   const std::string path = base::StringPrintf(
-      "v1/captchas/%s.png",
+      "/v1/captchas/%s.png",
       captcha_id.c_str());
   // return BuildUrl("/v2/attestations/safetynet", PREFIX_V1, ServerTypes::kPromotion);
   // TODO currently server is not at the top address yet
-  return "http://reputation-alb-1044480833.us-west-2.elb.amazonaws.com/" + path;
+  return "http://reputation-alb-1044480833.us-west-2.elb.amazonaws.com" + path;
+}
+
+std::string GetClaimAttestationDesktopUrl(const std::string captcha_id) {
+  const std::string path = base::StringPrintf(
+      "/v1/captchas/%s",
+      captcha_id.c_str());
+  // return BuildUrl("/v2/attestations/safetynet", PREFIX_V1, ServerTypes::kPromotion);
+  // TODO currently server is not at the top address yet
+  return "http://reputation-alb-1044480833.us-west-2.elb.amazonaws.com" + path;
 }
 
 }  // namespace braveledger_request_util
