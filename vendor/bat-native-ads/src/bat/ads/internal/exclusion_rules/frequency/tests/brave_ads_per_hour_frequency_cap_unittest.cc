@@ -76,7 +76,7 @@ class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
   }
 };
 
-TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdAllowedWhenNoAds) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, AdAllowedWhenNoAds) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
 
@@ -87,7 +87,7 @@ TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdAllowedWhenNoAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdAllowedOverTheHour) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, AdAllowedOverTheHour) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   // 1hr 1s in the past
@@ -100,7 +100,7 @@ TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdAllowedOverTheHour) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour1) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, AdExcludedWithinTheHour1) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   // 59m 59s
@@ -114,7 +114,7 @@ TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour1) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour2) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, AdExcludedWithinTheHour2) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   client_mock_->GenerateAdHistory(test_ad_uuid, 0,

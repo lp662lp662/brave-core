@@ -79,7 +79,7 @@ class BraveAdsPerDayFrequencyCapTest : public ::testing::Test {
   }
 };
 
-TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedWhenNoAds) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, AdAllowedWhenNoAds) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -91,7 +91,7 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedWhenNoAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedBelowDailyCap) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, AdAllowedBelowDailyCap) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -105,7 +105,7 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedBelowDailyCap) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, AdAllowedWithAdOutsideDayWindow) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -123,7 +123,7 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap1) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, AdExcludedAboveDailyCap1) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -138,7 +138,7 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap1) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap2) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, AdExcludedAboveDailyCap2) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -157,7 +157,7 @@ TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap2) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedForIssue4207) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, AdExcludedForIssue4207) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 20;

@@ -92,7 +92,7 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithNoAdHistory) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdAllowedWithMatchingAds) {
+TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithMatchingAds) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 2;
@@ -107,7 +107,7 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdAllowedWithMatchingAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdAllowedWithNonMatchingAds) {
+TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithNonMatchingAds) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 2;
@@ -122,7 +122,7 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdAllowedWithNonMatchingAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
+TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdExcludedWhenNoneAllowed) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 0;
@@ -137,7 +137,7 @@ TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdExcludedWhenMaximumReached) {
+TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdExcludedWhenMaximumReached) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 5;
