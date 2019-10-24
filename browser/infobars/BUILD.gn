@@ -2,9 +2,11 @@ import("//build/config/features.gni")
 
 source_set("infobars") {
   sources = [
-    "brave_infobar_delegate.h",
-    "brave_confirm_p3a_infobar_delegate.h",
     "brave_confirm_p3a_infobar_delegate.cc",
+    "brave_confirm_p3a_infobar_delegate.h",
+    "brave_infobar_delegate.h",
+    "crypto_wallets_infobar_delegate.cc",
+    "crypto_wallets_infobar_delegate.h",
   ]
 
   deps = [
