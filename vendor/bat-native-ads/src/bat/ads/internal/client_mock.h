@@ -16,20 +16,20 @@ class ClientMock : public Client {
  public:
   ClientMock(AdsImpl* ads, AdsClient* ads_client): Client(ads, ads_client) { }
 
-  void ConfigureWithDataForTotalMaximumFrequencyCappingTest(
+  void GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
       const std::string& creative_set_id, const uint8_t ad_instances);
 
-  void ConfigureWithDataForAddHistory(
+  void GenerateAdHistoryForPerHourFrequencyCapTests(
       const std::string uuid,
       const int64_t time_offset_per_ad_in_seconds,
       const uint8_t ad_instances);
 
-  void ConfigureWithDataForPerHourFrequencyCappingTest(
+  void GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
       const std::string& creative_set_id,
       const int64_t time_offset_per_ad_in_seconds,
       const uint8_t ad_instances);
 
-    void ConfigureWithDataForDailyCampaignHistory(
+    void GenerateCampaignHistoryForDailyCapFrequencyCapTests(
       const std::string campaign_id,
       const int64_t time_offset_per_ad_in_seconds,
       const uint8_t ad_instances);

@@ -96,7 +96,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedBelowDailyCap) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
       test_creative_set_id, 0, 1);
 
   // Act
@@ -111,10 +111,10 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
   // Now
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
       test_creative_set_id, 0, 1);
   // 24hrs + 1s ago
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
       test_creative_set_id, -kSecondsPerDay, 1);
 
   // Act
@@ -129,7 +129,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap1) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
 
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
       test_creative_set_id, 0, 2);
 
   // Act
@@ -145,10 +145,10 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap2) {
   ad_info_->per_day = 2;
 
   // Now
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
       test_creative_set_id, 0, 1);
   // 23hrs 59m 59s ago
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
       test_creative_set_id, -(kSecondsPerDay - 1), 1);
 
   // Act
@@ -164,7 +164,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedForIssue4207) {
   ad_info_->per_day = 20;
 
   // 5 ads per hour, up to a total of 20
-  client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
       test_creative_set_id, -(base::Time::kSecondsPerHour / 5), 20);
 
   // Act

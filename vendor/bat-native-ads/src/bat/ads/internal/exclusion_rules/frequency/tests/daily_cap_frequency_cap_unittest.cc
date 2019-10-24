@@ -98,7 +98,7 @@ TEST_F(AdsDailyCapFrequencyCapTest, TestAdAllowedWithAds) {
   ad_info_->campaign_id = test_campaign_id;
   ad_info_->daily_cap = 2;
 
-  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 0,
+  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id, 0,
       1);
 
   // Act
@@ -114,7 +114,7 @@ TEST_F(AdsDailyCapFrequencyCapTest, TestAdAllowedWithAdsWithinTheDay) {
   ad_info_->daily_cap = 2;
 
   // 23hrs 59m 59s ago
-  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id,
+  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id,
     -(kSecondsPerDay - 1), 1);
 
   // Act
@@ -130,7 +130,7 @@ TEST_F(AdsDailyCapFrequencyCapTest, TestAdAllowedWithAdsOverTheDay) {
   ad_info_->daily_cap = 2;
 
   // 24hs ago
-  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id,
+  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id,
     -kSecondsPerDay, 1);
 
   // Act
@@ -143,7 +143,7 @@ TEST_F(AdsDailyCapFrequencyCapTest, TestAdAllowedWithAdsOverTheDay) {
 TEST_F(AdsDailyCapFrequencyCapTest,
   TestAdExcludedWithMatchingCampaignAds) {
   // Arrange
-  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id, 0,
+  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id, 0,
       2);
 
   ad_info_->campaign_id = test_campaign_id;
@@ -158,7 +158,7 @@ TEST_F(AdsDailyCapFrequencyCapTest,
 TEST_F(AdsDailyCapFrequencyCapTest,
   TestAdNotExcludedWhenNoMatchingCampaignAds) {
   // Arrange
-  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id_2, 0,
+  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id_2, 0,
       2);
 
   ad_info_->campaign_id = test_campaign_id;
@@ -173,7 +173,7 @@ TEST_F(AdsDailyCapFrequencyCapTest,
 TEST_F(AdsDailyCapFrequencyCapTest, TestAdExcludedForIssue4207) {
   // Arrange
   // 5 ads per hour, up to a total of 20
-  client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id,
+  client_mock_->GenerateCampaignHistoryForDailyCapFrequencyCapTests(test_campaign_id,
       -(base::Time::kSecondsPerHour / 5), 20);
 
   ad_info_->campaign_id = test_campaign_id;

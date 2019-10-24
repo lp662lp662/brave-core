@@ -97,7 +97,7 @@ TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdAllowedWithMatchingAds) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 2;
 
-  client_mock_->ConfigureWithDataForTotalMaximumFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
     test_creative_set_id, 1);
 
   // Act
@@ -112,7 +112,7 @@ TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdAllowedWithNonMatchingAds) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 2;
 
-  client_mock_->ConfigureWithDataForTotalMaximumFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
     test_creative_set_id_2, 5);
 
   // Act
@@ -127,7 +127,7 @@ TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 0;
 
-  client_mock_->ConfigureWithDataForTotalMaximumFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
     test_creative_set_id, 5);
 
   // Act
@@ -141,7 +141,7 @@ TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdExcludedWhenMaximumReached) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 5;
-  client_mock_->ConfigureWithDataForTotalMaximumFrequencyCappingTest(
+  client_mock_->GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
     test_creative_set_id, 5);
 
   // Act

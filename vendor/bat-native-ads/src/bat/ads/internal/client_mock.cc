@@ -14,7 +14,7 @@
 
 namespace ads {
 
-void ClientMock::ConfigureWithDataForTotalMaximumFrequencyCappingTest(
+void ClientMock::GenerateCreativeSetHistoryForTotalMaximumFrequencyCapTests(
     const std::string& creative_set_id, const uint8_t ad_instances) {
   auto now_in_seconds = Time::NowInSeconds();
 
@@ -23,7 +23,7 @@ void ClientMock::ConfigureWithDataForTotalMaximumFrequencyCappingTest(
   }
 }
 
-void ClientMock::ConfigureWithDataForAddHistory(
+void ClientMock::GenerateAdHistoryForPerHourFrequencyCapTests(
     const std::string uuid,
     const int64_t time_offset_per_ad_in_seconds,
     const uint8_t ad_instances) {
@@ -41,7 +41,7 @@ void ClientMock::ConfigureWithDataForAddHistory(
   }
 }
 
-void ClientMock::ConfigureWithDataForPerHourFrequencyCappingTest(
+void ClientMock::GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
     const std::string& creative_set_id,
     const int64_t time_offset_per_ad_in_seconds,
     const uint8_t ad_instances) {
@@ -53,7 +53,7 @@ void ClientMock::ConfigureWithDataForPerHourFrequencyCappingTest(
   }
 }
 
-void ClientMock::ConfigureWithDataForDailyCampaignHistory(
+void ClientMock::GenerateCampaignHistoryForDailyCapFrequencyCapTests(
     const std::string campaign_id,
     const int64_t time_offset_per_ad_in_seconds,
     const uint8_t ad_instances) {
