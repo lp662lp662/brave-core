@@ -35,14 +35,6 @@ const uint64_t kSecondsPerDay = base::Time::kSecondsPerHour *
 
 class BraveAdsDailyCapFrequencyCapTest : public ::testing::Test {
  protected:
-  std::unique_ptr<MockAdsClient> mock_ads_client_;
-  std::unique_ptr<AdsImpl> ads_;
-
-  std::unique_ptr<ClientMock> client_mock_;
-  std::unique_ptr<FrequencyCapping> frequency_capping_;
-  std::unique_ptr<DailyCapFrequencyCap> exclusion_rule_;
-  std::unique_ptr<AdInfo> ad_info_;
-
   BraveAdsDailyCapFrequencyCapTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
       ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
@@ -61,7 +53,7 @@ class BraveAdsDailyCapFrequencyCapTest : public ::testing::Test {
     // each test)
 
     auto callback = std::bind(
-      &BraveAdsDailyCapFrequencyCapTest::OnAdsImpleInitialize, this, _1);
+      &BraveAdsDailyCapFrequencyCapTest::OnAdsImplInitialize, this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
@@ -73,7 +65,7 @@ class BraveAdsDailyCapFrequencyCapTest : public ::testing::Test {
     ad_info_ = std::make_unique<AdInfo>();
   }
 
-  void OnAdsImpleInitialize(const Result result) {
+  void OnAdsImplInitialize(const Result result) {
     EXPECT_EQ(Result::SUCCESS, result);
   }
 
@@ -81,6 +73,14 @@ class BraveAdsDailyCapFrequencyCapTest : public ::testing::Test {
     // Code here will be called immediately after each test (right before the
     // destructor)
   }
+
+  std::unique_ptr<MockAdsClient> mock_ads_client_;
+  std::unique_ptr<AdsImpl> ads_;
+
+  std::unique_ptr<ClientMock> client_mock_;
+  std::unique_ptr<FrequencyCapping> frequency_capping_;
+  std::unique_ptr<DailyCapFrequencyCap> exclusion_rule_;
+  std::unique_ptr<AdInfo> ad_info_;
 };
 
 TEST_F(BraveAdsDailyCapFrequencyCapTest, AdAllowedWhenNoAds) {

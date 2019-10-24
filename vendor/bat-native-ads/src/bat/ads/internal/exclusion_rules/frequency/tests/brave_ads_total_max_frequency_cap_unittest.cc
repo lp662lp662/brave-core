@@ -52,8 +52,7 @@ class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
     // each test)
 
     auto callback = std::bind(
-        &BraveAdsTotalMaxFrequencyCapTest::OnAdsImpleInitialize,
-        this, _1);
+        &BraveAdsTotalMaxFrequencyCapTest::OnAdsImplInitialize, this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
@@ -65,7 +64,7 @@ class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
     ad_info_ = std::make_unique<AdInfo>();
   }
 
-  void OnAdsImpleInitialize(const Result result) {
+  void OnAdsImplInitialize(const Result result) {
     EXPECT_EQ(Result::SUCCESS, result);
   }
 

@@ -28,14 +28,6 @@ const char test_ad_uuid[] = "9aea9a47-c6a0-4718-a0fa-706338bb2156";
 
 class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
  protected:
-  std::unique_ptr<MockAdsClient> mock_ads_client_;
-  std::unique_ptr<AdsImpl> ads_;
-
-  std::unique_ptr<ClientMock> client_mock_;
-  std::unique_ptr<FrequencyCapping> frequency_capping_;
-  std::unique_ptr<PerHourFrequencyCap> exclusion_rule_;
-  std::unique_ptr<AdInfo> ad_info_;
-
   BraveAdsPerHourFrequencyCapTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
       ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
@@ -53,8 +45,8 @@ class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
     // Code here will be called immediately after the constructor (right before
     // each test)
 
-    auto callback = std::bind(&BraveAdsPerHourFrequencyCapTest::OnAdsImpleInitialize,
-        this, _1);
+    auto callback = std::bind(
+        &BraveAdsPerHourFrequencyCapTest::OnAdsImplInitialize, this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
@@ -66,7 +58,7 @@ class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
     ad_info_ = std::make_unique<AdInfo>();
 }
 
-  void OnAdsImpleInitialize(const Result result) {
+  void OnAdsImplInitialize(const Result result) {
     EXPECT_EQ(Result::SUCCESS, result);
   }
 
@@ -74,6 +66,14 @@ class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
     // Code here will be called immediately after each test (right before the
     // destructor)
   }
+
+  std::unique_ptr<MockAdsClient> mock_ads_client_;
+  std::unique_ptr<AdsImpl> ads_;
+
+  std::unique_ptr<ClientMock> client_mock_;
+  std::unique_ptr<FrequencyCapping> frequency_capping_;
+  std::unique_ptr<PerHourFrequencyCap> exclusion_rule_;
+  std::unique_ptr<AdInfo> ad_info_;
 };
 
 TEST_F(BraveAdsPerHourFrequencyCapTest, AdAllowedWhenNoAds) {
