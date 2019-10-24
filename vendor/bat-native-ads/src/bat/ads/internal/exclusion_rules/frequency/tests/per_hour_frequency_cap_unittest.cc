@@ -24,9 +24,9 @@ using ::testing::Invoke;
 
 namespace ads {
 
-static const char* test_ad_uuid = "9aea9a47-c6a0-4718-a0fa-706338bb2156";
+const char test_ad_uuid[] = "9aea9a47-c6a0-4718-a0fa-706338bb2156";
 
-class AdsPerHourFrequencyCapTest : public ::testing::Test {
+class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
  protected:
   std::unique_ptr<MockAdsClient> mock_ads_client_;
   std::unique_ptr<AdsImpl> ads_;
@@ -36,13 +36,13 @@ class AdsPerHourFrequencyCapTest : public ::testing::Test {
   std::unique_ptr<PerHourFrequencyCap> exclusion_rule_;
   std::unique_ptr<AdInfo> ad_info_;
 
-  AdsPerHourFrequencyCapTest() :
+  BraveAdsPerHourFrequencyCapTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
       ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
-  ~AdsPerHourFrequencyCapTest() override {
+  ~BraveAdsPerHourFrequencyCapTest() override {
     // You can do clean-up work that doesn't throw exceptions here
   }
 
@@ -53,7 +53,7 @@ class AdsPerHourFrequencyCapTest : public ::testing::Test {
     // Code here will be called immediately after the constructor (right before
     // each test)
 
-    auto callback = std::bind(&AdsPerHourFrequencyCapTest::OnAdsImpleInitialize,
+    auto callback = std::bind(&BraveAdsPerHourFrequencyCapTest::OnAdsImpleInitialize,
         this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
@@ -76,7 +76,7 @@ class AdsPerHourFrequencyCapTest : public ::testing::Test {
   }
 };
 
-TEST_F(AdsPerHourFrequencyCapTest, TestAdAllowedWhenNoAds) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdAllowedWhenNoAds) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
 
@@ -87,7 +87,7 @@ TEST_F(AdsPerHourFrequencyCapTest, TestAdAllowedWhenNoAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsPerHourFrequencyCapTest, TestAdAllowedOverTheHour) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdAllowedOverTheHour) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   // 1hr 1s in the past
@@ -100,7 +100,7 @@ TEST_F(AdsPerHourFrequencyCapTest, TestAdAllowedOverTheHour) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour1) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour1) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   // 59m 59s
@@ -114,7 +114,7 @@ TEST_F(AdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour1) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(AdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour2) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, TestAdExcludedWithinTheHour2) {
   // Arrange
   ad_info_->uuid = test_ad_uuid;
   client_mock_->GenerateAdHistoryForPerHourFrequencyCapTests(test_ad_uuid, 0,

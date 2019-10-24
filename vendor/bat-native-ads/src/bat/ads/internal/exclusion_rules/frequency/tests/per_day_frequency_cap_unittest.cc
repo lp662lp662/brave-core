@@ -25,13 +25,9 @@ using ::testing::Invoke;
 
 namespace ads {
 
-static const char* test_creative_set_id =
-    "654f10df-fbc4-4a92-8d43-2edf73734a60";
+const char test_creative_set_id[] = "654f10df-fbc4-4a92-8d43-2edf73734a60";
 
-static auto kSecondsPerDay = base::Time::kSecondsPerHour *
-    base::Time::kHoursPerDay;
-
-class AdsPerDayFrequencyCapTest : public ::testing::Test {
+class BraveAdsPerDayFrequencyCapTest : public ::testing::Test {
  protected:
   std::unique_ptr<MockAdsClient> mock_ads_client_;
   std::unique_ptr<AdsImpl> ads_;
@@ -41,13 +37,13 @@ class AdsPerDayFrequencyCapTest : public ::testing::Test {
   std::unique_ptr<PerDayFrequencyCap> exclusion_rule_;
   std::unique_ptr<AdInfo> ad_info_;
 
-  AdsPerDayFrequencyCapTest() :
+  BraveAdsPerDayFrequencyCapTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
       ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
-  ~AdsPerDayFrequencyCapTest() override {
+  ~BraveAdsPerDayFrequencyCapTest() override {
     // You can do clean-up work that doesn't throw exceptions here
   }
 
@@ -58,7 +54,7 @@ class AdsPerDayFrequencyCapTest : public ::testing::Test {
     // Code here will be called immediately after the constructor (right before
     // each test)
 
-    auto callback = std::bind(&AdsPerDayFrequencyCapTest::OnAdsImpleInitialize,
+    auto callback = std::bind(&BraveAdsPerDayFrequencyCapTest::OnAdsImpleInitialize,
         this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
@@ -80,7 +76,7 @@ class AdsPerDayFrequencyCapTest : public ::testing::Test {
   }
 };
 
-TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWhenNoAds) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedWhenNoAds) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -92,7 +88,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWhenNoAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedBelowDailyCap) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedBelowDailyCap) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -106,7 +102,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedBelowDailyCap) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -115,7 +111,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
       test_creative_set_id, 0, 1);
   // 24hrs + 1s ago
   client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
-      test_creative_set_id, -kSecondsPerDay, 1);
+      test_creative_set_id, -base::Time::kSecondsPerDay, 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -124,7 +120,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdAllowedWithAdOutsideDayWindow) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap1) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap1) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -139,7 +135,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap1) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap2) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap2) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 2;
@@ -149,7 +145,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap2) {
       test_creative_set_id, 0, 1);
   // 23hrs 59m 59s ago
   client_mock_->GenerateCreativeSetHistoryForPerHourFrequencyCapTests(
-      test_creative_set_id, -(kSecondsPerDay - 1), 1);
+      test_creative_set_id, -(base::Time::kSecondsPerDay - 1), 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -158,7 +154,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap2) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedForIssue4207) {
+TEST_F(BraveAdsPerDayFrequencyCapTest, TestAdExcludedForIssue4207) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->per_day = 20;

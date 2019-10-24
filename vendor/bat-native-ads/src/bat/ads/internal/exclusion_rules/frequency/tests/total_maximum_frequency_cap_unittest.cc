@@ -24,28 +24,18 @@ using ::testing::Invoke;
 
 namespace ads {
 
-static const char* test_creative_set_id =
-"654f10df-fbc4-4a92-8d43-2edf73734a60";
-static const char* test_creative_set_id_2 =
-"465f10df-fbc4-4a92-8d43-4edf73734a60";
+const char test_creative_set_id[] = "654f10df-fbc4-4a92-8d43-2edf73734a60";
+const char test_creative_set_id_2[] = "465f10df-fbc4-4a92-8d43-4edf73734a60";
 
-class AdsTotalMaximumFrequencyCapTest : public ::testing::Test {
+class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
  protected:
-  std::unique_ptr<MockAdsClient> mock_ads_client_;
-  std::unique_ptr<AdsImpl> ads_;
-
-  std::unique_ptr<ClientMock> client_mock_;
-  std::unique_ptr<FrequencyCapping> frequency_capping_;
-  std::unique_ptr<TotalMaximumFrequencyCap> exclusion_rule_;
-  std::unique_ptr<AdInfo> ad_info_;
-
-  AdsTotalMaximumFrequencyCapTest() :
+  BraveAdsTotalMaxFrequencyCapTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
       ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
-  ~AdsTotalMaximumFrequencyCapTest() override {
+  ~BraveAdsTotalMaxFrequencyCapTest() override {
     // You can do clean-up work that doesn't throw exceptions here
   }
 
@@ -57,7 +47,7 @@ class AdsTotalMaximumFrequencyCapTest : public ::testing::Test {
     // each test)
 
     auto callback = std::bind(
-        &AdsTotalMaximumFrequencyCapTest::OnAdsImpleInitialize,
+        &BraveAdsTotalMaxFrequencyCapTest::OnAdsImpleInitialize,
         this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
@@ -78,9 +68,17 @@ class AdsTotalMaximumFrequencyCapTest : public ::testing::Test {
     // Code here will be called immediately after each test (right before the
     // destructor)
   }
+
+  std::unique_ptr<MockAdsClient> mock_ads_client_;
+  std::unique_ptr<AdsImpl> ads_;
+
+  std::unique_ptr<ClientMock> client_mock_;
+  std::unique_ptr<FrequencyCapping> frequency_capping_;
+  std::unique_ptr<TotalMaximumFrequencyCap> exclusion_rule_;
+  std::unique_ptr<AdInfo> ad_info_;
 };
 
-TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdAllowedWhenNoAds) {
+TEST_F(BraveAdsTotalMaxFrequencyCapTest, AdAllowedWithNoAdHistory) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 2;
@@ -92,7 +90,7 @@ TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdAllowedWhenNoAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdAllowedWithMatchingAds) {
+TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdAllowedWithMatchingAds) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 2;
@@ -107,7 +105,7 @@ TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdAllowedWithMatchingAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdAllowedWithNonMatchingAds) {
+TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdAllowedWithNonMatchingAds) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 2;
@@ -122,7 +120,7 @@ TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdAllowedWithNonMatchingAds) {
   EXPECT_FALSE(is_ad_excluded);
 }
 
-TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
+TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 0;
@@ -137,7 +135,7 @@ TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdExcludedWhenNoneAllowed) {
   EXPECT_TRUE(is_ad_excluded);
 }
 
-TEST_F(AdsTotalMaximumFrequencyCapTest, TestAdExcludedWhenMaximumReached) {
+TEST_F(BraveAdsTotalMaxFrequencyCapTest, TestAdExcludedWhenMaximumReached) {
   // Arrange
   ad_info_->creative_set_id = test_creative_set_id;
   ad_info_->total_max = 5;
