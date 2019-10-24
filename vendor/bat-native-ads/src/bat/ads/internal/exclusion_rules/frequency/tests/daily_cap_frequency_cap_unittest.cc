@@ -28,7 +28,8 @@ namespace ads {
 static const char* test_campaign_id = "60267cee-d5bb-4a0d-baaf-91cd7f18e07e";
 static const char* test_campaign_id_2 = "90762cee-d5bb-4a0d-baaf-61cd7f18e07e";
 
-static auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
+static auto kSecondsPerDay = base::Time::kSecondsPerHour * 
+    base::Time::kHoursPerDay;
 
 class AdsDailyCapFrequencyCapTest : public ::testing::Test {
  protected:
@@ -112,8 +113,9 @@ TEST_F(AdsDailyCapFrequencyCapTest, TestAdAllowedWithAdsWithinTheDay) {
   ad_info_->campaign_id = test_campaign_id;
   ad_info_->daily_cap = 2;
 
+  // 23hrs 59m 59s ago
   client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id,
-    day_window - 1, 1);
+    -(kSecondsPerDay - 1), 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
@@ -127,8 +129,9 @@ TEST_F(AdsDailyCapFrequencyCapTest, TestAdAllowedWithAdsOverTheDay) {
   ad_info_->campaign_id = test_campaign_id;
   ad_info_->daily_cap = 2;
 
+  // 24hs ago
   client_mock_->ConfigureWithDataForDailyCampaignHistory(test_campaign_id,
-    day_window + 1, 1);
+    -kSecondsPerDay, 1);
 
   // Act
   bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);

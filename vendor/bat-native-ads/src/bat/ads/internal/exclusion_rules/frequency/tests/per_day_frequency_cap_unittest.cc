@@ -147,7 +147,7 @@ TEST_F(AdsPerDayFrequencyCapTest, TestAdExcludedAboveDailyCap2) {
   // Now
   client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
       test_creative_set_id, 0, 1);
-  // 23hrs 59s ago
+  // 23hrs 59m 59s ago
   client_mock_->ConfigureWithDataForPerHourFrequencyCappingTest(
       test_creative_set_id, -(kSecondsPerDay - 1), 1);
 
