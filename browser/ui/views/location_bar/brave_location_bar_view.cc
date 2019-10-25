@@ -121,6 +121,11 @@ void BraveLocationBarView::ChildPreferredSizeChanged(views::View* child) {
   Layout();
 }
 
+int BraveLocationBarView::GetBorderRadius() const {
+  return ChromeLayoutProvider::Get()->GetCornerRadiusMetric(
+      views::EMPHASIS_MEDIUM, size());
+}
+
 ContentSettingImageView*
 BraveLocationBarView::GetContentSettingsImageViewForTesting(size_t idx) {
   DCHECK(idx < content_setting_views_.size());
