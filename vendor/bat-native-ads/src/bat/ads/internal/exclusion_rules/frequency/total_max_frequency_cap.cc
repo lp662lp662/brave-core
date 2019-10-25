@@ -13,12 +13,12 @@
 namespace ads {
 
 bool TotalMaxFrequencyCap::ShouldExclude(
-    const AdInfo& ad) const {
+    const AdInfo& ad) {
   if (!DoesAdRespectMaximumCap(ad)) {
     std::ostringstream string_stream;
     string_stream << "creativeSetId " << ad.creative_set_id <<
         " has exceeded the frequency capping for totalMax";
-    reason_for_exclusion_ = string_stream.str;
+    reason_for_exclusion_ = string_stream.str();
     return true;
   }
   return false;

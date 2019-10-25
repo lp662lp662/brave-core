@@ -44,12 +44,12 @@ std::deque<uint64_t> FrequencyCapping::GetCreativeSetHistoryForUuid(
 }
 
 // TODO(masparrow): GetAdsHistory but should be GetAdsShownHistory? and now 'History' is timestamps, not AdHistoryDetail's... confusing the client_->GetAdsShownHistory
-std::deque<uint64_t> GetAdsHistory() const {
+std::deque<uint64_t> FrequencyCapping::GetAdsHistory() const {
   std::deque<uint64_t> history;
   auto ads_history = client_.GetAdsShownHistory();
 
   for (const auto& detail : ads_history) {
-    history.push_back(ad.timestamp_in_seconds);
+    history.push_back(detail.timestamp_in_seconds);
   }
 
   return history;

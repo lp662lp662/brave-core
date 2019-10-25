@@ -153,10 +153,10 @@ source_set("ads") {
     "src/bat/ads/internal/exclusion_rules/frequency/daily_cap_frequency_cap.cc",
     "src/bat/ads/internal/exclusion_rules/frequency/total_max_frequency_cap.h",
     "src/bat/ads/internal/exclusion_rules/frequency/total_max_frequency_cap.cc",
-    "src/bat/ads/internal/exclusion_rules/bob/minimum_wait_time.h"
-    "src/bat/ads/internal/exclusion_rules/bob/minimum_wait_time.cc"
-    "src/bat/ads/internal/exclusion_rules/bob/per_day_limit.h"
-    "src/bat/ads/internal/exclusion_rules/bob/per_day_limit.cc"
+    "src/bat/ads/internal/exclusion_rules/bob/minimum_wait_time.h",
+    "src/bat/ads/internal/exclusion_rules/bob/minimum_wait_time.cc",
+    "src/bat/ads/internal/exclusion_rules/bob/per_day_limit.h",
+    "src/bat/ads/internal/exclusion_rules/bob/per_day_limit.cc",
     "src/bat/ads/internal/json_helper.cc",
     "src/bat/ads/internal/json_helper.h",
     "src/bat/ads/internal/locale_helper.cc",

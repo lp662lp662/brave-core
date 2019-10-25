@@ -21,7 +21,7 @@ class TotalMaxFrequencyCap final : public ExclusionRule {
       frequency_capping_(frequency_capping) {
   }
   bool ShouldExclude(
-      const AdInfo& ad) const override;
+      const AdInfo& ad) override;
 
   const std::string& GetLastReason() const override;
 

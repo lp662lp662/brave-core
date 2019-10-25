@@ -22,7 +22,7 @@ class DailyCapFrequencyCap final : public ExclusionRule {
     }
 
   bool ShouldExclude(
-      const AdInfo& ad) const override;
+      const AdInfo& ad) override;
 
   const std::string& GetLastReason() const override;
 

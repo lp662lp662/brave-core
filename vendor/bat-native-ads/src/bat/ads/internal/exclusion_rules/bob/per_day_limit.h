@@ -22,7 +22,7 @@ class PerDayLimit final {
       ads_client_(ads_client),
       frequency_capping_(frequency_capping) {
   }
-  bool DoesRespectPerDayLimit() const;
+  bool DoesRespectPerDayLimit();
 
   const std::string& GetLastReason() const;
 

@@ -13,13 +13,13 @@
 
 namespace ads {
 
-bool PerDayLimit::DoesRespectPerDayLimit() const {
+bool PerDayLimit::DoesRespectPerDayLimit() {
   auto respects_day_limit = Check1();
 
   std::ostringstream string_stream;
   string_stream << "DoesHistoryRespectAdsPerDayLimit:    respects_day_limit: "
       << respects_day_limit;
-  reason_for_exclusion_ = string_stream.str;
+  reason_for_exclusion_ = string_stream.str();
 
   return respects_day_limit;
 }
@@ -29,13 +29,13 @@ const std::string& PerDayLimit::GetLastReason() const {
 }
 
 bool PerDayLimit::Check1() const {
-  auto history = frequency_capping_->GetAdsHistory();
+  auto history = frequency_capping_.GetAdsHistory();
 
   auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
   auto day_allowed = ads_client_.GetAdsPerDay();
 
   auto respects_day_limit =
-      frequency_capping_->HistoryRespectsRollingTimeConstraint(
+      frequency_capping_.DoesHistoryRespectCapForRollingTimeConstraint(
           history, day_window, day_allowed);
 
   return respects_day_limit;

@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef BAT_ADS_INTERNAL_MAXIMUM_FREQUENCY_CAP_H_
-#define BAT_ADS_INTERNAL_MAXIMUM_FREQUENCY_CAP_H_
+#ifndef BAT_ADS_INTERNAL_MINIMUM_WAIT_TIME_H_
+#define BAT_ADS_INTERNAL_MINIMUM_WAIT_TIME_H_
 
 #include <string>
 
@@ -21,9 +21,11 @@ class MinimumWaitTime final {
       const AdsImpl& ads,
       const AdsClient& ads_client,
       const FrequencyCapping& frequency_capping):
+      ads_(ads),
+      ads_client_(ads_client),
       frequency_capping_(frequency_capping) {
   }
-  bool DoesRespectMinimumWaitTime() const;
+  bool DoesRespectMinimumWaitTime();
 
   const std::string& GetLastReason() const;
 
@@ -42,4 +44,4 @@ class MinimumWaitTime final {
 
 }  // namespace ads
 
-#endif  // BAT_ADS_INTERNAL_MAXIMUM_FREQUENCY_CAP_H_
+#endif  // BAT_ADS_INTERNAL_MINIMUM_WAIT_TIME_H_

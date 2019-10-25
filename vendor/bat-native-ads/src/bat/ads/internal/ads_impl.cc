@@ -1082,7 +1082,7 @@ std::vector<AdInfo> AdsImpl::GetEligibleAds(
   BuildFrequencyCaps(frequency_caps);
 
   for (const auto& ad : unseen_ads) {
-    for (const ExclusionRule* exclusion_rule : frequency_caps) {
+    for (ExclusionRule* exclusion_rule : frequency_caps) {
       if (exclusion_rule->ShouldExclude(ad)) {
         BLOG(WARNING) << exclusion_rule->GetLastReason();
         continue;
@@ -1210,20 +1210,19 @@ bool AdsImpl::ShowAd(
 }
 
 bool AdsImpl::IsAllowedToServeAds() {
-
   FrequencyCapping frequency_capping(*client_.get());
 
   auto minimum_wait_time = std::make_unique<MinimumWaitTime>(*this,
       *ads_client_, frequency_capping);
 
   auto does_history_respect_minimum_wait_time =
-      minimum_wait_time.DoesRespectMinimumWaitTime();
+      minimum_wait_time->DoesRespectMinimumWaitTime();
 
   auto per_day_limit = std::make_unique<PerDayLimit>(
       *ads_client_, frequency_capping);
 
   auto does_history_respect_ads_per_day_limit =
-      per_day_limit.DoesRespectPerDayLimit();
+      per_day_limit->DoesRespectPerDayLimit();
 
   BLOG(INFO) << "IsAllowedToServeAds:";
   BLOG(INFO) << "    does_history_respect_minimum_wait_time: "
