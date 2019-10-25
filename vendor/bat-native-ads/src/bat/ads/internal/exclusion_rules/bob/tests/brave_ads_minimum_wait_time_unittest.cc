@@ -78,7 +78,7 @@ TEST_F(BraveAdsMinimumWaitTimeTest, AdAllowedWithNoAdHistory) {
 
   // Act
   auto does_history_respect_minimum_wait_time =
-       minimum_wait_time_->DoesRespectMinimumWaitTime();
+       minimum_wait_time_->DoesAbide();
 
   // Assert
   EXPECT_FALSE(does_history_respect_minimum_wait_time);

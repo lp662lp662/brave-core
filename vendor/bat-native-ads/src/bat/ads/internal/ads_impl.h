@@ -38,6 +38,7 @@ class Bundle;
 class AdsServe;
 class Notifications;
 class ExclusionRule;
+class AbidingRule;
 
 class AdsImpl : public Ads {
  public:
@@ -318,6 +319,9 @@ class AdsImpl : public Ads {
   bool is_confirmations_ready_;
 
   AdsClient* ads_client_;  // NOT OWNED
+
+  void BuildAbidingRules(
+      std::vector<AbidingRule*>& abiding_rules) const;
 
   void BuildFrequencyCaps(
       std::vector<ExclusionRule*>& frequency_caps) const;

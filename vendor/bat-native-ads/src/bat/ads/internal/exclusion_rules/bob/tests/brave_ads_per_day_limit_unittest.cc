@@ -77,7 +77,7 @@ TEST_F(BraveAdsPerDayLimitTest, AdAllowedWithNoAdHistory) {
 
   // Act
   auto does_history_respect_ads_per_day_limit =
-      per_day_limit_->DoesRespectPerDayLimit();
+      per_day_limit_->DoesAbide();
 
   // Assert
   EXPECT_FALSE(does_history_respect_ads_per_day_limit);

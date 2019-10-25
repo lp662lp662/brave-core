@@ -7,6 +7,9 @@
 #define BAT_ADS_INTERNAL_MINIMUM_WAIT_TIME_H_
 
 #include <string>
+#include <deque>
+
+#include "bat/ads/internal/exclusion_rules/bob/abdiding_rule.h"
 
 namespace ads {
 
@@ -15,7 +18,7 @@ class AdsImpl;
 class AdsClient;
 class FrequencyCapping;
 
-class MinimumWaitTime final {
+class MinimumWaitTime final : public AbidingRule {
  public:
   explicit MinimumWaitTime(
       const AdsImpl& ads,
@@ -25,9 +28,9 @@ class MinimumWaitTime final {
       ads_client_(ads_client),
       frequency_capping_(frequency_capping) {
   }
-  bool DoesRespectMinimumWaitTime();
+  bool DoesAbide() override;
 
-  const std::string& GetLastReason() const;
+  const std::string& GetLastReason() const override;
 
  private:
   const AdsImpl& ads_;
@@ -36,9 +39,9 @@ class MinimumWaitTime final {
 
   std::string reason_for_exclusion_;
 
-  bool Check1(
+  bool AreAdsPerHourBelowAllowedThreshold(
       const std::deque<uint64_t>& history) const;
-  bool Check2(
+  bool AreAdsAllowedAfterMinimumWaitTime(
       const std::deque<uint64_t>& history) const;
 };
 

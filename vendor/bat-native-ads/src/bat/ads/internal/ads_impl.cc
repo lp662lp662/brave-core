@@ -1209,29 +1209,32 @@ bool AdsImpl::ShowAd(
   return true;
 }
 
-bool AdsImpl::IsAllowedToServeAds() {
+void AdsImpl::BuildAbidingRules(
+  std::vector<AbidingRule*>& abiding_rules) const {
   FrequencyCapping frequency_capping(*client_.get());
 
   auto minimum_wait_time = std::make_unique<MinimumWaitTime>(*this,
       *ads_client_, frequency_capping);
-
-  auto does_history_respect_minimum_wait_time =
-      minimum_wait_time->DoesRespectMinimumWaitTime();
+  abiding_rules.push_back(minimum_wait_time.get());
 
   auto per_day_limit = std::make_unique<PerDayLimit>(
       *ads_client_, frequency_capping);
+  abiding_rules.push_back(per_day_limit.get());
+}
 
-  auto does_history_respect_ads_per_day_limit =
-      per_day_limit->DoesRespectPerDayLimit();
+bool AdsImpl::IsAllowedToServeAds() {
+  std::vector<AbidingRule*> abiding_rules;
 
-  BLOG(INFO) << "IsAllowedToServeAds:";
-  BLOG(INFO) << "    does_history_respect_minimum_wait_time: "
-      << does_history_respect_minimum_wait_time;
-  BLOG(INFO) << "    does_history_respect_ads_per_day_limit: "
-      << does_history_respect_ads_per_day_limit;
+  BuildAbidingRules(abiding_rules);
 
-  return does_history_respect_minimum_wait_time &&
-      does_history_respect_ads_per_day_limit;
+  for (AbidingRule* abiding_rule : abiding_rules) {
+    if (!abiding_rule->DoesAbide()) {
+      BLOG(INFO) << abiding_rule->GetLastReason();
+      return false;
+    }
+  }
+
+  return true;
 }
 
 void AdsImpl::StartCollectingActivity(

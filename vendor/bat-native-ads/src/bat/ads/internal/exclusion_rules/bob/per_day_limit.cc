@@ -13,8 +13,8 @@
 
 namespace ads {
 
-bool PerDayLimit::DoesRespectPerDayLimit() {
-  auto respects_day_limit = Check1();
+bool PerDayLimit::DoesAbide() {
+  auto respects_day_limit = AreAdsPerDayBelowAllowedThreshold();
 
   std::ostringstream string_stream;
   string_stream << "DoesHistoryRespectAdsPerDayLimit:    respects_day_limit: "
@@ -28,7 +28,7 @@ const std::string& PerDayLimit::GetLastReason() const {
     return reason_for_exclusion_;
 }
 
-bool PerDayLimit::Check1() const {
+bool PerDayLimit::AreAdsPerDayBelowAllowedThreshold() const {
   auto history = frequency_capping_.GetAdsHistory();
 
   auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;

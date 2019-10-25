@@ -8,13 +8,15 @@
 
 #include <string>
 
+#include "bat/ads/internal/exclusion_rules/bob/abdiding_rule.h"
+
 namespace ads {
 
 struct AdInfo;
 class AdsClient;
 class FrequencyCapping;
 
-class PerDayLimit final {
+class PerDayLimit final : public AbidingRule  {
  public:
   explicit PerDayLimit(
       const AdsClient& ads_client,
@@ -22,9 +24,9 @@ class PerDayLimit final {
       ads_client_(ads_client),
       frequency_capping_(frequency_capping) {
   }
-  bool DoesRespectPerDayLimit();
+  bool DoesAbide() override;
 
-  const std::string& GetLastReason() const;
+  const std::string& GetLastReason() const override;
 
  private:
   const AdsClient& ads_client_;
@@ -32,7 +34,7 @@ class PerDayLimit final {
 
   std::string reason_for_exclusion_;
 
-  bool Check1() const;
+  bool AreAdsPerDayBelowAllowedThreshold() const;
 
 };
 
