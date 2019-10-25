@@ -244,6 +244,7 @@ void BraveProxyingWebSocket::OnBeforeSendHeaders(
 
 void BraveProxyingWebSocket::OnHeadersReceived(
     const std::string& headers,
+    const ::net::IPEndPoint& remote_endpoint,
     OnHeadersReceivedCallback callback) {
   DCHECK(proxy_has_extra_headers());
 
