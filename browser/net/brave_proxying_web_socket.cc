@@ -367,6 +367,7 @@ void BraveProxyingWebSocket::OnHeadersReceivedComplete(int error_code) {
   if (proxy_has_extra_headers()) {
     proxy_trusted_header_client_->OnHeadersReceived(
         headers,
+        ::net::IPEndPoint(),
         base::BindOnce(
             &BraveProxyingWebSocket::OnHeadersReceivedCompleteFromProxy,
             weak_factory_.GetWeakPtr()));
