@@ -44,40 +44,55 @@ const char kDefaultUserModelLanguage[] = "en";
 static const int kDoNotDisturbFromHour = 21;  // 9pm
 static const int kDoNotDisturbToHour = 6;     // 6am
 
-const std::map<std::string, bool> kSupportedRegions = {
-  // {{region, targeted}}
+const std::map<int, std::map<std::string, bool>> kSupportedRegions = {
+  // schema_version : {{region, targeted}}
+  0 : {
+    // We default to schema version 0 so that all regions are considered new if
+    // upgrading from a version of the browser which does not support Brave ads
+  },
 
-  { "US", true  },  // United States of America
-  { "CA", true  },  // Canada
-  { "GB", true  },  // United Kingdom (Great Britain and Northern Ireland)
-  { "DE", true  },  // Germany
-  { "FR", true  },  // France
-  { "AU", true  },  // Australia
-  { "NZ", true  },  // New Zealand
-  { "IE", true  },  // Ireland
-  { "AR", false },  // Argentina
-  { "AT", false },  // Austria
-  { "BR", false },  // Brazil
-  { "CH", false },  // Switzerland
-  { "CL", false },  // Chile
-  { "CO", false },  // Colombia
-  { "DK", false },  // Denmark
-  { "EC", false },  // Ecuador
-  { "IL", false },  // Israel
-  { "IN", false },  // India
-  { "IT", false },  // Italy
-  { "JP", false },  // Japan
-  { "KR", false },  // Korea
-  { "MX", false },  // Mexico
-  { "NL", false },  // Netherlands
-  { "PE", false },  // Peru
-  { "PH", false },  // Philippines
-  { "PL", false },  // Poland
-  { "SE", false },  // Sweden
-  { "SG", false },  // Singapore
-  { "VE", false },  // Venezuela
-  { "ZA", false },  // South Africa
-  { "KY", true  }   // Cayman Islands
+  1 : {
+    { "US", true  },  // United States of America
+    { "CA", true  },  // Canada
+    { "GB", true  },  // United Kingdom (Great Britain and Northern Ireland)
+    { "DE", true  },  // Germany
+    { "FR", true  }   // France
+  },
+
+  2 : {
+    { "AU", true  },  // Australia
+    { "NZ", true  },  // New Zealand
+    { "IE", true  }   // Ireland
+  },
+
+  3 : {
+    { "AR", false },  // Argentina
+    { "AT", false },  // Austria
+    { "BR", false },  // Brazil
+    { "CH", false },  // Switzerland
+    { "CL", false },  // Chile
+    { "CO", false },  // Colombia
+    { "DK", false },  // Denmark
+    { "EC", false },  // Ecuador
+    { "IL", false },  // Israel
+    { "IN", false },  // India
+    { "IT", false },  // Italy
+    { "JP", false },  // Japan
+    { "KR", false },  // Korea
+    { "MX", false },  // Mexico
+    { "NL", false },  // Netherlands
+    { "PE", false },  // Peru
+    { "PH", false },  // Philippines
+    { "PL", false },  // Poland
+    { "SE", false },  // Sweden
+    { "SG", false },  // Singapore
+    { "VE", false },  // Venezuela
+    { "ZA", false }   // South Africa
+  },
+
+  4 : {
+    { "KY", true  }   // Cayman Islands
+  }
 };
 
 #if defined(OS_ANDROID)

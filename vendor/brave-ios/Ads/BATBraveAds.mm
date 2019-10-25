@@ -97,6 +97,11 @@ static NSString * const kNumberOfAdsPerHourKey = @"BATNumberOfAdsPerHour";
   return ads::Ads::IsSupportedRegion(std::string(region.UTF8String));
 }
 
++ (BOOL)isNewlySupportedRegion:(NSString *)region
+{
+  return ads::Ads::IsNewlySupportedRegion(std::string(region.UTF8String));
+}
+
 + (BOOL)isCurrentRegionSupported
 {
   return [self isSupportedRegion:[NSLocale currentLocale].localeIdentifier];

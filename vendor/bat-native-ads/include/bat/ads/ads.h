@@ -77,6 +77,16 @@ class ADS_EXPORT Ads {
   static bool IsSupportedRegion(
       const std::string& locale);
 
+  // Should be called to determine if the specified |locale| is newly supported.
+  // |locale| should be specified in any of the following formats:
+  //
+  //     <language>-<REGION> i.e. en-US
+  //     <language>-<REGION>.<ENCODING> i.e. en-US.UTF-8
+  //     <language>_<REGION> i.e. en_US
+  //     <language>-<REGION>.<ENCODING> i.e. en_US.UTF-8
+  static bool IsNewlySupportedRegion(
+      const std::string& locale);
+
   // Return the region for the specified locale. |locale| should be specified in
   // any of the following formats:
   //

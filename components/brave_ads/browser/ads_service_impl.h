@@ -63,6 +63,8 @@ class AdsServiceImpl : public AdsService,
 
   bool IsSupportedRegion() const override;
 
+  bool IsNewlySupportedRegion() const override;
+
   void SetEnabled(
       const bool is_enabled) override;
 

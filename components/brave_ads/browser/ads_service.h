@@ -48,6 +48,8 @@ class AdsService : public KeyedService {
 
   virtual bool IsSupportedRegion() const = 0;
 
+  virtual bool IsNewlySupportedRegion() const = 0;
+
   virtual bool IsEnabled() const = 0;
   virtual void SetEnabled(
       const bool is_enabled) = 0;

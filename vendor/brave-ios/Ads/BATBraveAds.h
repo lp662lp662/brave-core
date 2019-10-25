@@ -45,6 +45,10 @@ NS_SWIFT_NAME(BraveAds)
 /// locale identifier, i.e. "en_US"
 + (BOOL)isSupportedRegion:(NSString *)region;
 
+/// Whether or not a given region is newly supported. The region should be a
+/// standard locale identifier, i.e. "en_US"
++ (BOOL)isNewlySupportedRegion:(NSString *)region;
+
 /// Whether or not the users current region (by `NSLocale`) is supported
 + (BOOL)isCurrentRegionSupported;
 

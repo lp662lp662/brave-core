@@ -408,6 +408,11 @@ bool AdsServiceImpl::IsSupportedRegion() const {
   return ads::Ads::IsSupportedRegion(locale);
 }
 
+bool AdsServiceImpl::IsNewlySupportedRegion() const {
+  auto locale = LocaleHelper::GetInstance()->GetLocale();
+  return ads::Ads::IsNewlySupportedRegion(locale);
+}
+
 void AdsServiceImpl::SetEnabled(
     const bool is_enabled) {
   SetBooleanPref(prefs::kEnabled, is_enabled);
