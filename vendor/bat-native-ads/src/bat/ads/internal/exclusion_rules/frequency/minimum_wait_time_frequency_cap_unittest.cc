@@ -9,8 +9,8 @@
 
 #include "base/time/time.h"
 
+#include "bat/ads/internal/exclusion_rules/frequency/minimum_wait_time_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
-#include "bat/ads/internal/exclusion_rules/bob/minimum_wait_time.h"
 
 #include "bat/ads/internal/client_mock.h"
 #include "bat/ads/internal/ads_client_mock.h"
@@ -51,7 +51,7 @@ class BraveAdsMinimumWaitTimeTest : public ::testing::Test {
         mock_ads_client_.get());
     frequency_capping_ = std::make_unique<FrequencyCapping>(
         *client_mock_.get());
-    minimum_wait_time_ = std::make_unique<MinimumWaitTime>(
+    minimum_wait_time_ = std::make_unique<MinimumWaitTimeFrequencyCap>(
         *ads_, *mock_ads_client_.get(), *frequency_capping_);
 
   }
@@ -70,7 +70,7 @@ class BraveAdsMinimumWaitTimeTest : public ::testing::Test {
 
   std::unique_ptr<ClientMock> client_mock_;
   std::unique_ptr<FrequencyCapping> frequency_capping_;
-  std::unique_ptr<MinimumWaitTime> minimum_wait_time_;
+  std::unique_ptr<MinimumWaitTimeFrequencyCap> minimum_wait_time_;
 };
 
 TEST_F(BraveAdsMinimumWaitTimeTest, AdAllowedWithNoAdHistory) {
@@ -78,7 +78,7 @@ TEST_F(BraveAdsMinimumWaitTimeTest, AdAllowedWithNoAdHistory) {
 
   // Act
   auto does_history_respect_minimum_wait_time =
-       minimum_wait_time_->DoesAbide();
+       minimum_wait_time_->IsAllowed();
 
   // Assert
   EXPECT_FALSE(does_history_respect_minimum_wait_time);

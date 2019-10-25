@@ -7,14 +7,14 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-#include "base/time/time.h"
-
+#include "bat/ads/internal/exclusion_rules/exclusion_rule.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
-#include "bat/ads/internal/exclusion_rules/bob/per_day_limit.h"
+#include "bat/ads/internal/exclusion_rules/frequency/per_hour_frequency_cap.h"
 
 #include "bat/ads/internal/client_mock.h"
 #include "bat/ads/internal/ads_client_mock.h"
 #include "bat/ads/internal/ads_impl.h"
+#include "bat/ads/ad_info.h"
 
 // npm run test -- brave_unit_tests --filter=Ads*
 
@@ -24,15 +24,17 @@ using ::testing::Invoke;
 
 namespace ads {
 
-class BraveAdsPerDayLimitTest : public ::testing::Test {
+const char test_ad_uuid[] = "9aea9a47-c6a0-4718-a0fa-706338bb2156";
+
+class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
  protected:
-  BraveAdsPerDayLimitTest() :
+  BraveAdsPerHourFrequencyCapTest() :
       mock_ads_client_(std::make_unique<MockAdsClient>()),
       ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
-  ~BraveAdsPerDayLimitTest() override {
+  ~BraveAdsPerHourFrequencyCapTest() override {
     // You can do clean-up work that doesn't throw exceptions here
   }
 
@@ -44,16 +46,17 @@ class BraveAdsPerDayLimitTest : public ::testing::Test {
     // each test)
 
     auto callback = std::bind(
-        &BraveAdsPerDayLimitTest::OnAdsImplInitialize, this, _1);
+        &BraveAdsPerHourFrequencyCapTest::OnAdsImplInitialize, this, _1);
     ads_->Initialize(callback);  // TODO(masparrow): Null callback?
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
         mock_ads_client_.get());
     frequency_capping_ = std::make_unique<FrequencyCapping>(
         *client_mock_.get());
-    per_day_limit_ = std::make_unique<PerDayLimit>(
-        *mock_ads_client_.get(), *frequency_capping_);
-  }
+    exclusion_rule_ = std::make_unique<PerHourFrequencyCap>(
+        *frequency_capping_);
+    ad_info_ = std::make_unique<AdInfo>();
+}
 
   void OnAdsImplInitialize(const Result result) {
     EXPECT_EQ(Result::SUCCESS, result);
@@ -69,18 +72,58 @@ class BraveAdsPerDayLimitTest : public ::testing::Test {
 
   std::unique_ptr<ClientMock> client_mock_;
   std::unique_ptr<FrequencyCapping> frequency_capping_;
-  std::unique_ptr<PerDayLimit> per_day_limit_;
+  std::unique_ptr<PerHourFrequencyCap> exclusion_rule_;
+  std::unique_ptr<AdInfo> ad_info_;
 };
 
-TEST_F(BraveAdsPerDayLimitTest, AdAllowedWithNoAdHistory) {
+TEST_F(BraveAdsPerHourFrequencyCapTest, AdAllowedWhenNoAds) {
   // Arrange
+  ad_info_->uuid = test_ad_uuid;
 
   // Act
-  auto does_history_respect_ads_per_day_limit =
-      per_day_limit_->DoesAbide();
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
 
   // Assert
-  EXPECT_FALSE(does_history_respect_ads_per_day_limit);
+  EXPECT_FALSE(is_ad_excluded);
+}
+
+TEST_F(BraveAdsPerHourFrequencyCapTest, AdAllowedOverTheHour) {
+  // Arrange
+  ad_info_->uuid = test_ad_uuid;
+  // 1hr 1s in the past
+  client_mock_->GenerateAdHistory(test_ad_uuid, -(60*60), 1);
+
+  // Act
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
+
+  // Assert
+  EXPECT_FALSE(is_ad_excluded);
+}
+
+TEST_F(BraveAdsPerHourFrequencyCapTest, AdExcludedWithinTheHour1) {
+  // Arrange
+  ad_info_->uuid = test_ad_uuid;
+  // 59m 59s
+  client_mock_->GenerateAdHistory(test_ad_uuid, -((60*60) - 1),
+    1);
+
+  // Act
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
+
+  // Assert
+  EXPECT_TRUE(is_ad_excluded);
+}
+
+TEST_F(BraveAdsPerHourFrequencyCapTest, AdExcludedWithinTheHour2) {
+  // Arrange
+  ad_info_->uuid = test_ad_uuid;
+  client_mock_->GenerateAdHistory(test_ad_uuid, 0, 1);
+
+  // Act
+  bool is_ad_excluded = exclusion_rule_->ShouldExclude(*ad_info_);
+
+  // Assert
+  EXPECT_TRUE(is_ad_excluded);
 }
 
 }  // namespace ads

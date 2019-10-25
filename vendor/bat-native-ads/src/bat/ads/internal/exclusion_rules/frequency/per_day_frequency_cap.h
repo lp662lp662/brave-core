@@ -15,11 +15,14 @@ namespace ads {
 struct AdInfo;
 class FrequencyCapping;
 
-class PerDayFrequencyCap final : public ExclusionRule {
+class PerDayFrequencyCap : public ExclusionRule {
  public:
-  explicit PerDayFrequencyCap(const FrequencyCapping& frequency_capping)
+  explicit PerDayFrequencyCap(
+    const FrequencyCapping& frequency_capping)
       : frequency_capping_(frequency_capping) {
     }
+  virtual ~PerDayFrequencyCap() = default;
+
   bool ShouldExclude(
       const AdInfo& ad) override;
 

@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include "bat/ads/internal/exclusion_rules/bob/abdiding_rule.h"
+#include "bat/ads/internal/exclusion_rules/frequency/permission_rule.h"
 
 namespace ads {
 
@@ -16,15 +16,17 @@ struct AdInfo;
 class AdsClient;
 class FrequencyCapping;
 
-class PerDayLimit final : public AbidingRule  {
+class PerDayLimitFrequencyCap : public PermissionRule  {
  public:
-  explicit PerDayLimit(
+  explicit PerDayLimitFrequencyCap(
       const AdsClient& ads_client,
-      const FrequencyCapping& frequency_capping):
-      ads_client_(ads_client),
-      frequency_capping_(frequency_capping) {
+      const FrequencyCapping& frequency_capping)
+      : ads_client_(ads_client),
+        frequency_capping_(frequency_capping) {
   }
-  bool DoesAbide() override;
+  virtual ~PerDayLimitFrequencyCap() = default;
+
+  bool IsAllowed() override;
 
   const std::string& GetLastReason() const override;
 
@@ -35,7 +37,6 @@ class PerDayLimit final : public AbidingRule  {
   std::string reason_for_exclusion_;
 
   bool AreAdsPerDayBelowAllowedThreshold() const;
-
 };
 
 }  // namespace ads

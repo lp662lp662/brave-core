@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "bat/ads/internal/exclusion_rules/bob/minimum_wait_time.h"
+#include "bat/ads/internal/exclusion_rules/frequency/minimum_wait_time_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/frequency_capping.h"
 #include "bat/ads/ads_client.h"
 #include "bat/ads/internal/time.h"
@@ -14,7 +14,7 @@
 
 namespace ads {
 
-bool MinimumWaitTime::DoesAbide() {
+bool MinimumWaitTimeFrequencyCap::IsAllowed() {
   if (ads_.IsMobile()) {
     return true;
   }
@@ -33,11 +33,11 @@ bool MinimumWaitTime::DoesAbide() {
   return respects_hour_limit && respects_minimum_wait_time;
 }
 
-const std::string& MinimumWaitTime::GetLastReason() const {
+const std::string& MinimumWaitTimeFrequencyCap::GetLastReason() const {
     return reason_for_exclusion_;
 }
 
-bool MinimumWaitTime::AreAdsPerHourBelowAllowedThreshold(
+bool MinimumWaitTimeFrequencyCap::AreAdsPerHourBelowAllowedThreshold(
   const std::deque<uint64_t>& history) const {
   auto hour_window = base::Time::kSecondsPerHour;
   auto hour_allowed = ads_client_.GetAdsPerHour();
@@ -49,7 +49,7 @@ bool MinimumWaitTime::AreAdsPerHourBelowAllowedThreshold(
   return respects_hour_limit;
 }
 
-bool MinimumWaitTime::AreAdsAllowedAfterMinimumWaitTime(
+bool MinimumWaitTimeFrequencyCap::AreAdsAllowedAfterMinimumWaitTime(
   const std::deque<uint64_t>& history) const {
   auto hour_window = base::Time::kSecondsPerHour;
   auto hour_allowed = ads_client_.GetAdsPerHour();

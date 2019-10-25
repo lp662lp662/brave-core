@@ -17,8 +17,8 @@ class Client;
 class FrequencyCapping {
  public:
   explicit FrequencyCapping(
-      const Client& client) :
-      client_(client) {
+      const Client& client)
+      : client_(client) {
   }
 
   ~FrequencyCapping() = default;

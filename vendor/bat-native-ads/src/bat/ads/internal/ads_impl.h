@@ -38,7 +38,7 @@ class Bundle;
 class AdsServe;
 class Notifications;
 class ExclusionRule;
-class AbidingRule;
+class PermissionRule;
 
 class AdsImpl : public Ads {
  public:
@@ -320,10 +320,10 @@ class AdsImpl : public Ads {
 
   AdsClient* ads_client_;  // NOT OWNED
 
-  void BuildAbidingRules(
-      std::vector<AbidingRule*>& abiding_rules) const;
+  void CreatePermissionRules(
+      std::vector<PermissionRule*>& rules) const;
 
-  void BuildFrequencyCaps(
+  void CreateFrequencyCaps(
       std::vector<ExclusionRule*>& frequency_caps) const;
 
   // Not copyable, not assignable

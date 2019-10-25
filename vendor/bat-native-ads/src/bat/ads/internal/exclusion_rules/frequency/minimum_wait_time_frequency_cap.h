@@ -9,7 +9,7 @@
 #include <string>
 #include <deque>
 
-#include "bat/ads/internal/exclusion_rules/bob/abdiding_rule.h"
+#include "bat/ads/internal/exclusion_rules/frequency/permission_rule.h"
 
 namespace ads {
 
@@ -18,23 +18,25 @@ class AdsImpl;
 class AdsClient;
 class FrequencyCapping;
 
-class MinimumWaitTime final : public AbidingRule {
+class MinimumWaitTimeFrequencyCap : public PermissionRule {
  public:
-  explicit MinimumWaitTime(
+  explicit MinimumWaitTimeFrequencyCap(
       const AdsImpl& ads,
       const AdsClient& ads_client,
-      const FrequencyCapping& frequency_capping):
-      ads_(ads),
-      ads_client_(ads_client),
-      frequency_capping_(frequency_capping) {
+      const FrequencyCapping& frequency_capping)
+      : ads_(ads),
+        ads_client_(ads_client),
+        frequency_capping_(frequency_capping) {
   }
-  bool DoesAbide() override;
+  virtual ~MinimumWaitTimeFrequencyCap() = default;
+
+  bool IsAllowed() override;
 
   const std::string& GetLastReason() const override;
 
  private:
-  const AdsImpl& ads_;
-  const AdsClient& ads_client_;
+  const AdsImpl& ads_;  // NOT OWNED
+  const AdsClient& ads_client_;  // NOT OWNED
   const FrequencyCapping& frequency_capping_;
 
   std::string reason_for_exclusion_;
