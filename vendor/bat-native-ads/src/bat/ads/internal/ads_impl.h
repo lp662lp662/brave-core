@@ -219,13 +219,7 @@ class AdsImpl : public Ads {
   bool ShowAd(
       const AdInfo& ad_info,
       const std::string& category);
-  bool HistoryRespectsRollingTimeConstraint(
-      const std::deque<AdHistoryDetail> history,
-      const uint64_t seconds_window,
-      const uint64_t allowable_ad_count) const;
   bool IsAllowedToServeAds();
-  bool DoesHistoryRespectMinimumWaitTimeToServeAds();
-  bool DoesHistoryRespectAdsPerDayLimit();
 
   uint32_t collect_activity_timer_id_;
   void StartCollectingActivity(

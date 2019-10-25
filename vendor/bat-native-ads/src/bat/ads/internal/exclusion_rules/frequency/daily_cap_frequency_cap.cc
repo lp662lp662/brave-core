@@ -16,8 +16,9 @@ bool DailyCapFrequencyCap::ShouldExclude(
     const AdInfo& ad) const {
   if (!DoesAdRespectDailyCampaignCap(ad)) {
     std::ostringstream string_stream;
-    string_stream  << "campaignId " << ad.campaign_id <<
+    string_stream << "campaignId " << ad.campaign_id <<
         " has exceeded the frequency capping for dailyCap";
+    reason_for_exclusion_ = string_stream.str;
     return true;
   }
   return false;

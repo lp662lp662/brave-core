@@ -12,15 +12,12 @@
 
 namespace ads {
 
-class AdsImpl;
 class Client;
 
 class FrequencyCapping {
  public:
   explicit FrequencyCapping(
-      const AdsImpl* ads,
-      const Client* client) :
-      ads_(ads),
+      const Client& client) :
       client_(client) {
   }
 
@@ -34,6 +31,8 @@ class FrequencyCapping {
   std::deque<uint64_t> GetCreativeSetHistoryForUuid(
       const std::string& uuid) const;
 
+  std::deque<uint64_t> GetAdsHistory() const;
+
   std::deque<uint64_t> GetAdsHistoryForUuid(
       const std::string& uuid) const;
 
@@ -41,8 +40,7 @@ class FrequencyCapping {
       const std::string& uuid) const;
 
  private:
-  const AdsImpl* ads_;  // NOT OWNED
-  const Client* client_;  // NOT OWNED
+  const Client& client_;
 };
 
 }  // namespace ads

@@ -28,6 +28,8 @@
 #include "bat/ads/internal/exclusion_rules/frequency/per_day_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/daily_cap_frequency_cap.h"
 #include "bat/ads/internal/exclusion_rules/frequency/total_max_frequency_cap.h"
+#include "bat/ads/internal/exclusion_rules/bob/minimum_wait_time.h"
+#include "bat/ads/internal/exclusion_rules/bob/per_day_limit.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/error/en.h"
@@ -1050,7 +1052,7 @@ void AdsImpl::ServeAd(
 
 void AdsImpl::BuildFrequencyCaps(
   std::vector<ExclusionRule*>& frequency_caps) const {
-  FrequencyCapping frequency_capping(this, client_.get());
+  FrequencyCapping frequency_capping(*client_.get());
 
   auto daily_cap_frequency_cap = std::make_unique<DailyCapFrequencyCap>
       (frequency_capping);
@@ -1207,33 +1209,21 @@ bool AdsImpl::ShowAd(
   return true;
 }
 
-bool AdsImpl::HistoryRespectsRollingTimeConstraint(
-    const std::deque<AdHistoryDetail> history,
-    const uint64_t seconds_window,
-    const uint64_t allowable_ad_count) const {
-  uint64_t recent_count = 0;
-
-  auto now_in_seconds = Time::NowInSeconds();
-
-  for (const auto& detail : history) {
-    if (now_in_seconds - detail.timestamp_in_seconds < seconds_window) {
-      recent_count++;
-    }
-  }
-
-  if (recent_count <= allowable_ad_count) {
-    return true;
-  }
-
-  return false;
-}
-
 bool AdsImpl::IsAllowedToServeAds() {
-  auto does_history_respect_ads_per_day_limit =
-      DoesHistoryRespectAdsPerDayLimit();
 
-  bool does_history_respect_minimum_wait_time =
-      DoesHistoryRespectMinimumWaitTimeToServeAds();
+  FrequencyCapping frequency_capping(*client_.get());
+
+  auto minimum_wait_time = std::make_unique<MinimumWaitTime>(*this,
+      *ads_client_, frequency_capping);
+
+  auto does_history_respect_minimum_wait_time =
+      minimum_wait_time.DoesRespectMinimumWaitTime();
+
+  auto per_day_limit = std::make_unique<PerDayLimit>(
+      *ads_client_, frequency_capping);
+
+  auto does_history_respect_ads_per_day_limit =
+      per_day_limit.DoesRespectPerDayLimit();
 
   BLOG(INFO) << "IsAllowedToServeAds:";
   BLOG(INFO) << "    does_history_respect_minimum_wait_time: "
@@ -1243,47 +1233,6 @@ bool AdsImpl::IsAllowedToServeAds() {
 
   return does_history_respect_minimum_wait_time &&
       does_history_respect_ads_per_day_limit;
-}
-
-bool AdsImpl::DoesHistoryRespectMinimumWaitTimeToServeAds() {
-  if (IsMobile()) {
-    return true;
-  }
-
-  auto ads_shown_history = client_->GetAdsShownHistory();
-
-  auto hour_window = base::Time::kSecondsPerHour;
-  auto hour_allowed = ads_client_->GetAdsPerHour();
-  auto respects_hour_limit = HistoryRespectsRollingTimeConstraint(
-      ads_shown_history, hour_window, hour_allowed);
-
-  auto minimum_wait_time = hour_window / hour_allowed;
-  auto respects_minimum_wait_time = HistoryRespectsRollingTimeConstraint(
-      ads_shown_history, minimum_wait_time, 0);
-
-  BLOG(INFO) << "DoesHistoryRespectMinimumWaitTimeToServeAds:";
-  BLOG(INFO) << "    respects_hour_limit: "
-      << respects_hour_limit;
-  BLOG(INFO) << "    respects_minimum_wait_time: "
-      << respects_minimum_wait_time;
-
-  return respects_hour_limit && respects_minimum_wait_time;
-}
-
-bool AdsImpl::DoesHistoryRespectAdsPerDayLimit() {
-  auto ads_shown_history = client_->GetAdsShownHistory();
-
-  auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
-  auto day_allowed = ads_client_->GetAdsPerDay();
-
-  auto respects_day_limit = HistoryRespectsRollingTimeConstraint(
-      ads_shown_history, day_window, day_allowed);
-
-  BLOG(INFO) << "DoesHistoryRespectAdsPerDayLimit:";
-  BLOG(INFO) << "    respects_day_limit: "
-      << respects_day_limit;
-
-  return respects_day_limit;
 }
 
 void AdsImpl::StartCollectingActivity(

@@ -18,6 +18,7 @@ bool PerDayFrequencyCap::ShouldExclude(
     std::ostringstream string_stream;
     string_stream  << "creativeSetId " << ad.creative_set_id <<
         " has exceeded the frequency capping for perDay";
+    reason_for_exclusion_ = string_stream.str;
     return true;
   }
   return false;
