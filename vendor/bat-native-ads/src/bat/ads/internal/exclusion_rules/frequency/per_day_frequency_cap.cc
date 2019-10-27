@@ -30,11 +30,11 @@ const std::string& PerDayFrequencyCap::GetLastReason() const {
 
 bool PerDayFrequencyCap::DoesAdRespectPerDayCap(
     const AdInfo& ad) const {
-  auto creative_set = frequency_capping_.GetCreativeSetHistoryForUuid(
+  auto creative_set = frequency_capping_->GetCreativeSetHistoryForUuid(
       ad.creative_set_id);
   auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
 
-  return frequency_capping_.DoesHistoryRespectCapForRollingTimeConstraint(
+  return frequency_capping_->DoesHistoryRespectCapForRollingTimeConstraint(
     creative_set, day_window, ad.per_day);
 }
 

@@ -17,7 +17,7 @@ class Client;
 class FrequencyCapping {
  public:
   explicit FrequencyCapping(
-      const Client& client)
+      const Client* client)
       : client_(client) {
   }
 
@@ -40,7 +40,7 @@ class FrequencyCapping {
       const std::string& uuid) const;
 
  private:
-  const Client& client_;
+  const Client* client_;  // NOT OWNED
 };
 
 }  // namespace ads

@@ -17,7 +17,7 @@ class FrequencyCapping;
 class PerHourFrequencyCap : public ExclusionRule {
  public:
   explicit PerHourFrequencyCap(
-      const FrequencyCapping& frequency_capping)
+      const FrequencyCapping* frequency_capping)
       : frequency_capping_(frequency_capping) {
     }
   virtual ~PerHourFrequencyCap() = default;
@@ -28,7 +28,7 @@ class PerHourFrequencyCap : public ExclusionRule {
   const std::string& GetLastReason() const override;
 
  private:
-  const FrequencyCapping& frequency_capping_;  // NOT OWNED
+  const FrequencyCapping* frequency_capping_;  // NOT OWNED
 
   std::string reason_for_exclusion_;
 

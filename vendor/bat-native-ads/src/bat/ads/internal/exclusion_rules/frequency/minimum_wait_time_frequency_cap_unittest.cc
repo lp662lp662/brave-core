@@ -26,9 +26,9 @@ namespace ads {
 
 class BraveAdsMinimumWaitTimeTest : public ::testing::Test {
  protected:
-  BraveAdsMinimumWaitTimeTest() :
-      mock_ads_client_(std::make_unique<MockAdsClient>()),
-      ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
+  BraveAdsMinimumWaitTimeTest()
+  : mock_ads_client_(std::make_unique<MockAdsClient>()),
+    ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
@@ -50,9 +50,9 @@ class BraveAdsMinimumWaitTimeTest : public ::testing::Test {
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
         mock_ads_client_.get());
     frequency_capping_ = std::make_unique<FrequencyCapping>(
-        *client_mock_.get());
+        client_mock_.get());
     minimum_wait_time_ = std::make_unique<MinimumWaitTimeFrequencyCap>(
-        *ads_, *mock_ads_client_.get(), *frequency_capping_);
+        ads_.get(), mock_ads_client_.get(), frequency_capping_.get());
 
   }
 
@@ -73,15 +73,24 @@ class BraveAdsMinimumWaitTimeTest : public ::testing::Test {
   std::unique_ptr<MinimumWaitTimeFrequencyCap> minimum_wait_time_;
 };
 
-TEST_F(BraveAdsMinimumWaitTimeTest, AdAllowedWithNoAdHistory) {
+TEST_F(BraveAdsMinimumWaitTimeTest, MinimumWaitTimeRespectedWithNoAdHistory) {
   // Arrange
+  ON_CALL(*mock_ads_client_, GetAdsPerHour())
+      .WillByDefault(testing::Return(2));
 
   // Act
   auto does_history_respect_minimum_wait_time =
        minimum_wait_time_->IsAllowed();
 
   // Assert
-  EXPECT_FALSE(does_history_respect_minimum_wait_time);
+  EXPECT_TRUE(does_history_respect_minimum_wait_time);
 }
+
+  // ads per hour   ads in last hour  ads in min wait time  IsAllowed
+  // 2              0                 0                     true
+  // 2              1                 0                     true
+  // 2              2                 0                     false
+  // 2              0                 1                     false
+  // 2              2                 1                     false
 
 }  // namespace ads

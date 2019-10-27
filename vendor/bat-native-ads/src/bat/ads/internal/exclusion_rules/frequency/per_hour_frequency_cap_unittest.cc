@@ -28,9 +28,9 @@ const char test_ad_uuid[] = "9aea9a47-c6a0-4718-a0fa-706338bb2156";
 
 class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
  protected:
-  BraveAdsPerHourFrequencyCapTest() :
-      mock_ads_client_(std::make_unique<MockAdsClient>()),
-      ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
+  BraveAdsPerHourFrequencyCapTest()
+  : mock_ads_client_(std::make_unique<MockAdsClient>()),
+    ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
@@ -51,10 +51,8 @@ class BraveAdsPerHourFrequencyCapTest : public ::testing::Test {
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
         mock_ads_client_.get());
-    frequency_capping_ = std::make_unique<FrequencyCapping>(
-        *client_mock_.get());
-    exclusion_rule_ = std::make_unique<PerHourFrequencyCap>(
-        *frequency_capping_);
+    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get());
+    exclusion_rule_ = std::make_unique<PerHourFrequencyCap>(frequency_capping_.get());
     ad_info_ = std::make_unique<AdInfo>();
 }
 

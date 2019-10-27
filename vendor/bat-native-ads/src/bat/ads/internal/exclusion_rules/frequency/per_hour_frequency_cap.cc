@@ -30,10 +30,10 @@ const std::string& PerHourFrequencyCap::GetLastReason() const {
 
 bool PerHourFrequencyCap::DoesAdRespectPerHourCap(
     const AdInfo& ad) const {
-  auto ads_shown = frequency_capping_.GetAdsHistoryForUuid(ad.uuid);
+  auto ads_shown = frequency_capping_->GetAdsHistoryForUuid(ad.uuid);
   auto hour_window = base::Time::kSecondsPerHour;
 
-  return frequency_capping_.DoesHistoryRespectCapForRollingTimeConstraint(
+  return frequency_capping_->DoesHistoryRespectCapForRollingTimeConstraint(
       ads_shown, hour_window, 1);
 }
 

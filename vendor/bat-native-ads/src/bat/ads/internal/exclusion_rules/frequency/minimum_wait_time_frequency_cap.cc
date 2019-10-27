@@ -9,17 +9,18 @@
 #include "bat/ads/internal/time.h"
 #include "bat/ads/internal/client.h"
 #include "bat/ads/internal/ads_impl.h"
+#include "bat/ads/ads_client.h"
 
 #include "bat/ads/ad_info.h"
 
 namespace ads {
 
 bool MinimumWaitTimeFrequencyCap::IsAllowed() {
-  if (ads_.IsMobile()) {
+  if (ads_->IsMobile()) {
     return true;
   }
 
-  auto history = frequency_capping_.GetAdsHistory();
+  auto history = frequency_capping_->GetAdsHistory();
 
   auto respects_hour_limit = AreAdsPerHourBelowAllowedThreshold(history);
   auto respects_minimum_wait_time = AreAdsAllowedAfterMinimumWaitTime(history);
@@ -40,10 +41,10 @@ const std::string& MinimumWaitTimeFrequencyCap::GetLastReason() const {
 bool MinimumWaitTimeFrequencyCap::AreAdsPerHourBelowAllowedThreshold(
   const std::deque<uint64_t>& history) const {
   auto hour_window = base::Time::kSecondsPerHour;
-  auto hour_allowed = ads_client_.GetAdsPerHour();
+  auto hour_allowed = ads_client_->GetAdsPerHour();
 
   auto respects_hour_limit =
-      frequency_capping_.DoesHistoryRespectCapForRollingTimeConstraint(
+      frequency_capping_->DoesHistoryRespectCapForRollingTimeConstraint(
           history, hour_window, hour_allowed);
 
   return respects_hour_limit;
@@ -52,11 +53,11 @@ bool MinimumWaitTimeFrequencyCap::AreAdsPerHourBelowAllowedThreshold(
 bool MinimumWaitTimeFrequencyCap::AreAdsAllowedAfterMinimumWaitTime(
   const std::deque<uint64_t>& history) const {
   auto hour_window = base::Time::kSecondsPerHour;
-  auto hour_allowed = ads_client_.GetAdsPerHour();
+  auto hour_allowed = ads_client_->GetAdsPerHour();
   auto minimum_wait_time = hour_window / hour_allowed;
 
   auto respects_minimum_wait_time =
-      frequency_capping_.DoesHistoryRespectCapForRollingTimeConstraint(
+      frequency_capping_->DoesHistoryRespectCapForRollingTimeConstraint(
           history, minimum_wait_time, 0);
 
   return respects_minimum_wait_time;

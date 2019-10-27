@@ -30,7 +30,7 @@ const std::string& TotalMaxFrequencyCap::GetLastReason() const {
 
 bool TotalMaxFrequencyCap::DoesAdRespectMaximumCap(
     const AdInfo& ad) const {
-  auto creative_set = frequency_capping_.GetCreativeSetHistoryForUuid(
+  auto creative_set = frequency_capping_->GetCreativeSetHistoryForUuid(
     ad.creative_set_id);
 
   if (creative_set.size() >= ad.total_max) {

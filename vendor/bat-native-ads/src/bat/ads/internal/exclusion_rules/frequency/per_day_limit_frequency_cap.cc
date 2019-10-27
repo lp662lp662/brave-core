@@ -8,6 +8,7 @@
 #include "bat/ads/ads_client.h"
 #include "bat/ads/internal/time.h"
 #include "bat/ads/internal/client.h"
+#include "bat/ads/ads_client.h"
 
 #include "bat/ads/ad_info.h"
 
@@ -29,13 +30,13 @@ const std::string& PerDayLimitFrequencyCap::GetLastReason() const {
 }
 
 bool PerDayLimitFrequencyCap::AreAdsPerDayBelowAllowedThreshold() const {
-  auto history = frequency_capping_.GetAdsHistory();
+  auto history = frequency_capping_->GetAdsHistory();
 
   auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
-  auto day_allowed = ads_client_.GetAdsPerDay();
+  auto day_allowed = ads_client_->GetAdsPerDay();
 
   auto respects_day_limit =
-      frequency_capping_.DoesHistoryRespectCapForRollingTimeConstraint(
+      frequency_capping_->DoesHistoryRespectCapForRollingTimeConstraint(
           history, day_window, day_allowed);
 
   return respects_day_limit;

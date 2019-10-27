@@ -30,10 +30,10 @@ const std::string& DailyCapFrequencyCap::GetLastReason() const {
 
 bool DailyCapFrequencyCap::DoesAdRespectDailyCampaignCap(
     const AdInfo& ad) const {
-  auto campaign = frequency_capping_.GetCampaignForUuid(ad.campaign_id);
+  auto campaign = frequency_capping_->GetCampaignForUuid(ad.campaign_id);
   auto day_window = base::Time::kSecondsPerHour * base::Time::kHoursPerDay;
 
-  return frequency_capping_.DoesHistoryRespectCapForRollingTimeConstraint(
+  return frequency_capping_->DoesHistoryRespectCapForRollingTimeConstraint(
       campaign, day_window, ad.daily_cap);
 }
 

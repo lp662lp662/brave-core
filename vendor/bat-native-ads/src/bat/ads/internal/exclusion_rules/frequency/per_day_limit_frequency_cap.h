@@ -19,8 +19,8 @@ class FrequencyCapping;
 class PerDayLimitFrequencyCap : public PermissionRule  {
  public:
   explicit PerDayLimitFrequencyCap(
-      const AdsClient& ads_client,
-      const FrequencyCapping& frequency_capping)
+      const AdsClient* ads_client,
+      const FrequencyCapping* frequency_capping)
       : ads_client_(ads_client),
         frequency_capping_(frequency_capping) {
   }
@@ -31,8 +31,8 @@ class PerDayLimitFrequencyCap : public PermissionRule  {
   const std::string& GetLastReason() const override;
 
  private:
-  const AdsClient& ads_client_;
-  const FrequencyCapping& frequency_capping_;
+  const AdsClient* ads_client_;  // NOT OWNED
+  const FrequencyCapping* frequency_capping_;  // NOT OWNED
 
   std::string reason_for_exclusion_;
 

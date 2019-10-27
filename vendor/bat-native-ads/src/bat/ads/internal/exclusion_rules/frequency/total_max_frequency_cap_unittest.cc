@@ -34,9 +34,9 @@ const char test_creative_set_ids[][40] = {
 
 class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
  protected:
-  BraveAdsTotalMaxFrequencyCapTest() :
-      mock_ads_client_(std::make_unique<MockAdsClient>()),
-      ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
+  BraveAdsTotalMaxFrequencyCapTest()
+  : mock_ads_client_(std::make_unique<MockAdsClient>()),
+    ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
@@ -57,10 +57,9 @@ class BraveAdsTotalMaxFrequencyCapTest : public ::testing::Test {
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
         mock_ads_client_.get());
-    frequency_capping_ = std::make_unique<FrequencyCapping>(
-        *client_mock_.get());
+    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get());
     exclusion_rule_ = std::make_unique<TotalMaxFrequencyCap>(
-        *frequency_capping_);
+        frequency_capping_.get());
     ad_info_ = std::make_unique<AdInfo>();
   }
 

@@ -26,9 +26,9 @@ namespace ads {
 
 class BraveAdsPerDayLimitTest : public ::testing::Test {
  protected:
-  BraveAdsPerDayLimitTest() :
-      mock_ads_client_(std::make_unique<MockAdsClient>()),
-      ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
+  BraveAdsPerDayLimitTest()
+  : mock_ads_client_(std::make_unique<MockAdsClient>()),
+    ads_(std::make_unique<AdsImpl>(mock_ads_client_.get())) {
     // You can do set-up work for each test here
   }
 
@@ -49,10 +49,9 @@ class BraveAdsPerDayLimitTest : public ::testing::Test {
 
     client_mock_ = std::make_unique<ClientMock>(ads_.get(),
         mock_ads_client_.get());
-    frequency_capping_ = std::make_unique<FrequencyCapping>(
-        *client_mock_.get());
+    frequency_capping_ = std::make_unique<FrequencyCapping>(client_mock_.get());
     per_day_limit_ = std::make_unique<PerDayLimitFrequencyCap>(
-        *mock_ads_client_.get(), *frequency_capping_);
+        mock_ads_client_.get(), frequency_capping_.get());
   }
 
   void OnAdsImplInitialize(const Result result) {
@@ -82,5 +81,9 @@ TEST_F(BraveAdsPerDayLimitTest, AdAllowedWithNoAdHistory) {
   // Assert
   EXPECT_FALSE(does_history_respect_ads_per_day_limit);
 }
+  // ads per day    ads in last day     IsAllowed
+  // 2              0                   true
+  // 2              1                   true
+  // 2              2                   false
 
 }  // namespace ads

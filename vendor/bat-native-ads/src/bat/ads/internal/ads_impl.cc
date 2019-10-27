@@ -1052,25 +1052,25 @@ void AdsImpl::ServeAd(
 
 void AdsImpl::CreateFrequencyCaps(
   std::vector<ExclusionRule*>& frequency_caps) const {
-  FrequencyCapping frequency_capping(*client_.get());
+  auto frequency_capping = std::make_unique<FrequencyCapping>(client_.get());
 
   auto daily_cap_frequency_cap = std::make_unique<DailyCapFrequencyCap>
-      (frequency_capping);
+      (frequency_capping.get());
   DCHECK(daily_cap_frequency_cap);
   frequency_caps.push_back(daily_cap_frequency_cap.get());
 
   auto per_day_frequency_cap = std::make_unique<PerDayFrequencyCap>
-      (frequency_capping);
+      (frequency_capping.get());
   DCHECK(per_day_frequency_cap);
   frequency_caps.push_back(per_day_frequency_cap.get());
 
   auto per_hour_frequency_cap = std::make_unique<PerHourFrequencyCap>
-      (frequency_capping);
+      (frequency_capping.get());
   DCHECK(per_hour_frequency_cap);
   frequency_caps.push_back(per_hour_frequency_cap.get());
 
   auto total_max_frequency_cap = std::make_unique<TotalMaxFrequencyCap>
-      (frequency_capping);
+      (frequency_capping.get());
   DCHECK(total_max_frequency_cap);
   frequency_caps.push_back(total_max_frequency_cap.get());
 }
@@ -1215,15 +1215,15 @@ bool AdsImpl::ShowAd(
 
 void AdsImpl::CreatePermissionRules(
   std::vector<PermissionRule*>& rules) const {
-  FrequencyCapping frequency_capping(*client_.get());
+  auto frequency_capping = std::make_unique<FrequencyCapping>(client_.get());
 
-  auto minimum_wait_time = std::make_unique<MinimumWaitTimeFrequencyCap>(*this,
-      *ads_client_, frequency_capping);
+  auto minimum_wait_time = std::make_unique<MinimumWaitTimeFrequencyCap>(this,
+      ads_client_, frequency_capping.get());
   DCHECK(minimum_wait_time);
   rules.push_back(minimum_wait_time.get());
 
   auto per_day_limit = std::make_unique<PerDayLimitFrequencyCap>(
-      *ads_client_, frequency_capping);
+      ads_client_, frequency_capping.get());
   DCHECK(per_day_limit);
   rules.push_back(per_day_limit.get());
 }

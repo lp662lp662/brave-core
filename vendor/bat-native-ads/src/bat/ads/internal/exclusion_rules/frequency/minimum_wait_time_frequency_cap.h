@@ -21,9 +21,9 @@ class FrequencyCapping;
 class MinimumWaitTimeFrequencyCap : public PermissionRule {
  public:
   explicit MinimumWaitTimeFrequencyCap(
-      const AdsImpl& ads,
-      const AdsClient& ads_client,
-      const FrequencyCapping& frequency_capping)
+      const AdsImpl* ads,
+      const AdsClient* ads_client,
+      const FrequencyCapping* frequency_capping)
       : ads_(ads),
         ads_client_(ads_client),
         frequency_capping_(frequency_capping) {
@@ -35,9 +35,9 @@ class MinimumWaitTimeFrequencyCap : public PermissionRule {
   const std::string& GetLastReason() const override;
 
  private:
-  const AdsImpl& ads_;  // NOT OWNED
-  const AdsClient& ads_client_;  // NOT OWNED
-  const FrequencyCapping& frequency_capping_;
+  const AdsImpl* ads_;  // NOT OWNED
+  const AdsClient* ads_client_;  // NOT OWNED
+  const FrequencyCapping* frequency_capping_;  // NOT OWNED
 
   std::string reason_for_exclusion_;
 
