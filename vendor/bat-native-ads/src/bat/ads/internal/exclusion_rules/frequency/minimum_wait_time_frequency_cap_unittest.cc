@@ -24,6 +24,8 @@ using ::testing::Invoke;
 
 namespace ads {
 
+const char test_ad_uuid[] = "9aea9a47-c6a0-4718-a0fa-706338bb2156";
+
 class BraveAdsMinimumWaitTimeTest : public ::testing::Test {
  protected:
   BraveAdsMinimumWaitTimeTest()
@@ -86,11 +88,41 @@ TEST_F(BraveAdsMinimumWaitTimeTest, MinimumWaitTimeRespectedWithNoAdHistory) {
   EXPECT_TRUE(does_history_respect_minimum_wait_time);
 }
 
+TEST_F(BraveAdsMinimumWaitTimeTest,
+  MinimumWaitTimeRespectedWithAdOverMiniumWaitTime) {
+  // Arrange
+  ON_CALL(*mock_ads_client_, GetAdsPerHour())
+      .WillByDefault(testing::Return(2));
+
+  client_mock_->GenerateAdHistory(test_ad_uuid, 45 * 60, 1);
+
+  // Act
+  auto does_history_respect_minimum_wait_time =
+       minimum_wait_time_->IsAllowed();
+
+  // Assert
+  EXPECT_TRUE(does_history_respect_minimum_wait_time);
+}
+
+TEST_F(BraveAdsMinimumWaitTimeTest,
+  MinimumWaitTimeNotRespectedWithAdWithinMiniumWaitTime) {
+  // Arrange
+  ON_CALL(*mock_ads_client_, GetAdsPerHour())
+      .WillByDefault(testing::Return(2));
+
+  client_mock_->GenerateAdHistory(test_ad_uuid, 15 * 60, 1);
+
+  // Act
+  auto does_history_respect_minimum_wait_time =
+       minimum_wait_time_->IsAllowed();
+
+  // Assert
+  EXPECT_FALSE(does_history_respect_minimum_wait_time);
+}
+
   // ads per hour   ads in last hour  ads in min wait time  IsAllowed
-  // 2              0                 0                     true
-  // 2              1                 0                     true
-  // 2              2                 0                     false
-  // 2              0                 1                     false
-  // 2              2                 1                     false
+  // 2              0                 0                     true D
+  // 2              1                 0                     true D
+  // 2              1                 1                     false D
 
 }  // namespace ads

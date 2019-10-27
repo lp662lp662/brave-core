@@ -24,6 +24,8 @@ using ::testing::Invoke;
 
 namespace ads {
 
+const char test_ad_uuid[] = "9aea9a47-c6a0-4718-a0fa-706338bb2156";
+
 class BraveAdsPerDayLimitTest : public ::testing::Test {
  protected:
   BraveAdsPerDayLimitTest()
@@ -71,8 +73,41 @@ class BraveAdsPerDayLimitTest : public ::testing::Test {
   std::unique_ptr<PerDayLimitFrequencyCap> per_day_limit_;
 };
 
-TEST_F(BraveAdsPerDayLimitTest, AdAllowedWithNoAdHistory) {
+TEST_F(BraveAdsPerDayLimitTest, PerDayLimitRespectedWithNoAdHistory) {
   // Arrange
+  ON_CALL(*mock_ads_client_, GetAdsPerDay())
+      .WillByDefault(testing::Return(2));
+
+  // Act
+  auto does_history_respect_ads_per_day_limit =
+      per_day_limit_->IsAllowed();
+
+  // Assert
+  EXPECT_TRUE(does_history_respect_ads_per_day_limit);
+}
+
+TEST_F(BraveAdsPerDayLimitTest, PerDayLimitRespectedWithAdsBelowPerDayLimit) {
+  // Arrange
+  ON_CALL(*mock_ads_client_, GetAdsPerDay())
+      .WillByDefault(testing::Return(2));
+
+  client_mock_->GenerateAdHistory(test_ad_uuid, base::Time::kSecondsPerHour, 1);
+
+  // Act
+  auto does_history_respect_ads_per_day_limit =
+      per_day_limit_->IsAllowed();
+
+  // Assert
+  EXPECT_TRUE(does_history_respect_ads_per_day_limit);
+}
+
+TEST_F(BraveAdsPerDayLimitTest,
+  PerDayLimitNotRespectedWithAdsAbovePerDayLimit) {
+  // Arrange
+  ON_CALL(*mock_ads_client_, GetAdsPerDay())
+      .WillByDefault(testing::Return(2));
+
+  client_mock_->GenerateAdHistory(test_ad_uuid, base::Time::kSecondsPerHour, 2);
 
   // Act
   auto does_history_respect_ads_per_day_limit =
@@ -81,9 +116,10 @@ TEST_F(BraveAdsPerDayLimitTest, AdAllowedWithNoAdHistory) {
   // Assert
   EXPECT_FALSE(does_history_respect_ads_per_day_limit);
 }
+
   // ads per day    ads in last day     IsAllowed
-  // 2              0                   true
-  // 2              1                   true
-  // 2              2                   false
+  // 2              0                   true D
+  // 2              1                   true D
+  // 2              2                   false D
 
 }  // namespace ads

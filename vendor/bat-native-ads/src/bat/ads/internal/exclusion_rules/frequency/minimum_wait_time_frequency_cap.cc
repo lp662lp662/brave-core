@@ -23,15 +23,21 @@ bool MinimumWaitTimeFrequencyCap::IsAllowed() {
   auto history = frequency_capping_->GetAdsHistory();
 
   auto respects_hour_limit = AreAdsPerHourBelowAllowedThreshold(history);
+  if (!respects_hour_limit) {
+    std::ostringstream string_stream;
+    string_stream << "IsAllowed: respects_hour_limit: " << respects_hour_limit;
+    return false;
+  }
   auto respects_minimum_wait_time = AreAdsAllowedAfterMinimumWaitTime(history);
+  if (!respects_minimum_wait_time) {
+    std::ostringstream string_stream;
+    string_stream << "IsAllowed: respects_minimum_wait_time:" <<
+        respects_minimum_wait_time;
+    reason_for_exclusion_ = string_stream.str();
+    return false;
+  }
 
-  std::ostringstream string_stream;
-  string_stream << "DoesRespectMinimumWaitTime:    respects_hour_limit: " <<
-      respects_hour_limit << "    respects_minimum_wait_time: " <<
-      respects_minimum_wait_time;
-  reason_for_exclusion_ = string_stream.str();
-
-  return respects_hour_limit && respects_minimum_wait_time;
+  return true;
 }
 
 const std::string& MinimumWaitTimeFrequencyCap::GetLastReason() const {
