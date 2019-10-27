@@ -73,7 +73,7 @@ TEST_F(PhaseTwoTest, GetStatisticalVotingWinners) {
     bool result = phase_two->GetStatisticalVotingWinner(
         cases[i].dart, list, &winner);
     EXPECT_TRUE(result);
-    EXPECT_STREQ(winner.direction_.publisher_key_.c_str(), cases[i].publisher);
+    EXPECT_STREQ(winner.direction.publisher_key.c_str(), cases[i].publisher);
   }
 }
 

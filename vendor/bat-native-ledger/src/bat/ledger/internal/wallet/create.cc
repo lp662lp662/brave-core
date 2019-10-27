@@ -192,7 +192,7 @@ void Create::RequestCredentialsCallback(
   braveledger_bat_helper::WALLET_INFO_ST wallet_info;
   std::vector<uint8_t> key_info_seed = braveledger_bat_helper::generateSeed();
 
-  wallet_info.keyInfoSeed_ = key_info_seed;
+  wallet_info.key_info_seed = key_info_seed;
   ledger_->SetWalletInfo(wallet_info);
   std::vector<uint8_t> secretKey =
       braveledger_bat_helper::getHKDF(key_info_seed);

@@ -183,7 +183,7 @@ void Recover::RecoverWalletCallback(
   braveledger_bat_helper::getJSONRecoverWallet(
       response,
       &balance,
-      &properties.grants_);
+      &properties.grants);
   ledger_->SetCurrency(currency);
   if (!ledger_->GetUserChangedContribution()) {
     ledger_->SetContributionAmount(fee_amount);
@@ -191,19 +191,19 @@ void Recover::RecoverWalletCallback(
   ledger_->SetDays(days);
   ledger_->SetWalletProperties(&properties);
 
-  wallet_info.paymentId_ = recoveryId;
-  wallet_info.keyInfoSeed_ = new_seed;
+  wallet_info.payment_id = recoveryId;
+  wallet_info.key_info_seed = new_seed;
   ledger_->SetWalletInfo(wallet_info);
 
   std::vector<ledger::GrantPtr> ledgerGrants;
-  std::vector<braveledger_bat_helper::GRANT> grants = properties.grants_;
+  std::vector<braveledger_bat_helper::GRANT> grants = properties.grants;
 
   for (size_t i = 0; i < grants.size(); i ++) {
     ledger::GrantPtr tempGrant = ledger::Grant::New();
 
-    tempGrant->altcurrency = grants[i].altcurrency;
+    tempGrant->altcurrency = grants[i].alt_currency;
     tempGrant->probi = grants[i].probi;
-    tempGrant->expiry_time = grants[i].expiryTime;
+    tempGrant->expiry_time = grants[i].expiry_time;
     tempGrant->type = grants[i].type;
 
     ledgerGrants.push_back(std::move(tempGrant));

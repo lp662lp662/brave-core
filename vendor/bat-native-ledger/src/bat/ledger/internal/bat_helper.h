@@ -21,8 +21,8 @@ struct UNSIGNED_TX {
   UNSIGNED_TX();
   ~UNSIGNED_TX();
 
-  std::string amount_;
-  std::string currency_;
+  std::string amount;
+  std::string currency;
   std::string destination_;
 };
 
@@ -30,13 +30,13 @@ struct RECONCILE_PAYLOAD_ST {
   RECONCILE_PAYLOAD_ST();
   ~RECONCILE_PAYLOAD_ST();
 
-  std::string requestType_;
-  std::string request_signedtx_headers_digest_;
-  std::string request_signedtx_headers_signature_;
-  UNSIGNED_TX request_signedtx_body_;
-  std::string request_signedtx_octets_;
-  std::string request_viewingId_;
-  std::string request_surveyorId_;
+  std::string request_type;
+  std::string request_signed_tx_headers_digest;
+  std::string request_signed_tx_headers_signature;
+  UNSIGNED_TX request_signed_tx_body;
+  std::string request_signed_tx_octets;
+  std::string request_viewing_id;
+  std::string request_surveyor_id;
 };
 
 struct WALLET_INFO_ST {
@@ -47,13 +47,13 @@ struct WALLET_INFO_ST {
   // load from json string
   bool loadFromJson(const std::string & json);
 
-  std::string paymentId_;
-  std::string addressBAT_;
-  std::string addressBTC_;
-  std::string addressCARD_ID_;
-  std::string addressETH_;
-  std::string addressLTC_;
-  std::vector<uint8_t> keyInfoSeed_;
+  std::string payment_id;
+  std::string address_bat;
+  std::string address_btc;
+  std::string address_card_id;
+  std::string address_eth;
+  std::string address_ltc;
+  std::vector<uint8_t> key_info_seed;
 };
 
 struct TRANSACTION_BALLOT_ST {
@@ -63,8 +63,8 @@ struct TRANSACTION_BALLOT_ST {
   // load from json string
   bool loadFromJson(const std::string & json);
 
-  std::string publisher_;
-  unsigned int offset_ = 0u;
+  std::string publisher;
+  unsigned int offset = 0u;
 };
 
 struct TRANSACTION_ST {
@@ -75,17 +75,17 @@ struct TRANSACTION_ST {
   // load from json string
   bool loadFromJson(const std::string & json);
 
-  std::string viewingId_;
-  std::string surveyorId_;
-  std::map<std::string, double> contribution_rates_;
-  std::string contribution_probi_;
-  std::string submissionStamp_;
-  std::string anonizeViewingId_;
-  std::string registrarVK_;
-  std::string masterUserToken_;
-  std::vector<std::string> surveyorIds_;
-  unsigned int votes_ = 0u;
-  std::vector<TRANSACTION_BALLOT_ST> ballots_;
+  std::string viewing_id;
+  std::string surveyor_id;
+  std::map<std::string, double> contribution_rates;
+  std::string contribution_probi;
+  std::string submission_stamp;
+  std::string anonize_viewing_id;
+  std::string registrar_vk;
+  std::string master_user_token;
+  std::vector<std::string> surveyor_ids;
+  unsigned int votes = 0u;
+  std::vector<TRANSACTION_BALLOT_ST> ballots;
 };
 
 struct BALLOT_ST {
@@ -93,16 +93,13 @@ struct BALLOT_ST {
   BALLOT_ST(const BALLOT_ST& ballot);
   ~BALLOT_ST();
 
-  // Load from json string
-  bool loadFromJson(const std::string & json);
-
-  std::string viewingId_;
-  std::string surveyorId_;
-  std::string publisher_;
-  unsigned int offset_ = 0u;
-  std::string prepareBallot_;
-  std::string proofBallot_;
-  uint64_t delayStamp_ = 0u;
+  std::string viewing_id;
+  std::string surveyor_id;
+  std::string publisher;
+  unsigned int offset = 0u;
+  std::string prepare_ballot;
+  std::string proof_ballot;
+  uint64_t delay_stamp = 0u;
 };
 
 struct BATCH_VOTES_INFO_ST {
@@ -110,11 +107,8 @@ struct BATCH_VOTES_INFO_ST {
   BATCH_VOTES_INFO_ST(const BATCH_VOTES_INFO_ST&);
   ~BATCH_VOTES_INFO_ST();
 
-  // Load from json string
-  bool loadFromJson(const std::string & json);
-
-  std::string surveyorId_;
-  std::string proof_;
+  std::string surveyor_id;
+  std::string proof;
 };
 
 struct BATCH_VOTES_ST {
@@ -122,11 +116,8 @@ struct BATCH_VOTES_ST {
   BATCH_VOTES_ST(const BATCH_VOTES_ST&);
   ~BATCH_VOTES_ST();
 
-  // Load from json string
-  bool loadFromJson(const std::string & json);
-
-  std::string publisher_;
-  std::vector<BATCH_VOTES_INFO_ST> batchVotesInfo_;
+  std::string publisher;
+  std::vector<BATCH_VOTES_INFO_ST> batch_votes_info;
 };
 
 struct GRANT {
@@ -136,10 +127,10 @@ struct GRANT {
 
   // load from json string
   bool loadFromJson(const std::string & json);
-  std::string altcurrency;
+  std::string alt_currency;
   std::string probi;
-  uint64_t expiryTime;
-  std::string promotionId;
+  uint64_t expiry_time;
+  std::string promotion_id;
   std::string type;
 };
 
@@ -151,23 +142,23 @@ struct GRANT_RESPONSE {
   // load from json string
   bool loadFromJson(const std::string & json);
 
-  std::string promotionId;
-  uint64_t minimumReconcileTimestamp;
-  uint64_t protocolVersion;
+  std::string promotion_id;
+  uint64_t minimum_reconcile_timestamp;
+  uint64_t protocol_version;
   std::string type;
 };
 
 struct WALLET_PROPERTIES_ST {
   WALLET_PROPERTIES_ST();
-  ~WALLET_PROPERTIES_ST();
   WALLET_PROPERTIES_ST(const WALLET_PROPERTIES_ST& properties);
+  ~WALLET_PROPERTIES_ST();
 
   // load from json string
   bool loadFromJson(const std::string & json);
 
-  double fee_amount_;
-  std::vector<double> parameters_choices_;
-  std::vector<GRANT> grants_;
+  double fee_amount;
+  std::vector<double> parameters_choices;
+  std::vector<GRANT> grants;
 };
 
 struct REPORT_BALANCE_ST {
@@ -177,15 +168,15 @@ struct REPORT_BALANCE_ST {
 
   bool loadFromJson(const std::string &json);
 
-  std::string opening_balance_ = "0";
-  std::string closing_balance_ = "0";
-  std::string deposits_ = "0";
-  std::string grants_ = "0";
-  std::string earning_from_ads_ = "0";
-  std::string auto_contribute_ = "0";
-  std::string recurring_donation_ = "0";
-  std::string one_time_donation_ = "0";
-  std::string total_ = "0";
+  std::string opening_balance = "0";
+  std::string closing_balance = "0";
+  std::string deposits = "0";
+  std::string grants = "0";
+  std::string earning_from_ads = "0";
+  std::string auto_contribute = "0";
+  std::string recurring_donation = "0";
+  std::string one_time_donation = "0";
+  std::string total = "0";
 };
 
 struct PUBLISHER_STATE_ST {
@@ -196,12 +187,12 @@ struct PUBLISHER_STATE_ST {
   // load from json string
   bool loadFromJson(const std::string &json);
 
-  uint64_t min_publisher_duration_ =
+  uint64_t min_publisher_duration =
       braveledger_ledger::_default_min_publisher_duration;  // In seconds
-  unsigned int min_visits_ = 1u;
-  bool allow_non_verified_ = true;
-  bool allow_videos_ = true;
-  std::map<std::string, REPORT_BALANCE_ST> monthly_balances_;
+  unsigned int min_visits = 1u;
+  bool allow_non_verified = true;
+  bool allow_videos = true;
+  std::map<std::string, REPORT_BALANCE_ST> monthly_balances;
   bool migrate_score_2 = false;
   std::vector<std::string> processed_pending_publishers;
 };
@@ -214,20 +205,20 @@ struct PUBLISHER_ST {
   // load from json string
   bool loadFromJson(const std::string & json);
 
-  std::string id_;
-  uint64_t duration_ = 0u;
-  double score_ = .0;
-  unsigned int visits_ = 0;
+  std::string id;
+  uint64_t duration = 0u;
+  double score = .0;
+  unsigned int visits = 0;
 
   // The mathematically rounded publisher voting weight, as described
   // below.
-  unsigned int percent_ = 0;
+  unsigned int percent = 0;
 
   // The exact weight to use when calculating the number of votes to
   // cast for each publisher.
-  double weight_ = .0;
+  double weight = .0;
 
-  unsigned int status_ = 0;
+  unsigned int status = 0;
 };
 
 struct RECONCILE_DIRECTION {
@@ -238,8 +229,8 @@ struct RECONCILE_DIRECTION {
 
   bool loadFromJson(const std::string &json);
 
-  std::string publisher_key_;
-  double amount_percent_;
+  std::string publisher_key;
+  double amount_percent;
 };
 
 typedef std::vector<RECONCILE_DIRECTION> Directions;
@@ -248,8 +239,8 @@ struct WINNERS_ST {
   WINNERS_ST();
   ~WINNERS_ST();
 
-  RECONCILE_DIRECTION direction_;
-  unsigned int votes_ = 0;
+  RECONCILE_DIRECTION direction;
+  unsigned int votes = 0;
 };
 
 typedef std::vector<braveledger_bat_helper::WINNERS_ST> Winners;
@@ -258,7 +249,7 @@ struct SURVEYOR_INFO_ST {
   SURVEYOR_INFO_ST();
   ~SURVEYOR_INFO_ST();
 
-  std::string surveyorId_;
+  std::string surveyor_id;
 };
 
 struct SURVEYOR_ST {
@@ -269,10 +260,10 @@ struct SURVEYOR_ST {
   bool loadFromJson(const std::string & json);
 
   std::string signature_;
-  std::string surveyorId_;
-  std::string surveyVK_;
-  std::string registrarVK_;
-  std::string surveySK_;
+  std::string surveyor_id;
+  std::string survey_vk;
+  std::string registrar_vk;
+  std::string survey_sk;
 };
 
 
@@ -286,23 +277,23 @@ struct CURRENT_RECONCILE {
   // load from json string
   bool loadFromJson(const std::string & json);
 
-  std::string viewingId_;
-  std::string anonizeViewingId_;
-  std::string registrarVK_;
-  std::string preFlight_;
-  std::string masterUserToken_;
-  SURVEYOR_INFO_ST surveyorInfo_;
-  uint64_t timestamp_ = 0u;
-  std::map<std::string, double> rates_;
-  std::string amount_;
-  std::string currency_;
-  double fee_;
-  Directions directions_;
-  ledger::RewardsType type_;
-  ledger::ContributionRetry retry_step_;
-  int retry_level_;
-  std::string destination_;
-  std::string proof_;
+  std::string viewing_id;
+  std::string anonize_viewing_id;
+  std::string registrar_vk;
+  std::string pre_flight;
+  std::string master_user_token;
+  SURVEYOR_INFO_ST surveyor_info;
+  uint64_t timestamp = 0u;
+  std::map<std::string, double> rates;
+  std::string amount;
+  std::string currency;
+  double fee;
+  Directions directions;
+  ledger::RewardsType type;
+  ledger::ContributionRetry retry_step;
+  int retry_level;
+  std::string destination;
+  std::string proof;
 };
 
 typedef std::vector<GRANT> Grants;
@@ -319,49 +310,50 @@ struct CLIENT_STATE_ST {
   // Load from json string
   bool loadFromJson(const std::string & json);
 
-  WALLET_INFO_ST walletInfo_;
-  WALLET_PROPERTIES_ST walletProperties_;
-  uint64_t bootStamp_ = 0u;
-  uint64_t reconcileStamp_ = 0u;
-  uint64_t last_grant_fetch_stamp_ = 0u;
-  std::string personaId_;
-  std::string userId_;
-  std::string registrarVK_;
-  std::string masterUserToken_;
-  std::string preFlight_;
-  std::string fee_currency_;
-  std::string settings_ = AD_FREE_SETTINGS;
-  double fee_amount_ = .0;
-  bool user_changed_fee_ = false;
-  unsigned int days_ = 0u;
-  Transactions transactions_;
-  Ballots ballots_;
-  std::string ruleset_;
-  std::string rulesetV2_;
-  BatchVotes batch_;
-  Grants grants_;
-  CurrentReconciles current_reconciles_;
-  bool auto_contribute_ = false;
-  bool rewards_enabled_ = false;
-  std::map<std::string, bool> inline_tip_;
+  WALLET_INFO_ST wallet_info;
+  WALLET_PROPERTIES_ST wallet_properties;
+  uint64_t boot_stamp = 0u;
+  uint64_t reconcile_stamp = 0u;
+  uint64_t last_grant_fetch_stamp = 0u;
+  std::string persona_id;
+  std::string user_id;
+  std::string registrar_vk;
+  std::string master_user_token;
+  std::string pre_flight;
+  std::string fee_currency;
+  std::string settings = AD_FREE_SETTINGS;
+  double fee_amount = .0;
+  bool user_changed_fee = false;
+  unsigned int days = 0u;
+  Transactions transactions;
+  Ballots ballots;
+  std::string rule_set;
+  std::string rule_set_v2;
+  BatchVotes batch;
+  Grants grants;
+  CurrentReconciles current_reconciles;
+  bool auto_contribute = false;
+  bool rewards_enabled = false;
+  std::map<std::string, bool> inline_tip;
 };
 
 struct GRANTS_PROPERTIES_ST {
   GRANTS_PROPERTIES_ST();
-  ~GRANTS_PROPERTIES_ST();
   GRANTS_PROPERTIES_ST(const GRANTS_PROPERTIES_ST& properties);
+  ~GRANTS_PROPERTIES_ST();
 
   //  load from json string
   bool loadFromJson(const std::string & json);
-  std::vector<GRANT_RESPONSE> grants_;
+
+  std::vector<GRANT_RESPONSE> grants;
 };
 
 struct BATCH_PROOF {
   BATCH_PROOF();
   ~BATCH_PROOF();
 
-  TRANSACTION_ST transaction_;
-  BALLOT_ST ballot_;
+  TRANSACTION_ST transaction;
+  BALLOT_ST ballot;
 };
 
 typedef std::vector<braveledger_bat_helper::BATCH_PROOF> BatchProofs;

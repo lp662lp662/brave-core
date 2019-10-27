@@ -121,9 +121,9 @@ void Grants::GetGrantsCallback(
     ok = braveledger_bat_helper::loadFromJson(&properties, response);
     if (ok) {
       braveledger_bat_helper::GRANT_RESPONSE grantResponse;
-      grantResponse.promotionId = properties.promotionId;
+      grantResponse.promotion_id = properties.promotion_id;
       grantResponse.type = properties.type;
-      grants_properties.grants_.push_back(grantResponse);
+      grants_properties.grants.push_back(grantResponse);
     }
   }
 
@@ -134,9 +134,9 @@ void Grants::GetGrantsCallback(
     return;
   }
 
-  for (auto grant : grants_properties.grants_) {
+  for (auto grant : grants_properties.grants) {
     braveledger_bat_helper::GRANT grant_;
-    grant_.promotionId = grant.promotionId;
+    grant_.promotion_id = grant.promotion_id;
     grant_.type = grant.type;
 
     grants.push_back(grant_);
@@ -214,7 +214,7 @@ void Grants::SetGrantCallback(
 
   for (auto state_grant : state_grants) {
     if (grant.type == state_grant.type) {
-      grant.promotionId = state_grant.promotionId;
+      grant.promotion_id = state_grant.promotion_id;
       ledger_->OnGrantFinish(ledger::Result::LEDGER_OK, grant);
       updated_grants.push_back(grant);
     } else {

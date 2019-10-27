@@ -56,7 +56,7 @@ void PhaseOne::ReconcileCallback(
 
   auto reconcile = ledger_->GetReconcileById(viewing_id);
 
-  if (response_status_code != net::HTTP_OK || reconcile.viewingId_.empty()) {
+  if (response_status_code != net::HTTP_OK || reconcile.viewing_id.empty()) {
     contribution_->AddRetry(ledger::ContributionRetry::STEP_RECONCILE,
                             viewing_id);
     return;
@@ -65,7 +65,7 @@ void PhaseOne::ReconcileCallback(
   bool success = braveledger_bat_helper::getJSONValue(
       SURVEYOR_ID,
       response,
-      &reconcile.surveyorInfo_.surveyorId_);
+      &reconcile.surveyor_info.surveyor_id);
   if (!success) {
     contribution_->AddRetry(ledger::ContributionRetry::STEP_RECONCILE,
                             viewing_id);
@@ -76,7 +76,7 @@ void PhaseOne::ReconcileCallback(
   if (!success) {
     Complete(ledger::Result::LEDGER_ERROR,
              viewing_id,
-             reconcile.type_);
+             reconcile.type);
     return;
   }
 
@@ -89,7 +89,7 @@ void PhaseOne::CurrentReconcile(const std::string& viewing_id) {
   std::ostringstream amount;
   auto reconcile = ledger_->GetReconcileById(viewing_id);
 
-  amount << reconcile.fee_;
+  amount << reconcile.fee;
 
   std::string currency = ledger_->GetCurrency();
   std::string path = (std::string)WALLET_PROPERTIES +
@@ -131,7 +131,7 @@ void PhaseOne::CurrentReconcileCallback(
   auto reconcile = ledger_->GetReconcileById(viewing_id);
 
   bool success = braveledger_bat_helper::getJSONRates(response,
-                                                      &reconcile.rates_);
+                                                      &reconcile.rates);
   if (!success) {
     contribution_->AddRetry(ledger::ContributionRetry::STEP_CURRENT,
                             viewing_id);
@@ -146,8 +146,8 @@ void PhaseOne::CurrentReconcileCallback(
     return;
   }
 
-  if (unsigned_tx.amount_.empty() &&
-      unsigned_tx.currency_.empty() &&
+  if (unsigned_tx.amount.empty() &&
+      unsigned_tx.currency.empty() &&
       unsigned_tx.destination_.empty()) {
     // We don't have any unsigned transactions
     contribution_->AddRetry(ledger::ContributionRetry::STEP_CURRENT,
@@ -155,14 +155,14 @@ void PhaseOne::CurrentReconcileCallback(
     return;
   }
 
-  reconcile.amount_ = unsigned_tx.amount_;
-  reconcile.currency_ = unsigned_tx.currency_;
-  reconcile.destination_ = unsigned_tx.destination_;
+  reconcile.amount = unsigned_tx.amount;
+  reconcile.currency = unsigned_tx.currency;
+  reconcile.destination = unsigned_tx.destination_;
 
   if (ledger::is_testing) {
     std::ostringstream amount;
-    amount << reconcile.fee_;
-    reconcile.amount_ = amount.str();
+    amount << reconcile.fee;
+    reconcile.amount = amount.str();
   }
 
   success = ledger_->UpdateReconcile(reconcile);
@@ -170,7 +170,7 @@ void PhaseOne::CurrentReconcileCallback(
   if (!success) {
     Complete(ledger::Result::LEDGER_ERROR,
              viewing_id,
-             reconcile.type_);
+             reconcile.type);
     return;
   }
 
@@ -184,9 +184,9 @@ void PhaseOne::ReconcilePayload(const std::string& viewing_id) {
   braveledger_bat_helper::WALLET_INFO_ST wallet_info = ledger_->GetWalletInfo();
 
   braveledger_bat_helper::UNSIGNED_TX unsigned_tx;
-  unsigned_tx.amount_ = reconcile.amount_;
-  unsigned_tx.currency_ = reconcile.currency_;
-  unsigned_tx.destination_ = reconcile.destination_;
+  unsigned_tx.amount = reconcile.amount;
+  unsigned_tx.currency = reconcile.currency;
+  unsigned_tx.destination_ = reconcile.destination;
   std::string octets = braveledger_bat_helper::stringifyUnsignedTx(unsigned_tx);
 
   std::string header_digest = "SHA-256=" +
@@ -197,7 +197,7 @@ void PhaseOne::ReconcilePayload(const std::string& viewing_id) {
   std::string header_values[1] = {header_digest};
 
   std::vector<uint8_t> secret_key = braveledger_bat_helper::getHKDF(
-      wallet_info.keyInfoSeed_);
+      wallet_info.key_info_seed);
   std::vector<uint8_t> public_key;
   std::vector<uint8_t> new_secret_key;
   bool success = braveledger_bat_helper::getPublicKeyFromSeed(
@@ -216,13 +216,13 @@ void PhaseOne::ReconcilePayload(const std::string& viewing_id) {
                                                              new_secret_key);
 
   braveledger_bat_helper::RECONCILE_PAYLOAD_ST reconcile_payload;
-  reconcile_payload.requestType_ = "httpSignature";
-  reconcile_payload.request_signedtx_headers_digest_ = header_digest;
-  reconcile_payload.request_signedtx_headers_signature_ = headerSignature;
-  reconcile_payload.request_signedtx_body_ = unsigned_tx;
-  reconcile_payload.request_signedtx_octets_ = octets;
-  reconcile_payload.request_viewingId_ = reconcile.viewingId_;
-  reconcile_payload.request_surveyorId_ = reconcile.surveyorInfo_.surveyorId_;
+  reconcile_payload.request_type = "httpSignature";
+  reconcile_payload.request_signed_tx_headers_digest = header_digest;
+  reconcile_payload.request_signed_tx_headers_signature = headerSignature;
+  reconcile_payload.request_signed_tx_body = unsigned_tx;
+  reconcile_payload.request_signed_tx_octets = octets;
+  reconcile_payload.request_viewing_id = reconcile.viewing_id;
+  reconcile_payload.request_surveyor_id = reconcile.surveyor_info.surveyor_id;
   std::string payload_stringify =
       braveledger_bat_helper::stringifyReconcilePayloadSt(reconcile_payload);
 
@@ -258,7 +258,7 @@ void PhaseOne::ReconcilePayloadCallback(
     if (response_status_code == net::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE) {
       Complete(ledger::Result::CONTRIBUTION_AMOUNT_TOO_LOW,
                viewing_id,
-               reconcile.type_);
+               reconcile.type);
     } else {
       contribution_->AddRetry(ledger::ContributionRetry::STEP_PAYLOAD,
                               viewing_id);
@@ -275,12 +275,12 @@ void PhaseOne::ReconcilePayloadCallback(
     return;
   }
 
-  transaction.viewingId_ = reconcile.viewingId_;
-  transaction.surveyorId_ = reconcile.surveyorInfo_.surveyorId_;
-  transaction.contribution_rates_ = reconcile.rates_;
+  transaction.viewing_id = reconcile.viewing_id;
+  transaction.surveyor_id = reconcile.surveyor_info.surveyor_id;
+  transaction.contribution_rates = reconcile.rates;
 
   if (ledger::is_testing) {
-    transaction.contribution_probi_ = reconcile.amount_ + "000000000000000000";
+    transaction.contribution_probi = reconcile.amount + "000000000000000000";
   }
 
   braveledger_bat_helper::Transactions transactions =
@@ -326,30 +326,30 @@ void PhaseOne::RegisterViewingCallback(
 
   bool success = braveledger_bat_helper::getJSONValue(REGISTRARVK_FIELDNAME,
                                                       response,
-                                                      &reconcile.registrarVK_);
-  DCHECK(!reconcile.registrarVK_.empty());
-  if (!success || reconcile.registrarVK_.empty()) {
+                                                      &reconcile.registrar_vk);
+  DCHECK(!reconcile.registrar_vk.empty());
+  if (!success || reconcile.registrar_vk.empty()) {
     contribution_->AddRetry(ledger::ContributionRetry::STEP_REGISTER,
                             viewing_id);
     return;
   }
 
-  reconcile.anonizeViewingId_ = reconcile.viewingId_;
-  reconcile.anonizeViewingId_.erase(
-      std::remove(reconcile.anonizeViewingId_.begin(),
-                  reconcile.anonizeViewingId_.end(),
+  reconcile.anonize_viewing_id = reconcile.viewing_id;
+  reconcile.anonize_viewing_id.erase(
+      std::remove(reconcile.anonize_viewing_id.begin(),
+                  reconcile.anonize_viewing_id.end(),
                   '-'),
-      reconcile.anonizeViewingId_.end());
-  reconcile.anonizeViewingId_.erase(12, 1);
-  reconcile.proof_ = GetAnonizeProof(reconcile.registrarVK_,
-                                     reconcile.anonizeViewingId_,
-                                     &reconcile.preFlight_);
+      reconcile.anonize_viewing_id.end());
+  reconcile.anonize_viewing_id.erase(12, 1);
+  reconcile.proof = GetAnonizeProof(reconcile.registrar_vk,
+                                     reconcile.anonize_viewing_id,
+                                     &reconcile.pre_flight);
 
   success = ledger_->UpdateReconcile(reconcile);
   if (!success) {
     Complete(ledger::Result::LEDGER_ERROR,
              viewing_id,
-             reconcile.type_);
+             reconcile.type);
     return;
   }
 
@@ -390,7 +390,7 @@ void PhaseOne::ViewingCredentials(const std::string& viewing_id) {
   auto reconcile = ledger_->GetReconcileById(viewing_id);
 
   std::string keys[1] = {"proof"};
-  std::string values[1] = {reconcile.proof_};
+  std::string values[1] = {reconcile.proof};
   std::string proof_stringified = braveledger_bat_helper::stringify(keys,
                                                                     values,
                                                                     1);
@@ -398,7 +398,7 @@ void PhaseOne::ViewingCredentials(const std::string& viewing_id) {
   std::string url = braveledger_bat_helper::buildURL(
       (std::string)REGISTER_VIEWING +
       "/" +
-      reconcile.anonizeViewingId_,
+      reconcile.anonize_viewing_id,
       PREFIX_V2);
 
   auto callback = std::bind(&PhaseOne::ViewingCredentialsCallback,
@@ -441,13 +441,13 @@ void PhaseOne::ViewingCredentialsCallback(
   }
 
   const char* master_user_token = registerUserFinal(
-      reconcile.anonizeViewingId_.c_str(),
+      reconcile.anonize_viewing_id.c_str(),
       verification.c_str(),
-      reconcile.preFlight_.c_str(),
-      reconcile.registrarVK_.c_str());
+      reconcile.pre_flight.c_str(),
+      reconcile.registrar_vk.c_str());
 
   if (master_user_token != nullptr) {
-    reconcile.masterUserToken_ = master_user_token;
+    reconcile.master_user_token = master_user_token;
     // should fix in
     // https://github.com/brave-intl/bat-native-anonize/issues/11
     free((void*)master_user_token); // NOLINT
@@ -457,7 +457,7 @@ void PhaseOne::ViewingCredentialsCallback(
   if (!success) {
     Complete(ledger::Result::LEDGER_ERROR,
              viewing_id,
-             reconcile.type_);
+             reconcile.type);
     return;
   }
 
@@ -477,21 +477,21 @@ void PhaseOne::ViewingCredentialsCallback(
       ledger_->GetTransactions();
 
   for (size_t i = 0; i < transactions.size(); i++) {
-    if (transactions[i].viewingId_ != reconcile.viewingId_) {
+    if (transactions[i].viewing_id != reconcile.viewing_id) {
       continue;
     }
 
-    transactions[i].anonizeViewingId_ = reconcile.anonizeViewingId_;
-    transactions[i].registrarVK_ = reconcile.registrarVK_;
-    transactions[i].masterUserToken_ = reconcile.masterUserToken_;
-    transactions[i].surveyorIds_ = surveyors;
-    probi = transactions[i].contribution_probi_;
+    transactions[i].anonize_viewing_id = reconcile.anonize_viewing_id;
+    transactions[i].registrar_vk = reconcile.registrar_vk;
+    transactions[i].master_user_token = reconcile.master_user_token;
+    transactions[i].surveyor_ids = surveyors;
+    probi = transactions[i].contribution_probi;
   }
 
   ledger_->SetTransactions(transactions);
   Complete(ledger::Result::LEDGER_OK,
-           reconcile.viewingId_,
-           reconcile.type_,
+           reconcile.viewing_id,
+           reconcile.type,
            probi);
 }
 

@@ -624,7 +624,7 @@ void LedgerImpl::OnGrants(ledger::Result result,
   for (const braveledger_bat_helper::GRANT& properties : grants) {
     ledger::GrantPtr grant = ledger::Grant::New();
     grant->type = properties.type;
-    grant->promotion_id = properties.promotionId;
+    grant->promotion_id = properties.promotion_id;
     ledger_grants.push_back(std::move(grant));
   }
 
@@ -682,10 +682,10 @@ void LedgerImpl::OnGrantFinish(ledger::Result result,
                                const braveledger_bat_helper::GRANT& grant) {
   ledger::GrantPtr newGrant = ledger::Grant::New();
 
-  newGrant->altcurrency = grant.altcurrency;
+  newGrant->altcurrency = grant.alt_currency;
   newGrant->probi = grant.probi;
-  newGrant->expiry_time = grant.expiryTime;
-  newGrant->promotion_id = grant.promotionId;
+  newGrant->expiry_time = grant.expiry_time;
+  newGrant->promotion_id = grant.promotion_id;
   newGrant->type = grant.type;
 
   if (grant.type == "ads") {
@@ -1011,13 +1011,13 @@ const confirmations::WalletInfo LedgerImpl::GetConfirmationsWalletInfo(
     const braveledger_bat_helper::WALLET_INFO_ST& info) const {
   confirmations::WalletInfo wallet_info;
 
-  wallet_info.payment_id = info.paymentId_;
+  wallet_info.payment_id = info.payment_id;
 
-  if (info.keyInfoSeed_.empty()) {
+  if (info.key_info_seed.empty()) {
     return wallet_info;
   }
 
-  auto seed = braveledger_bat_helper::getHKDF(info.keyInfoSeed_);
+  auto seed = braveledger_bat_helper::getHKDF(info.key_info_seed);
   std::vector<uint8_t> publicKey = {};
   std::vector<uint8_t> secretKey = {};
   braveledger_bat_helper::getPublicKeyFromSeed(seed, &publicKey, &secretKey);
@@ -1046,11 +1046,11 @@ void LedgerImpl::GetRewardsInternalsInfo(
   // Retrieve the key info seed and validate it.
   const braveledger_bat_helper::WALLET_INFO_ST wallet_info =
       bat_state_->GetWalletInfo();
-  if (wallet_info.keyInfoSeed_.size() != SEED_LENGTH) {
+  if (wallet_info.key_info_seed.size() != SEED_LENGTH) {
     info->is_key_info_seed_valid = false;
   } else {
     std::vector<uint8_t> secret_key =
-        braveledger_bat_helper::getHKDF(wallet_info.keyInfoSeed_);
+        braveledger_bat_helper::getHKDF(wallet_info.key_info_seed);
     std::vector<uint8_t> public_key;
     std::vector<uint8_t> new_secret_key;
     info->is_key_info_seed_valid = braveledger_bat_helper::getPublicKeyFromSeed(
@@ -1062,12 +1062,12 @@ void LedgerImpl::GetRewardsInternalsInfo(
       GetCurrentReconciles();
   for (const auto& reconcile : current_reconciles) {
     ledger::ReconcileInfoPtr reconcile_info = ledger::ReconcileInfo::New();
-    reconcile_info->viewing_id = reconcile.second.viewingId_;
-    reconcile_info->amount = reconcile.second.amount_;
-    reconcile_info->retry_step = reconcile.second.retry_step_;
-    reconcile_info->retry_level = reconcile.second.retry_level_;
+    reconcile_info->viewing_id = reconcile.second.viewing_id;
+    reconcile_info->amount = reconcile.second.amount;
+    reconcile_info->retry_step = reconcile.second.retry_step;
+    reconcile_info->retry_level = reconcile.second.retry_level;
     info->current_reconciles.insert(
-        std::make_pair(reconcile.second.viewingId_, std::move(reconcile_info)));
+        std::make_pair(reconcile.second.viewing_id, std::move(reconcile_info)));
   }
 
   callback(std::move(info));

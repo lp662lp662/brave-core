@@ -16,6 +16,9 @@
 #include "bat/ledger/internal/logging.h"
 #include "bat/ledger/internal/rapidjson_bat_helper.h"
 #include "bat/ledger/internal/static_values.h"
+#include "bat/ledger/internal/migration/state/json/ballot_json_state.h"
+#include "bat/ledger/internal/migration/state/json/batch_votes_info_json_state.h"
+#include "bat/ledger/internal/migration/state/json/batch_votes_json_state.h"
 #include "bat/ledger/ledger.h"
 #include "third_party/re2/src/re2/re2.h"
 #include "tweetnacl.h"  // NOLINT
@@ -42,13 +45,13 @@ RECONCILE_PAYLOAD_ST::~RECONCILE_PAYLOAD_ST() {}
 WALLET_INFO_ST::WALLET_INFO_ST() {}
 
 WALLET_INFO_ST::WALLET_INFO_ST(const WALLET_INFO_ST& other) {
-  paymentId_ = other.paymentId_;
-  addressBAT_ = other.addressBAT_;
-  addressBTC_ = other.addressBTC_;
-  addressCARD_ID_ = other.addressCARD_ID_;
-  addressETH_ = other.addressETH_;
-  addressLTC_ = other.addressLTC_;
-  keyInfoSeed_ = other.keyInfoSeed_;
+  payment_id = other.payment_id;
+  address_bat = other.address_bat;
+  address_btc = other.address_btc;
+  address_card_id = other.address_card_id;
+  address_eth = other.address_eth;
+  address_ltc = other.address_ltc;
+  key_info_seed = other.key_info_seed;
 }
 
 WALLET_INFO_ST::~WALLET_INFO_ST() {}
@@ -73,16 +76,16 @@ bool WALLET_INFO_ST::loadFromJson(const std::string & json) {
   if (!error) {
     // convert keyInfoSeed and check error
     std::string sKeyInfoSeed = d["keyInfoSeed"].GetString();
-    error = !getFromBase64(sKeyInfoSeed, &keyInfoSeed_);
+    error = !getFromBase64(sKeyInfoSeed, &key_info_seed);
   }
 
   if (!error) {
-    paymentId_ = d["paymentId"].GetString();
-    addressBAT_ = d["addressBAT"].GetString();
-    addressBTC_ = d["addressBTC"].GetString();
-    addressCARD_ID_ = d["addressCARD_ID"].GetString();
-    addressETH_ = d["addressETH"].GetString();
-    addressLTC_ = d["addressLTC"].GetString();
+    payment_id = d["paymentId"].GetString();
+    address_bat = d["addressBAT"].GetString();
+    address_btc = d["addressBTC"].GetString();
+    address_card_id = d["addressCARD_ID"].GetString();
+    address_eth = d["addressETH"].GetString();
+    address_ltc = d["addressLTC"].GetString();
   }
   return !error;
 }
@@ -91,28 +94,28 @@ void saveToJson(JsonWriter* writer, const WALLET_INFO_ST& data) {
   writer->StartObject();
 
   writer->String("paymentId");
-  writer->String(data.paymentId_.c_str());
+  writer->String(data.payment_id.c_str());
 
   writer->String("addressBAT");
-  writer->String(data.addressBAT_.c_str());
+  writer->String(data.address_bat.c_str());
 
   writer->String("addressBTC");
-  writer->String(data.addressBTC_.c_str());
+  writer->String(data.address_btc.c_str());
 
   writer->String("addressCARD_ID");
-  writer->String(data.addressCARD_ID_.c_str());
+  writer->String(data.address_card_id.c_str());
 
   writer->String("addressETH");
-  writer->String(data.addressETH_.c_str());
+  writer->String(data.address_eth.c_str());
 
   writer->String("addressLTC");
-  writer->String(data.addressLTC_.c_str());
+  writer->String(data.address_ltc.c_str());
 
   writer->String("keyInfoSeed");
-  if (data.keyInfoSeed_.size() == 0) {
+  if (data.key_info_seed.size() == 0) {
     writer->String("");
   } else {
-    writer->String(getBase64(data.keyInfoSeed_).c_str());
+    writer->String(getBase64(data.key_info_seed).c_str());
   }
 
   writer->EndObject();
@@ -125,7 +128,7 @@ UNSIGNED_TX::~UNSIGNED_TX() {}
 
 /////////////////////////////////////////////////////////////////////////////
 TRANSACTION_BALLOT_ST::TRANSACTION_BALLOT_ST() :
-  offset_(0) {}
+  offset(0) {}
 
 TRANSACTION_BALLOT_ST::~TRANSACTION_BALLOT_ST() {}
 
@@ -141,8 +144,8 @@ bool TRANSACTION_BALLOT_ST::loadFromJson(const std::string & json) {
   }
 
   if (!error) {
-    publisher_ = d["publisher"].GetString();
-    offset_ = d["offset"].GetUint();
+    publisher = d["publisher"].GetString();
+    offset = d["offset"].GetUint();
   }
 
   return !error;
@@ -152,31 +155,31 @@ void saveToJson(JsonWriter* writer, const TRANSACTION_BALLOT_ST& data) {
   writer->StartObject();
 
   writer->String("publisher");
-  writer->String(data.publisher_.c_str());
+  writer->String(data.publisher.c_str());
 
   writer->String("offset");
-  writer->Uint(data.offset_);
+  writer->Uint(data.offset);
 
   writer->EndObject();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 TRANSACTION_ST::TRANSACTION_ST():
-  votes_(0) {}
+  votes(0) {}
 
 TRANSACTION_ST::TRANSACTION_ST(const TRANSACTION_ST& transaction) {
-  viewingId_ = transaction.viewingId_;
-  surveyorId_ = transaction.surveyorId_;
-  contribution_rates_ = transaction.contribution_rates_;
-  contribution_probi_ = transaction.contribution_probi_;
-  submissionStamp_ = transaction.submissionStamp_;
-  contribution_rates_ = transaction.contribution_rates_;
-  anonizeViewingId_ = transaction.anonizeViewingId_;
-  registrarVK_ = transaction.registrarVK_;
-  masterUserToken_ = transaction.masterUserToken_;
-  surveyorIds_ = transaction.surveyorIds_;
-  votes_ = transaction.votes_;
-  ballots_ = transaction.ballots_;
+  viewing_id = transaction.viewing_id;
+  surveyor_id = transaction.surveyor_id;
+  contribution_rates = transaction.contribution_rates;
+  contribution_probi = transaction.contribution_probi;
+  submission_stamp = transaction.submission_stamp;
+  contribution_rates = transaction.contribution_rates;
+  anonize_viewing_id = transaction.anonize_viewing_id;
+  registrar_vk = transaction.registrar_vk;
+  master_user_token = transaction.master_user_token;
+  surveyor_ids = transaction.surveyor_ids;
+  votes = transaction.votes;
+  ballots = transaction.ballots;
 }
 
 TRANSACTION_ST::~TRANSACTION_ST() {}
@@ -215,22 +218,22 @@ bool TRANSACTION_ST::loadFromJson(const std::string & json) {
   }
 
   if (!error) {
-    viewingId_ = d["viewingId"].GetString();
-    surveyorId_ = d["surveyorId"].GetString();
-    contribution_probi_ = d["contribution_probi"].GetString();
-    submissionStamp_ = d["submissionStamp"].GetString();
-    anonizeViewingId_ = d["anonizeViewingId"].GetString();
-    registrarVK_ = d["registrarVK"].GetString();
-    masterUserToken_ = d["masterUserToken"].GetString();
-    votes_ = d["votes"].GetUint();
+    viewing_id = d["viewingId"].GetString();
+    surveyor_id = d["surveyorId"].GetString();
+    contribution_probi = d["contribution_probi"].GetString();
+    submission_stamp = d["submissionStamp"].GetString();
+    anonize_viewing_id = d["anonizeViewingId"].GetString();
+    registrar_vk = d["registrarVK"].GetString();
+    master_user_token = d["masterUserToken"].GetString();
+    votes = d["votes"].GetUint();
 
     for (auto & i : d["rates"].GetObject()) {
-      contribution_rates_.insert(
+      contribution_rates.insert(
           std::make_pair(i.name.GetString(), i.value.GetDouble()));
     }
 
     for (auto & i : d["surveyorIds"].GetArray()) {
-      surveyorIds_.push_back(i.GetString());
+      surveyor_ids.push_back(i.GetString());
     }
 
     for (const auto & i : d["ballots"].GetArray()) {
@@ -240,7 +243,7 @@ bool TRANSACTION_ST::loadFromJson(const std::string & json) {
 
       TRANSACTION_BALLOT_ST ballot;
       ballot.loadFromJson(sb.GetString());
-      ballots_.push_back(ballot);
+      ballots.push_back(ballot);
     }
   }
 
@@ -252,47 +255,47 @@ void saveToJson(JsonWriter* writer, const TRANSACTION_ST& data) {
   writer->StartObject();
 
   writer->String("viewingId");
-  writer->String(data.viewingId_.c_str());
+  writer->String(data.viewing_id.c_str());
 
   writer->String("surveyorId");
-  writer->String(data.surveyorId_.c_str());
+  writer->String(data.surveyor_id.c_str());
 
   writer->String("rates");
   writer->StartObject();
-  for (auto & p : data.contribution_rates_) {
+  for (auto & p : data.contribution_rates) {
     writer->String(p.first.c_str());
     writer->Double(p.second);
   }
   writer->EndObject();
 
   writer->String("contribution_probi");
-  writer->String(data.contribution_probi_.c_str());
+  writer->String(data.contribution_probi.c_str());
 
   writer->String("submissionStamp");
-  writer->String(data.submissionStamp_.c_str());
+  writer->String(data.submission_stamp.c_str());
 
   writer->String("anonizeViewingId");
-  writer->String(data.anonizeViewingId_.c_str());
+  writer->String(data.anonize_viewing_id.c_str());
 
   writer->String("registrarVK");
-  writer->String(data.registrarVK_.c_str());
+  writer->String(data.registrar_vk.c_str());
 
   writer->String("masterUserToken");
-  writer->String(data.masterUserToken_.c_str());
+  writer->String(data.master_user_token.c_str());
 
   writer->String("surveyorIds");
   writer->StartArray();
-  for (auto & i : data.surveyorIds_) {
+  for (auto & i : data.surveyor_ids) {
     writer->String(i.c_str());
   }
   writer->EndArray();
 
   writer->String("votes");
-  writer->Uint(data.votes_);
+  writer->Uint(data.votes);
 
   writer->String("ballots");
   writer->StartArray();
-  for (auto & i : data.ballots_) {
+  for (auto & i : data.ballots) {
     saveToJson(writer, i);
   }
   writer->EndArray();
@@ -302,68 +305,41 @@ void saveToJson(JsonWriter* writer, const TRANSACTION_ST& data) {
 
 /////////////////////////////////////////////////////////////////////////////
 BALLOT_ST::BALLOT_ST():
-  offset_(0),
-  delayStamp_(0) {}
+  offset(0),
+  delay_stamp(0) {}
 
 BALLOT_ST::BALLOT_ST(const BALLOT_ST& ballot) {
-  viewingId_ = ballot.viewingId_;
-  surveyorId_ = ballot.surveyorId_;
-  publisher_ = ballot.publisher_;
-  offset_ = ballot.offset_;
-  prepareBallot_ = ballot.prepareBallot_;
-  proofBallot_ = ballot.proofBallot_;
-  delayStamp_ = ballot.delayStamp_;
+  viewing_id = ballot.viewing_id;
+  surveyor_id = ballot.surveyor_id;
+  publisher = ballot.publisher;
+  offset = ballot.offset;
+  prepare_ballot = ballot.prepare_ballot;
+  proof_ballot = ballot.proof_ballot;
+  delay_stamp = ballot.delay_stamp;
 }
 
 BALLOT_ST::~BALLOT_ST() {}
-
-bool BALLOT_ST::loadFromJson(const std::string & json) {
-  rapidjson::Document d;
-  d.Parse(json.c_str());
-
-  // has parser errors or wrong types
-  bool error = d.HasParseError();
-  if (!error) {
-    error = !(d.HasMember("viewingId") &&  d["viewingId"].IsString() &&
-      d.HasMember("surveyorId") && d["surveyorId"].IsString() &&
-      d.HasMember("publisher") && d["publisher"].IsString() &&
-      d.HasMember("offset") && d["offset"].IsUint() &&
-      d.HasMember("prepareBallot") && d["prepareBallot"].IsString() &&
-      d.HasMember("delayStamp") && d["delayStamp"].IsUint64() );
-  }
-
-  if (!error) {
-    viewingId_ = d["viewingId"].GetString();
-    surveyorId_ = d["surveyorId"].GetString();
-    publisher_ = d["publisher"].GetString();
-    offset_ = d["offset"].GetUint();
-    prepareBallot_ = d["prepareBallot"].GetString();
-    delayStamp_ = d["delayStamp"].GetUint64();
-  }
-
-  return !error;
-}
 
 void saveToJson(JsonWriter* writer, const BALLOT_ST& data) {
   writer->StartObject();
 
   writer->String("viewingId");
-  writer->String(data.viewingId_.c_str());
+  writer->String(data.viewing_id.c_str());
 
   writer->String("surveyorId");
-  writer->String(data.surveyorId_.c_str());
+  writer->String(data.surveyor_id.c_str());
 
   writer->String("publisher");
-  writer->String(data.publisher_.c_str());
+  writer->String(data.publisher.c_str());
 
   writer->String("offset");
-  writer->Uint(data.offset_);
+  writer->Uint(data.offset);
 
   writer->String("prepareBallot");
-  writer->String(data.prepareBallot_.c_str());
+  writer->String(data.prepare_ballot.c_str());
 
   writer->String("delayStamp");
-  writer->Uint64(data.delayStamp_);
+  writer->Uint64(data.delay_stamp);
 
   writer->EndObject();
 }
@@ -372,39 +348,20 @@ void saveToJson(JsonWriter* writer, const BALLOT_ST& data) {
 BATCH_VOTES_INFO_ST::BATCH_VOTES_INFO_ST() {}
 
 BATCH_VOTES_INFO_ST::BATCH_VOTES_INFO_ST(const BATCH_VOTES_INFO_ST& other) {
-  surveyorId_ = other.surveyorId_;
-  proof_ = other.proof_;
+  surveyor_id = other.surveyor_id;
+  proof = other.proof;
 }
 
 BATCH_VOTES_INFO_ST::~BATCH_VOTES_INFO_ST() {}
-
-bool BATCH_VOTES_INFO_ST::loadFromJson(const std::string & json) {
-  rapidjson::Document d;
-  d.Parse(json.c_str());
-
-  // Has parser errors or wrong types
-  bool error = d.HasParseError();
-  if (!error) {
-    error = !(d.HasMember("surveyorId") && d["surveyorId"].IsString() &&
-      d.HasMember("proof") && d["proof"].IsString());
-  }
-
-  if (!error) {
-    surveyorId_ = d["surveyorId"].GetString();
-    proof_ = d["proof"].GetString();
-  }
-
-  return !error;
-}
 
 void saveToJson(JsonWriter* writer, const BATCH_VOTES_INFO_ST& data) {
   writer->StartObject();
 
   writer->String("surveyorId");
-  writer->String(data.surveyorId_.c_str());
+  writer->String(data.surveyor_id.c_str());
 
   writer->String("proof");
-  writer->String(data.proof_.c_str());
+  writer->String(data.proof.c_str());
 
   writer->EndObject();
 }
@@ -413,48 +370,21 @@ void saveToJson(JsonWriter* writer, const BATCH_VOTES_INFO_ST& data) {
 BATCH_VOTES_ST::BATCH_VOTES_ST() {}
 
 BATCH_VOTES_ST::BATCH_VOTES_ST(const BATCH_VOTES_ST& other) {
-  publisher_ = other.publisher_;
-  batchVotesInfo_ = other.batchVotesInfo_;
+  publisher = other.publisher;
+  batch_votes_info = other.batch_votes_info;
 }
 
 BATCH_VOTES_ST::~BATCH_VOTES_ST() {}
-
-bool BATCH_VOTES_ST::loadFromJson(const std::string & json) {
-  rapidjson::Document d;
-  d.Parse(json.c_str());
-
-  // Has parser errors or wrong types
-  bool error = d.HasParseError();
-  if (!error) {
-    error = !(d.HasMember("publisher") &&  d["publisher"].IsString() &&
-      d.HasMember("batchVotesInfo") && d["batchVotesInfo"].IsArray());
-  }
-
-  if (!error) {
-    publisher_ = d["publisher"].GetString();
-    for (const auto & i : d["batchVotesInfo"].GetArray()) {
-      rapidjson::StringBuffer sb;
-      rapidjson::Writer<rapidjson::StringBuffer> writer(sb);
-      i.Accept(writer);
-
-      BATCH_VOTES_INFO_ST b;
-      b.loadFromJson(sb.GetString());
-      batchVotesInfo_.push_back(b);
-    }
-  }
-
-  return !error;
-}
 
 void saveToJson(JsonWriter* writer, const BATCH_VOTES_ST& data) {
   writer->StartObject();
 
   writer->String("publisher");
-  writer->String(data.publisher_.c_str());
+  writer->String(data.publisher.c_str());
 
   writer->String("batchVotesInfo");
   writer->StartArray();
-  for (auto & b : data.batchVotesInfo_) {
+  for (auto & b : data.batch_votes_info) {
     saveToJson(writer, b);
   }
   writer->EndArray();
@@ -464,26 +394,26 @@ void saveToJson(JsonWriter* writer, const BATCH_VOTES_ST& data) {
 
 /////////////////////////////////////////////////////////////////////////////
 REPORT_BALANCE_ST::REPORT_BALANCE_ST():
-  opening_balance_("0"),
-  closing_balance_("0"),
-  deposits_("0"),
-  grants_("0"),
-  earning_from_ads_("0"),
-  auto_contribute_("0"),
-  recurring_donation_("0"),
-  one_time_donation_("0"),
-  total_("0") {}
+  opening_balance("0"),
+  closing_balance("0"),
+  deposits("0"),
+  grants("0"),
+  earning_from_ads("0"),
+  auto_contribute("0"),
+  recurring_donation("0"),
+  one_time_donation("0"),
+  total("0") {}
 
 REPORT_BALANCE_ST::REPORT_BALANCE_ST(const REPORT_BALANCE_ST& state) {
-  opening_balance_ = state.opening_balance_;
-  closing_balance_ = state.closing_balance_;
-  deposits_ = state.deposits_;
-  grants_ = state.grants_;
-  earning_from_ads_ = state.earning_from_ads_;
-  auto_contribute_ = state.auto_contribute_;
-  recurring_donation_ = state.recurring_donation_;
-  one_time_donation_ = state.one_time_donation_;
-  total_ = state.total_;
+  opening_balance = state.opening_balance;
+  closing_balance = state.closing_balance;
+  deposits = state.deposits;
+  grants = state.grants;
+  earning_from_ads = state.earning_from_ads;
+  auto_contribute = state.auto_contribute;
+  recurring_donation = state.recurring_donation;
+  one_time_donation = state.one_time_donation;
+  total = state.total;
 }
 
 REPORT_BALANCE_ST::~REPORT_BALANCE_ST() {}
@@ -517,15 +447,15 @@ bool REPORT_BALANCE_ST::loadFromJson(const std::string& json) {
   }
 
   if (!error) {
-    opening_balance_ = d["opening_balance"].GetString();
-    closing_balance_ = d["closing_balance"].GetString();
-    deposits_ = d["deposits"].GetString();
-    grants_ = d["grants"].GetString();
-    earning_from_ads_ = d["earning_from_ads"].GetString();
-    auto_contribute_ = d["auto_contribute"].GetString();
-    recurring_donation_ = d["recurring_donation"].GetString();
-    one_time_donation_ = d["one_time_donation"].GetString();
-    total_ = d["total"].GetString();
+    opening_balance = d["opening_balance"].GetString();
+    closing_balance = d["closing_balance"].GetString();
+    deposits = d["deposits"].GetString();
+    grants = d["grants"].GetString();
+    earning_from_ads = d["earning_from_ads"].GetString();
+    auto_contribute = d["auto_contribute"].GetString();
+    recurring_donation = d["recurring_donation"].GetString();
+    one_time_donation = d["one_time_donation"].GetString();
+    total = d["total"].GetString();
   }
 
   return !error;
@@ -536,56 +466,56 @@ void saveToJson(JsonWriter* writer, const REPORT_BALANCE_ST& data) {
 
   writer->String("opening_balance");
 
-  writer->String(data.opening_balance_.c_str());
+  writer->String(data.opening_balance.c_str());
 
   writer->String("closing_balance");
 
-  writer->String(data.closing_balance_.c_str());
+  writer->String(data.closing_balance.c_str());
 
   writer->String("deposits");
 
-  writer->String(data.deposits_.c_str());
+  writer->String(data.deposits.c_str());
 
   writer->String("grants");
 
-  writer->String(data.grants_.c_str());
+  writer->String(data.grants.c_str());
 
   writer->String("earning_from_ads");
 
-  writer->String(data.earning_from_ads_.c_str());
+  writer->String(data.earning_from_ads.c_str());
 
   writer->String("auto_contribute");
 
-  writer->String(data.auto_contribute_.c_str());
+  writer->String(data.auto_contribute.c_str());
 
   writer->String("recurring_donation");
 
-  writer->String(data.recurring_donation_.c_str());
+  writer->String(data.recurring_donation.c_str());
 
   writer->String("one_time_donation");
 
-  writer->String(data.one_time_donation_.c_str());
+  writer->String(data.one_time_donation.c_str());
 
   writer->String("total");
 
-  writer->String(data.total_.c_str());
+  writer->String(data.total.c_str());
 
   writer->EndObject();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 PUBLISHER_STATE_ST::PUBLISHER_STATE_ST():
-  min_publisher_duration_(braveledger_ledger::_default_min_publisher_duration),
-  min_visits_(1),
-  allow_non_verified_(true),
-  allow_videos_(true) {}
+  min_publisher_duration(braveledger_ledger::_default_min_publisher_duration),
+  min_visits(1),
+  allow_non_verified(true),
+  allow_videos(true) {}
 
 PUBLISHER_STATE_ST::PUBLISHER_STATE_ST(const PUBLISHER_STATE_ST& state) {
-  min_publisher_duration_ = state.min_publisher_duration_;
-  min_visits_ = state.min_visits_;
-  allow_non_verified_ = state.allow_non_verified_;
-  allow_videos_ = state.allow_videos_;
-  monthly_balances_ = state.monthly_balances_;
+  min_publisher_duration = state.min_publisher_duration;
+  min_visits = state.min_visits;
+  allow_non_verified = state.allow_non_verified;
+  allow_videos = state.allow_videos;
+  monthly_balances = state.monthly_balances;
   migrate_score_2 = state.migrate_score_2;
   processed_pending_publishers = state.processed_pending_publishers;
 }
@@ -608,10 +538,10 @@ bool PUBLISHER_STATE_ST::loadFromJson(const std::string& json) {
   }
 
   if (!error) {
-    min_publisher_duration_ = d["min_pubslisher_duration"].GetUint();
-    min_visits_ = d["min_visits"].GetUint();
-    allow_non_verified_ = d["allow_non_verified"].GetBool();
-    allow_videos_ = d["allow_videos"].GetBool();
+    min_publisher_duration = d["min_pubslisher_duration"].GetUint();
+    min_visits = d["min_visits"].GetUint();
+    allow_non_verified = d["allow_non_verified"].GetBool();
+    allow_videos = d["allow_videos"].GetBool();
 
     for (const auto & i : d["monthly_balances"].GetArray()) {
       rapidjson::StringBuffer sb;
@@ -628,7 +558,7 @@ bool PUBLISHER_STATE_ST::loadFromJson(const std::string& json) {
         itr->value.Accept(writer1);
         REPORT_BALANCE_ST r;
         r.loadFromJson(sb1.GetString());
-        monthly_balances_.insert(std::make_pair(itr->name.GetString(), r));
+        monthly_balances.insert(std::make_pair(itr->name.GetString(), r));
       }
     }
 
@@ -653,20 +583,20 @@ void saveToJson(JsonWriter* writer, const PUBLISHER_STATE_ST& data) {
   writer->StartObject();
 
   writer->String("min_pubslisher_duration");
-  writer->Uint(data.min_publisher_duration_);
+  writer->Uint(data.min_publisher_duration);
 
   writer->String("min_visits");
-  writer->Uint(data.min_visits_);
+  writer->Uint(data.min_visits);
 
   writer->String("allow_non_verified");
-  writer->Bool(data.allow_non_verified_);
+  writer->Bool(data.allow_non_verified);
 
   writer->String("allow_videos");
-  writer->Bool(data.allow_videos_);
+  writer->Bool(data.allow_videos);
 
   writer->String("monthly_balances");
   writer->StartArray();
-  for (auto & p : data.monthly_balances_) {
+  for (auto & p : data.monthly_balances) {
     writer->StartObject();
     writer->String(p.first.c_str());
     saveToJson(writer, p.second);
@@ -689,18 +619,18 @@ void saveToJson(JsonWriter* writer, const PUBLISHER_STATE_ST& data) {
 
 /////////////////////////////////////////////////////////////////////////////
 PUBLISHER_ST::PUBLISHER_ST():
-  id_(""),
-  duration_(0),
-  score_(0),
-  visits_(0),
-  percent_(0),
-  weight_(0),
-  status_(0) {}
+  id(""),
+  duration(0),
+  score(0),
+  visits(0),
+  percent(0),
+  weight(0),
+  status(0) {}
 
 PUBLISHER_ST::~PUBLISHER_ST() {}
 
 bool PUBLISHER_ST::operator<(const PUBLISHER_ST& rhs) const {
-  return score_ > rhs.score_;
+  return score > rhs.score;
 }
 
 bool PUBLISHER_ST::loadFromJson(const std::string& json) {
@@ -719,22 +649,22 @@ bool PUBLISHER_ST::loadFromJson(const std::string& json) {
   }
 
   if (!error) {
-    id_ = d["id"].GetString();
-    duration_ = d["duration"].GetUint64();
-    score_ = d["score"].GetDouble();
-    visits_ = d["visits"].GetUint();
-    percent_ = d["percent"].GetUint();
-    weight_ = d["weight"].GetDouble();
-    status_ = 0;  // ledger::PublisherStatus::NOT_VERIFIED
+    id = d["id"].GetString();
+    duration = d["duration"].GetUint64();
+    score = d["score"].GetDouble();
+    visits = d["visits"].GetUint();
+    percent = d["percent"].GetUint();
+    weight = d["weight"].GetDouble();
+    status = 0;  // ledger::PublisherStatus::NOT_VERIFIED
 
     if (d.HasMember("status") && d["status"].IsUint()) {
-      status_ = d["status"].GetUint();
+      status = d["status"].GetUint();
     }
 
     // LEGACY CHECK
     if (d.HasMember("verified") && d["verified"].IsBool()) {
       const bool verified = d["verified"].GetBool();
-      status_ = verified
+      status = verified
           ? 2  // ledger::PublisherStatus::VERIFIED
           : 0;  // ledger::PublisherStatus::NOT_VERIFIED
     }
@@ -747,32 +677,32 @@ void saveToJson(JsonWriter* writer, const PUBLISHER_ST& data) {
   writer->StartObject();
 
   writer->String("id");
-  writer->String(data.id_.c_str());
+  writer->String(data.id.c_str());
 
   writer->String("duration");
-  writer->Uint64(data.duration_);
+  writer->Uint64(data.duration);
 
   writer->String("score");
-  writer->Double(data.score_);
+  writer->Double(data.score);
 
   writer->String("visits");
-  writer->Uint(data.visits_);
+  writer->Uint(data.visits);
 
   writer->String("percent");
-  writer->Uint(data.percent_);
+  writer->Uint(data.percent);
 
   writer->String("weight");
-  writer->Double(data.weight_);
+  writer->Double(data.weight);
 
   writer->String("status");
-  writer->Uint(data.status_);
+  writer->Uint(data.status);
 
   writer->EndObject();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 WINNERS_ST::WINNERS_ST() :
-  votes_(0) {}
+  votes(0) {}
 
 WINNERS_ST::~WINNERS_ST() {}
 
@@ -783,9 +713,9 @@ WALLET_PROPERTIES_ST::~WALLET_PROPERTIES_ST() {}
 
 WALLET_PROPERTIES_ST::WALLET_PROPERTIES_ST(
     const WALLET_PROPERTIES_ST &properties) {
-  fee_amount_ = properties.fee_amount_;
-  parameters_choices_ = properties.parameters_choices_;
-  grants_ = properties.grants_;
+  fee_amount = properties.fee_amount;
+  parameters_choices = properties.parameters_choices;
+  grants = properties.grants;
 }
 
 bool WALLET_PROPERTIES_ST::loadFromJson(const std::string & json) {
@@ -800,10 +730,10 @@ bool WALLET_PROPERTIES_ST::loadFromJson(const std::string & json) {
 
   if (!error) {
     for (auto & i : d["parameters"]["adFree"]["choices"]["BAT"].GetArray()) {
-      parameters_choices_.push_back(i.GetDouble());
+      parameters_choices.push_back(i.GetDouble());
     }
 
-    fee_amount_ = d["parameters"]["adFree"]["fee"]["BAT"].GetDouble();
+    fee_amount = d["parameters"]["adFree"]["fee"]["BAT"].GetDouble();
 
     if (d.HasMember("grants") && d["grants"].IsArray()) {
       for (auto &i : d["grants"].GetArray()) {
@@ -814,21 +744,21 @@ bool WALLET_PROPERTIES_ST::loadFromJson(const std::string & json) {
         }
 
         if (obj.HasMember("altcurrency")) {
-          grant.altcurrency = obj["altcurrency"].GetString();
+          grant.alt_currency = obj["altcurrency"].GetString();
         }
 
         if (obj.HasMember("expiryTime")) {
-          grant.expiryTime = obj["expiryTime"].GetUint64();
+          grant.expiry_time = obj["expiryTime"].GetUint64();
         }
 
         if (obj.HasMember("type")) {
           grant.type = obj["type"].GetString();
         }
 
-        grants_.push_back(grant);
+        grants.push_back(grant);
       }
     } else {
-      grants_.clear();
+      grants.clear();
     }
   }
   return !error;
@@ -838,7 +768,7 @@ void saveToJson(JsonWriter* writer, const WALLET_PROPERTIES_ST& data) {
   writer->StartObject();
 
   writer->String("fee_amount");
-  writer->Double(data.fee_amount_);
+  writer->Double(data.fee_amount);
 
   writer->String("parameters");
   writer->StartObject();
@@ -848,7 +778,7 @@ void saveToJson(JsonWriter* writer, const WALLET_PROPERTIES_ST& data) {
   writer->String("fee");
   writer->StartObject();
   writer->String("BAT");
-  writer->Double(data.fee_amount_);
+  writer->Double(data.fee_amount);
   writer->EndObject();
 
   writer->String("choices");
@@ -856,7 +786,7 @@ void saveToJson(JsonWriter* writer, const WALLET_PROPERTIES_ST& data) {
   writer->String("BAT");
 
   writer->StartArray();
-  for (auto & choice : data.parameters_choices_) {
+  for (auto & choice : data.parameters_choices) {
     writer->Double(choice);
   }
   writer->EndArray();
@@ -867,7 +797,7 @@ void saveToJson(JsonWriter* writer, const WALLET_PROPERTIES_ST& data) {
 
   writer->String("grants");
   writer->StartArray();
-  for (auto & grant : data.grants_) {
+  for (auto & grant : data.grants) {
     saveToJson(writer, grant);
   }
   writer->EndArray();
@@ -880,7 +810,7 @@ GRANTS_PROPERTIES_ST::GRANTS_PROPERTIES_ST() {}
 
 GRANTS_PROPERTIES_ST::GRANTS_PROPERTIES_ST(
     const GRANTS_PROPERTIES_ST& properties) {
-  grants_ = properties.grants_;
+  grants = properties.grants;
 }
 
 GRANTS_PROPERTIES_ST::~GRANTS_PROPERTIES_ST() {}
@@ -900,40 +830,40 @@ bool GRANTS_PROPERTIES_ST::loadFromJson(const std::string & json) {
       auto obj = i.GetObject();
 
       if (obj.HasMember("promotionId")) {
-        grant.promotionId = obj["promotionId"].GetString();
+        grant.promotion_id = obj["promotionId"].GetString();
       }
 
       if (obj.HasMember("minimumReconcileTimestamp")) {
-        grant.minimumReconcileTimestamp =
+        grant.minimum_reconcile_timestamp =
             obj["minimumReconcileTimestamp"].GetUint64();
       }
 
       if (obj.HasMember("protocolVersion")) {
-        grant.protocolVersion = obj["protocolVersion"].GetUint64();
+        grant.protocol_version = obj["protocolVersion"].GetUint64();
       }
 
       if (obj.HasMember("type")) {
         grant.type = obj["type"].GetString();
       }
 
-      grants_.push_back(grant);
+      grants.push_back(grant);
     }
   } else {
-    grants_.clear();
+    grants.clear();
   }
   return !error;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-GRANT::GRANT() : expiryTime(0) {}
+GRANT::GRANT() : expiry_time(0) {}
 
 GRANT::~GRANT() {}
 
 GRANT::GRANT(const GRANT &properties) {
-  promotionId = properties.promotionId;
-  altcurrency = properties.altcurrency;
-  expiryTime = properties.expiryTime;
+  promotion_id = properties.promotion_id;
+  alt_currency = properties.alt_currency;
+  expiry_time = properties.expiry_time;
   probi = properties.probi;
   type = properties.type;
 }
@@ -953,7 +883,7 @@ bool GRANT::loadFromJson(const std::string & json) {
       d.HasMember("promotionId") && d["promotionId"].IsString());
 
   if (!error) {
-    promotionId = d["promotionId"].GetString();
+    promotion_id = d["promotionId"].GetString();
 
     if (d.HasMember("type") && d["type"].IsString()) {
       type = d["type"].GetString();
@@ -968,8 +898,8 @@ bool GRANT::loadFromJson(const std::string & json) {
       d.HasMember("probi") && d["probi"].IsString());
 
   if (!error) {
-    altcurrency = d["altcurrency"].GetString();
-    expiryTime = d["expiryTime"].GetUint64();
+    alt_currency = d["altcurrency"].GetString();
+    expiry_time = d["expiryTime"].GetUint64();
     probi = d["probi"].GetString();
     if (d.HasMember("type") && d["type"].IsString()) {
       type = d["type"].GetString();
@@ -990,9 +920,9 @@ GRANT_RESPONSE::GRANT_RESPONSE() {}
 GRANT_RESPONSE::~GRANT_RESPONSE() {}
 
 GRANT_RESPONSE::GRANT_RESPONSE(const GRANT_RESPONSE &properties) {
-  promotionId = properties.promotionId;
-  minimumReconcileTimestamp = properties.minimumReconcileTimestamp;
-  protocolVersion = properties.protocolVersion;
+  promotion_id = properties.promotion_id;
+  minimum_reconcile_timestamp = properties.minimum_reconcile_timestamp;
+  protocol_version = properties.protocol_version;
   type = properties.type;
 }
 
@@ -1010,7 +940,7 @@ bool GRANT_RESPONSE::loadFromJson(const std::string & json) {
   error = !(d.HasMember("promotionId") && d["promotionId"].IsString());
 
   if (!error) {
-    promotionId = d["promotionId"].GetString();
+    promotion_id = d["promotionId"].GetString();
     return !error;
   }
 
@@ -1022,8 +952,8 @@ bool GRANT_RESPONSE::loadFromJson(const std::string & json) {
       d.HasMember("type") && d["type"].IsString());
 
   if (!error) {
-    minimumReconcileTimestamp = d["minimumReconcileTimestamp"].GetUint64();
-    protocolVersion = d["protocolVersion"].GetUint64();
+    minimum_reconcile_timestamp = d["minimumReconcileTimestamp"].GetUint64();
+    protocol_version = d["protocolVersion"].GetUint64();
     type = d["type"].GetString();
   }
 
@@ -1034,16 +964,16 @@ void saveToJson(JsonWriter* writer, const GRANT& data) {
   writer->StartObject();
 
   writer->String("altcurrency");
-  writer->String(data.altcurrency.c_str());
+  writer->String(data.alt_currency.c_str());
 
   writer->String("probi");
   writer->String(data.probi.c_str());
 
   writer->String("expiryTime");
-  writer->Uint64(data.expiryTime);
+  writer->Uint64(data.expiry_time);
 
   writer->String("promotionId");
-  writer->String(data.promotionId.c_str());
+  writer->String(data.promotion_id.c_str());
 
   writer->String("type");
   writer->String(data.type.c_str());
@@ -1076,11 +1006,11 @@ bool SURVEYOR_ST::loadFromJson(const std::string & json) {
 
   if (!error) {
     signature_ = d["signature"].GetString();
-    surveyorId_ = d["surveyorId"].GetString();
-    surveyVK_ = d["surveyVK"].GetString();
-    registrarVK_ = d["registrarVK"].GetString();
+    surveyor_id = d["surveyorId"].GetString();
+    survey_vk = d["surveyVK"].GetString();
+    registrar_vk = d["registrarVK"].GetString();
     if (d.HasMember("surveySK") && d["surveySK"].IsString()) {
-      surveySK_ = d["surveySK"].GetString();
+      survey_sk = d["surveySK"].GetString();
     }
   }
 
@@ -1091,8 +1021,8 @@ bool SURVEYOR_ST::loadFromJson(const std::string & json) {
 RECONCILE_DIRECTION::RECONCILE_DIRECTION() {}
 RECONCILE_DIRECTION::RECONCILE_DIRECTION(const std::string& publisher_key,
                                          const double amount_percent) :
-  publisher_key_(publisher_key),
-  amount_percent_(amount_percent) {}
+  publisher_key(publisher_key),
+  amount_percent(amount_percent) {}
 RECONCILE_DIRECTION::~RECONCILE_DIRECTION() {}
 
 bool RECONCILE_DIRECTION::loadFromJson(const std::string & json) {
@@ -1107,14 +1037,14 @@ bool RECONCILE_DIRECTION::loadFromJson(const std::string & json) {
 
   if (!error) {
     if (d.HasMember("amount") && d["amount"].IsInt()) {
-      amount_percent_ = static_cast<double>(d["amount"].GetInt());
+      amount_percent = static_cast<double>(d["amount"].GetInt());
     } else if (d["amount_percent"].IsDouble()) {
-      amount_percent_ = d["amount_percent"].GetDouble();
+      amount_percent = d["amount_percent"].GetDouble();
     } else {
       return false;
     }
 
-    publisher_key_ = d["publisher_key"].GetString();
+    publisher_key = d["publisher_key"].GetString();
   }
 
   return !error;
@@ -1124,39 +1054,39 @@ void saveToJson(JsonWriter* writer, const RECONCILE_DIRECTION& data) {
   writer->StartObject();
 
   writer->String("amount_percent");
-  writer->Double(data.amount_percent_);
+  writer->Double(data.amount_percent);
 
   writer->String("publisher_key");
-  writer->String(data.publisher_key_.c_str());
+  writer->String(data.publisher_key.c_str());
 
   writer->EndObject();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 CURRENT_RECONCILE::CURRENT_RECONCILE() :
-  timestamp_(0),
-  fee_(.0),
-  retry_step_(ledger::ContributionRetry::STEP_NO),
-  retry_level_(0) {}
+  timestamp(0),
+  fee(.0),
+  retry_step(ledger::ContributionRetry::STEP_NO),
+  retry_level(0) {}
 
 CURRENT_RECONCILE::CURRENT_RECONCILE(const CURRENT_RECONCILE& data):
-  viewingId_(data.viewingId_),
-  anonizeViewingId_(data.anonizeViewingId_),
-  registrarVK_(data.registrarVK_),
-  preFlight_(data.preFlight_),
-  masterUserToken_(data.masterUserToken_),
-  surveyorInfo_(data.surveyorInfo_),
-  timestamp_(data.timestamp_),
-  rates_(data.rates_),
-  amount_(data.amount_),
-  currency_(data.currency_),
-  fee_(data.fee_),
-  directions_(data.directions_),
-  type_(data.type_),
-  retry_step_(data.retry_step_),
-  retry_level_(data.retry_level_),
-  destination_(data.destination_),
-  proof_(data.proof_) {}
+  viewing_id(data.viewing_id),
+  anonize_viewing_id(data.anonize_viewing_id),
+  registrar_vk(data.registrar_vk),
+  pre_flight(data.pre_flight),
+  master_user_token(data.master_user_token),
+  surveyor_info(data.surveyor_info),
+  timestamp(data.timestamp),
+  rates(data.rates),
+  amount(data.amount),
+  currency(data.currency),
+  fee(data.fee),
+  directions(data.directions),
+  type(data.type),
+  retry_step(data.retry_step),
+  retry_level(data.retry_level),
+  destination(data.destination),
+  proof(data.proof) {}
 
 CURRENT_RECONCILE::~CURRENT_RECONCILE() {}
 
@@ -1174,31 +1104,31 @@ bool CURRENT_RECONCILE::loadFromJson(const std::string & json) {
   }
 
   if (!error) {
-    viewingId_ = d["viewingId"].GetString();
-    anonizeViewingId_ = d["anonizeViewingId"].GetString();
-    registrarVK_ = d["registrarVK"].GetString();
-    preFlight_ = d["preFlight"].GetString();
-    masterUserToken_ = d["masterUserToken"].GetString();
-    timestamp_ = d["timestamp"].GetUint64();
-    amount_ = d["amount"].GetString();
-    currency_ = d["currency"].GetString();
-    fee_ = d["fee"].GetDouble();
+    viewing_id = d["viewingId"].GetString();
+    anonize_viewing_id = d["anonizeViewingId"].GetString();
+    registrar_vk = d["registrarVK"].GetString();
+    pre_flight = d["preFlight"].GetString();
+    master_user_token = d["masterUserToken"].GetString();
+    timestamp = d["timestamp"].GetUint64();
+    amount = d["amount"].GetString();
+    currency = d["currency"].GetString();
+    fee = d["fee"].GetDouble();
     if (d.HasMember("category") && d["category"].IsInt()) {
-      type_ = static_cast<ledger::RewardsType>(d["category"].GetInt());
+      type = static_cast<ledger::RewardsType>(d["category"].GetInt());
     } else {
-      type_ = static_cast<ledger::RewardsType>(d["type"].GetInt());
+      type = static_cast<ledger::RewardsType>(d["type"].GetInt());
     }
 
     if (d.HasMember("surveyorInfo") && d["surveyorInfo"].IsObject()) {
       auto obj = d["surveyorInfo"].GetObject();
       SURVEYOR_INFO_ST info;
-      info.surveyorId_ = obj["surveyorId"].GetString();
-      surveyorInfo_ = info;
+      info.surveyor_id = obj["surveyorId"].GetString();
+      surveyor_info = info;
     }
 
     if (d.HasMember("rates") && d["rates"].IsObject()) {
       for (auto & i : d["rates"].GetObject()) {
-        rates_.insert(std::make_pair(i.name.GetString(), i.value.GetDouble()));
+        rates.insert(std::make_pair(i.name.GetString(), i.value.GetDouble()));
       }
     }
 
@@ -1210,7 +1140,7 @@ bool CURRENT_RECONCILE::loadFromJson(const std::string & json) {
 
         RECONCILE_DIRECTION direction;
         direction.loadFromJson(sb.GetString());
-        directions_.push_back(direction);
+        directions.push_back(direction);
       }
     }
 
@@ -1220,31 +1150,31 @@ bool CURRENT_RECONCILE::loadFromJson(const std::string & json) {
         RECONCILE_DIRECTION direction;
 
         auto obj = i.GetObject();
-        direction.publisher_key_ = obj["id"].GetString();
-        direction.amount_percent_ = obj["weight"].GetDouble();
-        directions_.push_back(direction);
+        direction.publisher_key = obj["id"].GetString();
+        direction.amount_percent = obj["weight"].GetDouble();
+        directions.push_back(direction);
       }
     }
 
     if (d.HasMember("retry_step") && d["retry_step"].IsInt()) {
-      retry_step_ = static_cast<ledger::ContributionRetry>(
+      retry_step = static_cast<ledger::ContributionRetry>(
           d["retry_step"].GetInt());
     } else {
-      retry_step_ = ledger::ContributionRetry::STEP_NO;
+      retry_step = ledger::ContributionRetry::STEP_NO;
     }
 
     if (d.HasMember("retry_level") && d["retry_level"].IsInt()) {
-      retry_level_ = d["retry_level"].GetInt();
+      retry_level = d["retry_level"].GetInt();
     } else {
-      retry_level_ = 0;
+      retry_level = 0;
     }
 
     if (d.HasMember("destination") && d["destination"].IsString()) {
-      destination_ = d["destination"].GetString();
+      destination = d["destination"].GetString();
     }
 
     if (d.HasMember("proof") && d["proof"].IsString()) {
-      proof_ = d["proof"].GetString();
+      proof = d["proof"].GetString();
     }
   }
 
@@ -1255,44 +1185,44 @@ void saveToJson(JsonWriter* writer, const CURRENT_RECONCILE& data) {
   writer->StartObject();
 
   writer->String("viewingId");
-  writer->String(data.viewingId_.c_str());
+  writer->String(data.viewing_id.c_str());
 
   writer->String("anonizeViewingId");
-  writer->String(data.anonizeViewingId_.c_str());
+  writer->String(data.anonize_viewing_id.c_str());
 
   writer->String("registrarVK");
-  writer->String(data.registrarVK_.c_str());
+  writer->String(data.registrar_vk.c_str());
 
   writer->String("preFlight");
-  writer->String(data.preFlight_.c_str());
+  writer->String(data.pre_flight.c_str());
 
   writer->String("masterUserToken");
-  writer->String(data.masterUserToken_.c_str());
+  writer->String(data.master_user_token.c_str());
 
   writer->String("surveyorInfo");
   writer->StartObject();
     writer->String("surveyorId");
-    writer->String(data.surveyorInfo_.surveyorId_.c_str());
+    writer->String(data.surveyor_info.surveyor_id.c_str());
   writer->EndObject();
 
   writer->String("timestamp");
-  writer->Uint64(data.timestamp_);
+  writer->Uint64(data.timestamp);
 
   writer->String("amount");
-  writer->String(data.amount_.c_str());
+  writer->String(data.amount.c_str());
 
   writer->String("currency");
-  writer->String(data.currency_.c_str());
+  writer->String(data.currency.c_str());
 
   writer->String("fee");
-  writer->Double(data.fee_);
+  writer->Double(data.fee);
 
   writer->String("type");
-  writer->Int(static_cast<int>(data.type_));
+  writer->Int(static_cast<int>(data.type));
 
   writer->String("rates");
   writer->StartObject();
-  for (auto & p : data.rates_) {
+  for (auto & p : data.rates) {
     writer->String(p.first.c_str());
     writer->Double(p.second);
   }
@@ -1300,64 +1230,64 @@ void saveToJson(JsonWriter* writer, const CURRENT_RECONCILE& data) {
 
   writer->String("directions");
   writer->StartArray();
-  for (auto & i : data.directions_) {
+  for (auto & i : data.directions) {
     saveToJson(writer, i);
   }
   writer->EndArray();
 
   writer->String("retry_step");
-  writer->Int(static_cast<int32_t>(data.retry_step_));
+  writer->Int(static_cast<int32_t>(data.retry_step));
 
   writer->String("retry_level");
-  writer->Int(data.retry_level_);
+  writer->Int(data.retry_level);
 
   writer->String("destination");
-  writer->String(data.destination_.c_str());
+  writer->String(data.destination.c_str());
 
   writer->String("proof");
-  writer->String(data.proof_.c_str());
+  writer->String(data.proof.c_str());
 
   writer->EndObject();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 CLIENT_STATE_ST::CLIENT_STATE_ST():
-  bootStamp_(0),
-  reconcileStamp_(0),
-  last_grant_fetch_stamp_(0),
-  settings_(AD_FREE_SETTINGS),
-  fee_amount_(0),
-  user_changed_fee_(false),
-  days_(0),
-  auto_contribute_(false),
-  rewards_enabled_(false) {}
+  boot_stamp(0),
+  reconcile_stamp(0),
+  last_grant_fetch_stamp(0),
+  settings(AD_FREE_SETTINGS),
+  fee_amount(0),
+  user_changed_fee(false),
+  days(0),
+  auto_contribute(false),
+  rewards_enabled(false) {}
 
 CLIENT_STATE_ST::CLIENT_STATE_ST(const CLIENT_STATE_ST& other) {
-  walletProperties_ = other.walletProperties_;
-  walletInfo_ = other.walletInfo_;
-  bootStamp_ = other.bootStamp_;
-  reconcileStamp_ = other.reconcileStamp_;
-  last_grant_fetch_stamp_ = other.last_grant_fetch_stamp_;
-  personaId_ = other.personaId_;
-  userId_ = other.userId_;
-  registrarVK_ = other.registrarVK_;
-  masterUserToken_ = other.masterUserToken_;
-  preFlight_ = other.preFlight_;
-  fee_currency_ = other.fee_currency_;
-  settings_ = other.settings_;
-  fee_amount_ = other.fee_amount_;
-  user_changed_fee_ = other.user_changed_fee_;
-  days_ = other.days_;
-  transactions_ = other.transactions_;
-  ballots_ = other.ballots_;
-  ruleset_ = other.ruleset_;
-  rulesetV2_ = other.rulesetV2_;
-  batch_ = other.batch_;
-  auto_contribute_ = other.auto_contribute_;
-  rewards_enabled_ = other.rewards_enabled_;
-  current_reconciles_ = other.current_reconciles_;
-  inline_tip_ = other.inline_tip_;
-  grants_ = other.grants_;
+  wallet_properties = other.wallet_properties;
+  wallet_info = other.wallet_info;
+  boot_stamp = other.boot_stamp;
+  reconcile_stamp = other.reconcile_stamp;
+  last_grant_fetch_stamp = other.last_grant_fetch_stamp;
+  persona_id = other.persona_id;
+  user_id = other.user_id;
+  registrar_vk = other.registrar_vk;
+  master_user_token = other.master_user_token;
+  pre_flight = other.pre_flight;
+  fee_currency = other.fee_currency;
+  settings = other.settings;
+  fee_amount = other.fee_amount;
+  user_changed_fee = other.user_changed_fee;
+  days = other.days;
+  transactions = other.transactions;
+  ballots = other.ballots;
+  rule_set = other.rule_set;
+  rule_set_v2 = other.rule_set_v2;
+  batch = other.batch;
+  auto_contribute = other.auto_contribute;
+  rewards_enabled = other.rewards_enabled;
+  current_reconciles = other.current_reconciles;
+  inline_tip = other.inline_tip;
+  grants = other.grants;
 }
 
 CLIENT_STATE_ST::~CLIENT_STATE_ST() {}
@@ -1397,31 +1327,31 @@ bool CLIENT_STATE_ST::loadFromJson(const std::string & json) {
       rapidjson::StringBuffer sb;
       rapidjson::Writer<rapidjson::StringBuffer> writer(sb);
       i.Accept(writer);
-      walletInfo_.loadFromJson(sb.GetString());
+      wallet_info.loadFromJson(sb.GetString());
     }
 
-    bootStamp_ = d["bootStamp"].GetUint64();
-    reconcileStamp_ = d["reconcileStamp"].GetUint64();
+    boot_stamp = d["bootStamp"].GetUint64();
+    reconcile_stamp = d["reconcileStamp"].GetUint64();
 
     if (d.HasMember("last_grant_fetch_stamp") &&
         d["last_grant_fetch_stamp"].IsUint64()) {
-      last_grant_fetch_stamp_ = d["last_grant_fetch_stamp"].GetUint64();
+      last_grant_fetch_stamp = d["last_grant_fetch_stamp"].GetUint64();
     } else {
-      last_grant_fetch_stamp_ = 0u;
+      last_grant_fetch_stamp = 0u;
     }
 
-    personaId_ = d["personaId"].GetString();
-    userId_ = d["userId"].GetString();
-    registrarVK_ = d["registrarVK"].GetString();
-    masterUserToken_ = d["masterUserToken"].GetString();
-    preFlight_ = d["preFlight"].GetString();
-    fee_currency_ = d["fee_currency"].GetString();
-    settings_ = d["settings"].GetString();
-    fee_amount_ = d["fee_amount"].GetDouble();
-    user_changed_fee_ = d["user_changed_fee"].GetBool();
-    days_ = d["days"].GetUint();
-    auto_contribute_ = d["auto_contribute"].GetBool();
-    rewards_enabled_ = d["rewards_enabled"].GetBool();
+    persona_id = d["personaId"].GetString();
+    user_id = d["userId"].GetString();
+    registrar_vk = d["registrarVK"].GetString();
+    master_user_token = d["masterUserToken"].GetString();
+    pre_flight = d["preFlight"].GetString();
+    fee_currency = d["fee_currency"].GetString();
+    settings = d["settings"].GetString();
+    fee_amount = d["fee_amount"].GetDouble();
+    user_changed_fee = d["user_changed_fee"].GetBool();
+    days = d["days"].GetUint();
+    auto_contribute = d["auto_contribute"].GetBool();
+    rewards_enabled = d["rewards_enabled"].GetBool();
 
     for (const auto & i : d["transactions"].GetArray()) {
       rapidjson::StringBuffer sb;
@@ -1430,7 +1360,7 @@ bool CLIENT_STATE_ST::loadFromJson(const std::string & json) {
 
       TRANSACTION_ST ta;
       ta.loadFromJson(sb.GetString());
-      transactions_.push_back(ta);
+      transactions.push_back(ta);
     }
 
     for (const auto & i : d["ballots"].GetArray()) {
@@ -1439,12 +1369,16 @@ bool CLIENT_STATE_ST::loadFromJson(const std::string & json) {
       i.Accept(writer);
 
       BALLOT_ST b;
-      b.loadFromJson(sb.GetString());
-      ballots_.push_back(b);
+      const ledger::BallotJsonState ballot_state;
+      if (!ballot_state.FromJson(sb.GetString(), &b)) {
+        continue;
+      }
+
+      ballots.push_back(b);
     }
 
-    ruleset_ = d["ruleset"].GetString();
-    rulesetV2_ = d["rulesetV2"].GetString();
+    rule_set = d["ruleset"].GetString();
+    rule_set_v2 = d["rulesetV2"].GetString();
 
     for (const auto & i : d["batch"].GetArray()) {
       rapidjson::StringBuffer sb;
@@ -1452,8 +1386,12 @@ bool CLIENT_STATE_ST::loadFromJson(const std::string & json) {
       i.Accept(writer);
 
       BATCH_VOTES_ST b;
-      b.loadFromJson(sb.GetString());
-      batch_.push_back(b);
+      const ledger::BatchVotesJsonState batch_votes_state;
+      if (!batch_votes_state.FromJson(sb.GetString(), &b)) {
+        continue;
+      }
+
+      batch.push_back(b);
     }
 
     if (d.HasMember("current_reconciles") &&
@@ -1465,7 +1403,7 @@ bool CLIENT_STATE_ST::loadFromJson(const std::string & json) {
 
         CURRENT_RECONCILE b;
         b.loadFromJson(sb.GetString());
-        current_reconciles_[i.name.GetString()] = b;
+        current_reconciles[i.name.GetString()] = b;
       }
     }
 
@@ -1474,12 +1412,12 @@ bool CLIENT_STATE_ST::loadFromJson(const std::string & json) {
       rapidjson::StringBuffer sb;
       rapidjson::Writer<rapidjson::StringBuffer> writer(sb);
       i.Accept(writer);
-      walletProperties_.loadFromJson(sb.GetString());
+      wallet_properties.loadFromJson(sb.GetString());
     }
 
     if (d.HasMember("inlineTip") && d["inlineTip"].IsObject()) {
       for (auto & k : d["inlineTip"].GetObject()) {
-        inline_tip_.insert(
+        inline_tip.insert(
             std::make_pair(k.name.GetString(), k.value.GetBool()));
       }
     }
@@ -1492,94 +1430,94 @@ void saveToJson(JsonWriter* writer, const CLIENT_STATE_ST& data) {
   writer->StartObject();
 
   writer->String("walletInfo");
-  saveToJson(writer, data.walletInfo_);
+  saveToJson(writer, data.wallet_info);
 
   writer->String("bootStamp");
-  writer->Uint64(data.bootStamp_);
+  writer->Uint64(data.boot_stamp);
 
   writer->String("reconcileStamp");
-  writer->Uint64(data.reconcileStamp_);
+  writer->Uint64(data.reconcile_stamp);
 
   writer->String("last_grant_fetch_stamp");
-  writer->Uint64(data.last_grant_fetch_stamp_);
+  writer->Uint64(data.last_grant_fetch_stamp);
 
   writer->String("personaId");
-  writer->String(data.personaId_.c_str());
+  writer->String(data.persona_id.c_str());
 
   writer->String("userId");
-  writer->String(data.userId_.c_str());
+  writer->String(data.user_id.c_str());
 
   writer->String("registrarVK");
-  writer->String(data.registrarVK_.c_str());
+  writer->String(data.registrar_vk.c_str());
 
   writer->String("masterUserToken");
-  writer->String(data.masterUserToken_.c_str());
+  writer->String(data.master_user_token.c_str());
 
   writer->String("preFlight");
-  writer->String(data.preFlight_.c_str());
+  writer->String(data.pre_flight.c_str());
 
   writer->String("fee_currency");
-  writer->String(data.fee_currency_.c_str());
+  writer->String(data.fee_currency.c_str());
 
   writer->String("settings");
-  writer->String(data.settings_.c_str());
+  writer->String(data.settings.c_str());
 
   writer->String("fee_amount");
-  writer->Double(data.fee_amount_);
+  writer->Double(data.fee_amount);
 
   writer->String("user_changed_fee");
-  writer->Bool(data.user_changed_fee_);
+  writer->Bool(data.user_changed_fee);
 
   writer->String("days");
-  writer->Uint(data.days_);
+  writer->Uint(data.days);
 
   writer->String("rewards_enabled");
-  writer->Bool(data.rewards_enabled_);
+  writer->Bool(data.rewards_enabled);
 
   writer->String("auto_contribute");
-  writer->Bool(data.auto_contribute_);
+  writer->Bool(data.auto_contribute);
 
   writer->String("transactions");
   writer->StartArray();
-  for (auto & t : data.transactions_) {
+  for (auto & t : data.transactions) {
     saveToJson(writer, t);
   }
   writer->EndArray();
 
   writer->String("ballots");
   writer->StartArray();
-  for (auto & b : data.ballots_) {
+  for (auto & b : data.ballots) {
     saveToJson(writer, b);
   }
   writer->EndArray();
 
   writer->String("ruleset");
-  writer->String(data.ruleset_.c_str());
+  writer->String(data.rule_set.c_str());
 
   writer->String("rulesetV2");
-  writer->String(data.rulesetV2_.c_str());
+  writer->String(data.rule_set_v2.c_str());
 
   writer->String("batch");
   writer->StartArray();
-  for (auto & b : data.batch_) {
+  for (auto & b : data.batch) {
     saveToJson(writer, b);
   }
   writer->EndArray();
 
   writer->String("current_reconciles");
   writer->StartObject();
-  for (auto & t : data.current_reconciles_) {
+  for (auto & t : data.current_reconciles) {
     writer->Key(t.first.c_str());
     saveToJson(writer, t.second);
   }
   writer->EndObject();
 
   writer->String("walletProperties");
-  saveToJson(writer, data.walletProperties_);
+  saveToJson(writer, data.wallet_properties);
 
   writer->String("inlineTip");
   writer->StartObject();
-  for (auto & p : data.inline_tip_) {
+  for (auto & p : data.inline_tip) {
     writer->String(p.first.c_str());
     writer->Bool(p.second);
   }
@@ -1736,8 +1674,8 @@ bool getJSONTransaction(const std::string& json, TRANSACTION_ST* transaction) {
 
   if (!error) {
     uint64_t stamp = d["paymentStamp"].GetUint64();
-    transaction->submissionStamp_ = std::to_string(stamp);
-    transaction->contribution_probi_ = d["probi"].GetString();
+    transaction->submission_stamp = std::to_string(stamp);
+    transaction->contribution_probi = d["probi"].GetString();
   }
   return !error;
 }
@@ -1753,9 +1691,9 @@ bool getJSONUnsignedTx(const std::string& json, UNSIGNED_TX* unsignedTx) {
   }
 
   if (!error) {
-    unsignedTx->amount_ =
+    unsignedTx->amount =
         d["unsignedTx"]["denomination"]["amount"].GetString();
-    unsignedTx->currency_ =
+    unsignedTx->currency =
         d["unsignedTx"]["denomination"]["currency"].GetString();
     unsignedTx->destination_ = d["unsignedTx"]["destination"].GetString();
   }
@@ -1782,13 +1720,13 @@ bool getJSONWalletInfo(const std::string& json,
 
   if (!error) {
     if (d.HasMember("payload") && d["payload"].IsObject()) {
-      walletInfo->paymentId_ = d["wallet"]["paymentId"].GetString();
-      walletInfo->addressBAT_ = d["wallet"]["addresses"]["BAT"].GetString();
-      walletInfo->addressBTC_ = d["wallet"]["addresses"]["BTC"].GetString();
-      walletInfo->addressCARD_ID_ =
+      walletInfo->payment_id = d["wallet"]["paymentId"].GetString();
+      walletInfo->address_bat = d["wallet"]["addresses"]["BAT"].GetString();
+      walletInfo->address_btc = d["wallet"]["addresses"]["BTC"].GetString();
+      walletInfo->address_card_id =
           d["wallet"]["addresses"]["CARD_ID"].GetString();
-      walletInfo->addressETH_ = d["wallet"]["addresses"]["ETH"].GetString();
-      walletInfo->addressLTC_ = d["wallet"]["addresses"]["LTC"].GetString();
+      walletInfo->address_eth = d["wallet"]["addresses"]["ETH"].GetString();
+      walletInfo->address_ltc = d["wallet"]["addresses"]["LTC"].GetString();
 
       *days = d["payload"]["adFree"]["days"].GetUint();
       const auto & fee = d["payload"]["adFree"]["fee"].GetObject();
@@ -1798,11 +1736,11 @@ bool getJSONWalletInfo(const std::string& json,
         *fee_amount = itr->value.GetDouble();
       }
     } else if (d.HasMember("parameters") && d["parameters"].IsObject()) {
-      walletInfo->addressBAT_ = d["addresses"]["BAT"].GetString();
-      walletInfo->addressBTC_ = d["addresses"]["BTC"].GetString();
-      walletInfo->addressCARD_ID_ = d["addresses"]["CARD_ID"].GetString();
-      walletInfo->addressETH_ = d["addresses"]["ETH"].GetString();
-      walletInfo->addressLTC_ = d["addresses"]["LTC"].GetString();
+      walletInfo->address_bat = d["addresses"]["BAT"].GetString();
+      walletInfo->address_btc = d["addresses"]["BTC"].GetString();
+      walletInfo->address_card_id = d["addresses"]["CARD_ID"].GetString();
+      walletInfo->address_eth = d["addresses"]["ETH"].GetString();
+      walletInfo->address_ltc = d["addresses"]["LTC"].GetString();
       *days = d["parameters"]["adFree"]["days"].GetUint();
       const auto & fee = d["parameters"]["adFree"]["fee"].GetObject();
       auto itr = fee.MemberBegin();
@@ -1839,11 +1777,11 @@ bool getJSONRecoverWallet(const std::string& json,
         }
 
         if (obj.HasMember("altcurrency")) {
-          grant.altcurrency = obj["altcurrency"].GetString();
+          grant.alt_currency = obj["altcurrency"].GetString();
         }
 
         if (obj.HasMember("expiryTime")) {
-          grant.expiryTime = obj["expiryTime"].GetUint64();
+          grant.expiry_time = obj["expiryTime"].GetUint64();
         }
 
         if (obj.HasMember("type")) {
@@ -2040,10 +1978,10 @@ std::string stringifyUnsignedTx(const UNSIGNED_TX& unsignedTx) {
   writer.StartObject();
 
   writer.String("amount");
-  writer.String(unsignedTx.amount_.c_str());
+  writer.String(unsignedTx.amount.c_str());
 
   writer.String("currency");
-  writer.String(unsignedTx.currency_.c_str());
+  writer.String(unsignedTx.currency.c_str());
   writer.EndObject();
 
   writer.String("destination");
@@ -2059,9 +1997,9 @@ std::string stringifyReconcilePayloadSt(
   JsonWriter writer(buffer);
   writer.StartObject();  // root
 
-  if (!reconcile_payload.requestType_.empty()) {
+  if (!reconcile_payload.request_type.empty()) {
     writer.String("requestType");
-    writer.String(reconcile_payload.requestType_.c_str());
+    writer.String(reconcile_payload.request_type.c_str());
   }
 
   writer.String("signedTx");
@@ -2071,10 +2009,10 @@ std::string stringifyReconcilePayloadSt(
   writer.StartObject();  // headers
 
   writer.String("digest");
-  writer.String(reconcile_payload.request_signedtx_headers_digest_.c_str());
+  writer.String(reconcile_payload.request_signed_tx_headers_digest.c_str());
 
   writer.String("signature");
-  writer.String(reconcile_payload.request_signedtx_headers_signature_.c_str());
+  writer.String(reconcile_payload.request_signed_tx_headers_signature.c_str());
 
   writer.EndObject();  // headers
 
@@ -2085,31 +2023,31 @@ std::string stringifyReconcilePayloadSt(
   writer.StartObject();  // denomination
 
   writer.String("amount");
-  writer.String(reconcile_payload.request_signedtx_body_.amount_.c_str());
+  writer.String(reconcile_payload.request_signed_tx_body.amount.c_str());
 
   writer.String("currency");
-  writer.String(reconcile_payload.request_signedtx_body_.currency_.c_str());
+  writer.String(reconcile_payload.request_signed_tx_body.currency.c_str());
 
   writer.EndObject();  // denomination
 
   writer.String("destination");
-  writer.String(reconcile_payload.request_signedtx_body_.destination_.c_str());
+  writer.String(reconcile_payload.request_signed_tx_body.destination_.c_str());
 
   writer.EndObject();  // body
 
   writer.String("octets");
-  writer.String(reconcile_payload.request_signedtx_octets_.c_str());
+  writer.String(reconcile_payload.request_signed_tx_octets.c_str());
 
   writer.EndObject();  // signedTx
 
-  if (!reconcile_payload.request_surveyorId_.empty()) {
+  if (!reconcile_payload.request_surveyor_id.empty()) {
     writer.String("surveyorId");
-    writer.String(reconcile_payload.request_surveyorId_.c_str());
+    writer.String(reconcile_payload.request_surveyor_id.c_str());
   }
 
-  if (!reconcile_payload.request_viewingId_.empty()) {
+  if (!reconcile_payload.request_viewing_id.empty()) {
     writer.String("viewingId");
-    writer.String(reconcile_payload.request_viewingId_.c_str());
+    writer.String(reconcile_payload.request_viewing_id.c_str());
   }
 
   writer.EndObject();  // root

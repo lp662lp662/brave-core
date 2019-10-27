@@ -83,7 +83,7 @@ void Uphold::ContributionCompleted(
     const double fee,
     const ledger::ExternalWallet& wallet) {
   const auto reconcile = ledger_->GetReconcileById(viewing_id);
-  const auto amount = ConvertToProbi(std::to_string(reconcile.fee_));
+  const auto amount = ConvertToProbi(std::to_string(reconcile.fee));
 
   if (result == ledger::Result::LEDGER_OK) {
     const auto current_time_seconds = base::Time::Now().ToDoubleT();
@@ -98,7 +98,7 @@ void Uphold::ContributionCompleted(
   ledger_->OnReconcileComplete(result,
                                viewing_id,
                                amount,
-                               reconcile.type_);
+                               reconcile.type);
 
   if (result != ledger::Result::LEDGER_OK) {
     if (!viewing_id.empty()) {
